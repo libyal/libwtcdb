@@ -1,0 +1,10 @@
+TODO:
+* update macosx files
+* update msvscpp files
+* debug print cache type
+* also use last available offset to read thumbnail entries
+  instead solely using of number of entries
+
+20101023
+* Created initial version based on libnk2 for the library structure and common code
+
