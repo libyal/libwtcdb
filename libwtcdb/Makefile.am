@@ -6,8 +6,6 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/libnotify \
 	@LIBUNA_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
-	@LIBFDATETIME_CPPFLAGS@ \
-	@LIBFGUID_CPPFLAGS@ \
 	@LIBFVALUE_CPPFLAGS@ \
 	@MEMWATCH_CPPFLAGS@
 
@@ -16,6 +14,7 @@ lib_LTLIBRARIES = libwtcdb.la
 libwtcdb_la_SOURCES = \
 	libwtcdb.c \
 	libwtcdb_array_type.c libwtcdb_array_type.h \
+	libwtcdb_crc.c libwtcdb_crc.h \
 	libwtcdb_debug.c libwtcdb_debug.h \
 	libwtcdb_definitions.h \
 	libwtcdb_error.c libwtcdb_error.h \
@@ -31,8 +30,8 @@ libwtcdb_la_SOURCES = \
 	libwtcdb_support.c libwtcdb_support.h \
 	libwtcdb_types.h \
 	libwtcdb_value_identifier.h \
-	wtcdb_file_header.h \
-	wtcdb_thumbnail_entry.h
+	wtcdb_cache_entry.h \
+	wtcdb_file_header.h
 
 libwtcdb_la_LIBADD = \
 	../libcstring/libcstring.la \
@@ -40,8 +39,6 @@ libwtcdb_la_LIBADD = \
 	../libnotify/libnotify.la \
 	@LIBUNA_LIBADD@ \
 	@LIBBFIO_LIBADD@ \
-	@LIBFDATETIME_LIBADD@ \
-	@LIBFGUID_LIBADD@ \
 	@LIBFVALUE_LIBADD@
 
 libwtcdb_la_LDFLAGS = -no-undefined -version-info 1:0:0

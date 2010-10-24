@@ -1,5 +1,5 @@
 /*
- * The thumbnail entry definition of a Windows Explorer thumbnail cache database file
+ * The cache entry definition of a Windows Explorer thumbnail cache database file
  *
  * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
  *
@@ -29,9 +29,9 @@
 extern "C" {
 #endif
 
-typedef struct wtcdb_thumbnail_entry wtcdb_thumbnail_entry_t;
+typedef struct wtcdb_cache_entry_vista wtcdb_cache_entry_vista_t;
 
-struct wtcdb_thumbnail_entry
+struct wtcdb_cache_entry_vista
 {
 	/* Signature
 	 * Consists of 4 bytes
@@ -49,21 +49,21 @@ struct wtcdb_thumbnail_entry
 	 */
 	uint8_t unknown1[ 8 ];
 
-	/* The file type
+	/* The file extension
 	 * Consists of 8 bytes
 	 * Contains an UTF-16 little-endian string
 	 */
-	uint8_t file_type[ 8 ];
+	uint8_t file_extension[ 8 ];
 
 	/* The identifier string size
 	 * Consists of 4 bytes
 	 */
 	uint8_t identifier_string_size[ 4 ];
 
-	/* Unknown
+	/* Padding size
 	 * Consists of 4 bytes
 	 */
-	uint8_t unknown2[ 4 ];
+	uint8_t padding_size[ 4 ];
 
 	/* The data size
 	 * Consists of 4 bytes
@@ -73,27 +73,74 @@ struct wtcdb_thumbnail_entry
 	/* Unknown
 	 * Consists of 4 bytes
 	 */
-	uint8_t unknown3[ 4 ];
+	uint8_t unknown2[ 4 ];
+
+	/* A CRC-64 of the data
+	 * Consists of 8 bytes
+	 */
+	uint8_t data_checksum[ 8 ];
+
+	/* A CRC-64 of the header
+	 * Consists of 8 bytes
+	 */
+	uint8_t header_checksum[ 8 ];
+
+	/* The identifier string
+	 */
+
+	/* The data
+	 */
+};
+
+typedef struct wtcdb_cache_entry_win7 wtcdb_cache_entry_win7_t;
+
+struct wtcdb_cache_entry_win7
+{
+	/* Signature
+	 * Consists of 4 bytes
+	 * Contains CMMM
+	 */
+	uint8_t signature[ 4 ];
+
+	/* The size
+	 * Consists of 4 bytes
+	 */
+	uint8_t size[ 4 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown1[ 8 ];
+
+	/* The identifier string size
+	 * Consists of 4 bytes
+	 */
+	uint8_t identifier_string_size[ 4 ];
+
+	/* Padding size
+	 * Consists of 4 bytes
+	 */
+	uint8_t padding_size[ 4 ];
+
+	/* The data size
+	 * Consists of 4 bytes
+	 */
+	uint8_t data_size[ 4 ];
 
 	/* Unknown
 	 * Consists of 4 bytes
 	 */
-	uint8_t unknown4[ 4 ];
+	uint8_t unknown2[ 4 ];
 
-	/* Unknown
-	 * Consists of 4 bytes
+	/* A CRC-64 of the data
+	 * Consists of 8 bytes
 	 */
-	uint8_t unknown5[ 4 ];
+	uint8_t data_checksum[ 8 ];
 
-	/* Unknown
-	 * Consists of 4 bytes
+	/* A CRC-64 of the header
+	 * Consists of 8 bytes
 	 */
-	uint8_t unknown6[ 4 ];
-
-	/* Unknown
-	 * Consists of 4 bytes
-	 */
-	uint8_t unknown7[ 4 ];
+	uint8_t header_checksum[ 8 ];
 
 	/* The identifier string
 	 */

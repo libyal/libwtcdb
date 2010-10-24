@@ -26,47 +26,6 @@
 #include <libcstring.h>
 #include <liberror.h>
 
-/* If libtool DLL support is enabled set LIBWTCDB_DLL_IMPORT
- * before including libwtcdb_extern.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBWTCDB_DLL_EXPORT
-#endif
-
-#include <libwtcdb.h>
-
-#if defined( HAVE_LOCAL_LIBFDATETIME )
-#include <libfdatetime_date_time_values.h>
-#include <libfdatetime_definitions.h>
-#include <libfdatetime_filetime.h>
-#include <libfdatetime_types.h>
-#elif defined( HAVE_LIBDATETIME_H )
-#include <libfdatetime.h>
-#endif
-
-/* Define HAVE_LOCAL_LIBFGUID for local use of libfguid
- */
-#if defined( HAVE_LOCAL_LIBFGUID )
-
-#include <libfguid_definitions.h>
-#include <libfguid_identifier.h>
-#include <libfguid_types.h>
-
-#elif defined( HAVE_LIBFGUID_H )
-
-/* If libtool DLL support is enabled set LIBFGUID_DLL_IMPORT
- * before including libfguid.h
- */
-#if defined( _WIN32 ) && defined( DLL_IMPORT )
-#define LIBFGUID_DLL_IMPORT
-#endif
-
-#include <libfguid.h>
-
-#else
-#error Missing libfguid.h
-#endif
-
 #include <libsystem.h>
 
 #include "export_handle.h"

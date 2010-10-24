@@ -65,5 +65,13 @@ enum LIBWTCDB_ACCESS_FLAGS
 
 #endif
 
+/* The file types
+ */
+enum LIBWTCDB_FILE_TYPES
+{
+	LIBWTCDB_FILE_TYPE_CACHE			= (uint8_t) 'c',
+	LIBWTCDB_FILE_TYPE_INDEX			= (uint8_t) 'i'
+};
+
 #endif
 

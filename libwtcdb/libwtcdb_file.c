@@ -765,10 +765,11 @@ int libwtcdb_file_open_read(
      libwtcdb_internal_file_t *internal_file,
      liberror_error_t **error )
 {
-	static char *function      = "libwtcdb_file_open_read";
-	uint32_t first_item_offset = 0;
-	uint32_t number_of_items   = 0;
-	int result                 = 1;
+	static char *function          = "libwtcdb_file_open_read";
+	uint32_t first_item_offset     = 0;
+	uint32_t available_item_offset = 0;
+	uint32_t number_of_items       = 0;
+	int result                     = 1;
 
 	if( internal_file == NULL )
 	{
@@ -807,6 +808,7 @@ int libwtcdb_file_open_read(
 	     internal_file->io_handle,
 	     internal_file->file_io_handle,
 	     &first_item_offset,
+	     &available_item_offset,
 	     &number_of_items,
 	     error ) != 1 )
 	{
@@ -830,6 +832,7 @@ int libwtcdb_file_open_read(
 	          internal_file->io_handle,
 	          internal_file->file_io_handle,
 	          first_item_offset,
+	          available_item_offset,
 	          number_of_items,
 	          internal_file->items,
 	          error );

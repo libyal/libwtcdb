@@ -1,9 +1,12 @@
 TODO:
 * update macosx files
 * update msvscpp files
+
 * debug print cache type
-* also use last available offset to read thumbnail entries
-  instead solely using of number of entries
+* debug print thumbnail entry flags
+
+20101024
+* worked on file format support
 
 20101023
 * Created initial version based on libnk2 for the library structure and common code

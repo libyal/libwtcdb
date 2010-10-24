@@ -8,8 +8,6 @@ SUBDIRS = \
 	libnotify \
 	libuna \
 	libbfio \
-	libfdatetime \
-	libfguid \
 	libfvalue \
 	libwtcdb \
 	libsystem \
@@ -47,8 +45,6 @@ library:
 	(cd $(srcdir)/libnotify && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libuna && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libbfio && $(MAKE) $(AM_MAKEFLAGS))
-	(cd $(srcdir)/libfdatetime && $(MAKE) $(AM_MAKEFLAGS))
-	(cd $(srcdir)/libfguid && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfvalue && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libwtcdb && $(MAKE) $(AM_MAKEFLAGS))
 
@@ -70,8 +66,6 @@ splint:
 	(cd $(srcdir)/libnotify && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libuna && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libbfio && $(MAKE) splint $(AM_MAKEFLAGS))
-	(cd $(srcdir)/libfdatetime && $(MAKE) splint $(AM_MAKEFLAGS))
-	(cd $(srcdir)/libfguid && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfvalue && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libwtcdb && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libsystem && $(MAKE) splint $(AM_MAKEFLAGS))

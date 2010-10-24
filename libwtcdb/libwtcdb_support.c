@@ -353,9 +353,16 @@ int libwtcdb_check_file_signature_file_io_handle(
 		}
 	}
 	if( memory_compare(
-	     wtcdb_database_file_signature,
+	     wtcdb_cache_file_signature,
 	     signature,
 	     4 ) == 0 )
+	{
+		return( 1 );
+	}
+	else if( memory_compare(
+	          wtcdb_index_file_signature,
+	          signature,
+	          4 ) == 0 )
 	{
 		return( 1 );
 	}

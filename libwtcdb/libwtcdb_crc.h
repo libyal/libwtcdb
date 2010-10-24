@@ -1,5 +1,5 @@
 /*
- * The file header definition of a Windows Explorer thumbnail cache database file
+ * CRC-64 functions
  *
  * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
  *
@@ -19,52 +19,24 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _WTCDB_FILE_HEADER_H )
-#define _WTCDB_FILE_HEADER_H
+#if !defined( _LIBWTCDB_CRC_H )
+#define _LIBWTCDB_CRC_H
 
 #include <common.h>
 #include <types.h>
+
+#include <liberror.h>
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-typedef struct wtcdb_file_header wtcdb_file_header_t;
-
-struct wtcdb_file_header
-{
-	/* Signature
-	 * Consists of 4 bytes
-	 * Contains CMMM for a database file
-	 * Contains IMMM for an index file
-	 */
-	uint8_t signature[ 4 ];
-
-	/* Version
-	 * Consists of 4 bytes
-	 */
-	uint8_t version[ 4 ];
-
-	/* Cache type
-	 * Consists of 4 bytes
-	 */
-	uint8_t cache_type[ 4 ];
-
-	/* Offset to the first cache entry
-	 * Consists of 4 bytes
-	 */
-	uint8_t first_cache_entry_offset[ 4 ];
-
-	/* Offset to the (next) available cache entry
-	 * Consists of 4 bytes
-	 */
-	uint8_t available_cache_entry_offset[ 4 ];
-
-	/* Number of cache entries
-	 * Consists of 4 bytes
-	 */
-	uint8_t number_of_cache_entries[ 4 ];
-};
+int libwtcdb_crc64_weak_calculate(
+     uint64_t *crc64,
+     uint8_t *buffer,
+     size_t size,
+     uint64_t initial_value,
+     liberror_error_t **error );
 
 #if defined( __cplusplus )
 }

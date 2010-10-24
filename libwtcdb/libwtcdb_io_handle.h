@@ -35,13 +35,21 @@
 extern "C" {
 #endif
 
-extern const uint8_t *wtcdb_database_file_signature;
+extern const uint8_t *wtcdb_cache_file_signature;
 extern const uint8_t *wtcdb_index_file_signature;
 
 typedef struct libwtcdb_io_handle libwtcdb_io_handle_t;
 
 struct libwtcdb_io_handle
 {
+	/* The file type
+	 */
+	uint32_t file_type;
+
+	/* The version
+	 */
+	uint32_t version;
+
 	/* Value to indicate if abort was signalled
 	 */
 	int abort;
@@ -59,6 +67,7 @@ int libwtcdb_io_handle_read_file_header(
      libwtcdb_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      uint32_t *first_thumbnail_entry_offset,
+     uint32_t *available_thumbnail_entry_offset,
      uint32_t *number_of_thumbnail_entries,
      liberror_error_t **error );
 
@@ -66,6 +75,7 @@ int libwtcdb_io_handle_read_items(
      libwtcdb_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      uint32_t first_thumbnail_entry_offset,
+     uint32_t available_thumbnail_entry_offset,
      uint32_t number_of_items,
      libwtcdb_array_t *items_array,
      liberror_error_t **error );
