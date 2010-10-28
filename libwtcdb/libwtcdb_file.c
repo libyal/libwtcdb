@@ -853,6 +853,57 @@ int libwtcdb_file_open_read(
 	return( result );
 }
 
+/* Retrieves the file type
+ * Returns 1 if successful or -1 on error
+ */
+int libwtcdb_file_get_type(
+     libwtcdb_file_t *file,
+     uint8_t *type,
+     liberror_error_t **error )
+{
+	libwtcdb_internal_file_t *internal_file = NULL;
+	static char *function                   = "libwtcdb_file_get_type";
+
+	if( file == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid file.",
+		 function );
+
+		return( -1 );
+	}
+	internal_file = (libwtcdb_internal_file_t *) file;
+
+	if( internal_file->io_handle == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid internal file - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( type == NULL )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid type.",
+		 function );
+
+		return( -1 );
+	}
+	*type = internal_file->io_handle->file_type;
+
+	return( 1 );
+}
+
 /* Retrieves the number of items
  * Returns 1 if successful or -1 on error
  */

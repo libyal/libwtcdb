@@ -44,7 +44,7 @@ struct libwtcdb_io_handle
 {
 	/* The file type
 	 */
-	uint32_t file_type;
+	uint8_t file_type;
 
 	/* The version
 	 */
@@ -66,16 +66,16 @@ int libwtcdb_io_handle_free(
 int libwtcdb_io_handle_read_file_header(
      libwtcdb_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
-     uint32_t *first_thumbnail_entry_offset,
-     uint32_t *available_thumbnail_entry_offset,
-     uint32_t *number_of_thumbnail_entries,
+     uint32_t *first_entry_offset,
+     uint32_t *available_cache_entry_offset,
+     uint32_t *number_of_entries,
      liberror_error_t **error );
 
 int libwtcdb_io_handle_read_items(
      libwtcdb_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
-     uint32_t first_thumbnail_entry_offset,
-     uint32_t available_thumbnail_entry_offset,
+     uint32_t first_entry_offset,
+     uint32_t available_cache_entry_offset,
      uint32_t number_of_items,
      libwtcdb_array_t *items_array,
      liberror_error_t **error );

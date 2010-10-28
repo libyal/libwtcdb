@@ -63,7 +63,7 @@ int libwtcdb_array_initialize(
 	if( *array == NULL )
 	{
 		*array = (libwtcdb_array_t *) memory_allocate(
-		                               sizeof( libwtcdb_array_t ) );
+		                                sizeof( libwtcdb_array_t ) );
 
 		if( *array == NULL )
 		{
@@ -265,6 +265,7 @@ int libwtcdb_array_empty(
 				array->entries[ entry_iterator ] = NULL;
 			}
 		}
+		array->number_of_entries = 0;
 	}
 	return( result );
 }

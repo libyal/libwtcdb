@@ -29,14 +29,13 @@
 extern "C" {
 #endif
 
-typedef struct wtcdb_file_header wtcdb_file_header_t;
+typedef struct wtcdb_cache_file_header wtcdb_cache_file_header_t;
 
-struct wtcdb_file_header
+struct wtcdb_cache_file_header
 {
 	/* Signature
 	 * Consists of 4 bytes
-	 * Contains CMMM for a database file
-	 * Contains IMMM for an index file
+	 * Contains CMMM
 	 */
 	uint8_t signature[ 4 ];
 
@@ -64,6 +63,42 @@ struct wtcdb_file_header
 	 * Consists of 4 bytes
 	 */
 	uint8_t number_of_cache_entries[ 4 ];
+};
+
+typedef struct wtcdb_index_file_header wtcdb_index_file_header_t;
+
+struct wtcdb_index_file_header
+{
+	/* Signature
+	 * Consists of 4 bytes
+	 * Contains IMMM
+	 */
+	uint8_t signature[ 4 ];
+
+	/* Version
+	 * Consists of 4 bytes
+	 */
+	uint8_t version[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown1[ 4 ];
+
+	/* The number of index entries used
+	 * Consists of 4 bytes
+	 */
+	uint8_t number_of_index_entries_used[ 4 ];
+
+	/* Total number of index entries
+	 * Consists of 4 bytes
+	 */
+	uint8_t number_of_index_entries[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown2[ 4 ];
 };
 
 #if defined( __cplusplus )

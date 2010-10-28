@@ -1,4 +1,4 @@
-.Dd October 23, 2010
+.Dd October 28, 2010
 .Dt libwtcdb 3
 .Os libwtcdb
 .Sh NAME
@@ -56,6 +56,8 @@ File functions
 .Fn libwtcdb_file_open "libwtcdb_file_t *file, const char *filename, int access_flags, libwtcdb_error_t **error"
 .Ft int
 .Fn libwtcdb_file_close "libwtcdb_file_t *file, libwtcdb_error_t **error"
+.Ft int
+.Fn libwtcdb_file_get_type "libwtcdb_file_t *file, uint8_t *type, libwtcdb_error_t **error"
 .Ft int
 .Fn libwtcdb_file_get_number_of_items "libwtcdb_file_t *file, int *number_of_items, libwtcdb_error_t **error"
 .Ft int

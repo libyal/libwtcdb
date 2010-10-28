@@ -1,7 +1,7 @@
 /*
- * Extracts items from a Nickfile (WTCDB)
+ * Extracts items from a Windows Explorer thumbnail cache database file
  *
- * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -60,7 +60,8 @@ void usage_fprint(
 	{
 		return;
 	}
-	fprintf( stream, "Use wtcdbexport to export items stored in a Nickfile (WTCDB).\n\n" );
+	fprintf( stream, "Use wtcdbexport to export items stored in a Windows Explorer\n"
+	                 "thumbnail cache database (thumbcache.db) file.\n\n" );
 
 	fprintf( stream, "Usage: wtcdbexport [ -l logfile ] [ -t target ] [ -hvV ] source\n\n" );
 

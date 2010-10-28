@@ -210,6 +210,14 @@ LIBWTCDB_EXTERN int libwtcdb_file_close(
                      libwtcdb_file_t *file,
                      libwtcdb_error_t **error );
 
+/* Retrieves the file type
+ * Returns 1 if successful or -1 on error
+ */
+LIBWTCDB_EXTERN int libwtcdb_file_get_type(
+                     libwtcdb_file_t *file,
+                     uint8_t *type,
+                     libwtcdb_error_t **error );
+
 /* Retrieves the number of items
  * Returns 1 if successful or -1 on error
  */

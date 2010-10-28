@@ -3,11 +3,21 @@ TODO:
 * update msvscpp files
 
 * debug print cache type
-* debug print thumbnail entry flags
+* debug print index entry flags
+
+* wtcdbexport export items in directories using the entry hash as filename
+
+20101028
+* updated configure.ac
+* updated include/types.h
+* updated array type
+* updated liberror, libsystem, libfvalue
+* worked on index file format support
 
 20101024
-* worked on file format support
+* worked on cache file format support
 
 20101023
-* Created initial version based on libnk2 for the library structure and common code
+* created initial version based on libnk2 for the library structure and common code
+* worked on cache file format support
 

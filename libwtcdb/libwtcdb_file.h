@@ -98,6 +98,11 @@ int libwtcdb_file_open_read(
      libwtcdb_internal_file_t *internal_file,
      liberror_error_t **error );
 
+LIBWTCDB_EXTERN int libwtcdb_file_get_type(
+                     libwtcdb_file_t *file,
+                     uint8_t *type,
+                     liberror_error_t **error );
+
 LIBWTCDB_EXTERN int libwtcdb_file_get_number_of_items(
                      libwtcdb_file_t *file,
                      int *number_of_items,

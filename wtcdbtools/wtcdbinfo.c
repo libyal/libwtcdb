@@ -59,7 +59,7 @@ void usage_fprint(
 		return;
 	}
 	fprintf( stream, "Use wtcdbinfo to determine information about a Windows Explorer\n"
-	                 "thumbnail cache database file.\n\n" );
+	                 "thumbnail cache database (thumbcache.db) file.\n\n" );
 
 	fprintf( stream, "Usage: wtcdbinfo [ -hvV ] source\n\n" );
 
@@ -79,6 +79,7 @@ int wtcdbinfo_file_info_fprint(
      liberror_error_t **error )
 {
 	static char *function = "wtcdbinfo_file_info_fprint";
+	uint8_t file_type     = 0;
 	int number_of_items   = 0;
 
 	if( stream == NULL )
@@ -103,6 +104,20 @@ int wtcdbinfo_file_info_fprint(
 
 		return( -1 );
 	}
+	if( libwtcdb_file_get_type(
+	     file,
+	     &file_type,
+	     error ) != 1 )
+	{
+		liberror_error_set(
+		 error,
+		 LIBERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve file type.",
+		 function );
+
+		return( -1 );
+	}
 	if( libwtcdb_file_get_number_of_items(
 	     file,
 	     &number_of_items,
@@ -123,7 +138,27 @@ int wtcdbinfo_file_info_fprint(
 
 	fprintf(
 	 stream,
-	 "\tNumber of thumbnails:\t%d\n",
+	 "\tFile type:\t\t" );
+
+	if( file_type == LIBWTCDB_FILE_TYPE_CACHE )
+	{
+		fprintf(
+		 stream,
+		 "Cache file" );
+	}
+	else if( file_type == LIBWTCDB_FILE_TYPE_INDEX )
+	{
+		fprintf(
+		 stream,
+		 "Index file" );
+	}
+	fprintf(
+	 stream,
+	 "\n" );
+
+	fprintf(
+	 stream,
+	 "\tNumber of items:\t%d\n",
 	 number_of_items );
 
 	fprintf(

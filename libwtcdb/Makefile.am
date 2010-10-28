@@ -31,7 +31,8 @@ libwtcdb_la_SOURCES = \
 	libwtcdb_types.h \
 	libwtcdb_value_identifier.h \
 	wtcdb_cache_entry.h \
-	wtcdb_file_header.h
+	wtcdb_file_header.h \
+	wtcdb_index_entry.h
 
 libwtcdb_la_LIBADD = \
 	../libcstring/libcstring.la \

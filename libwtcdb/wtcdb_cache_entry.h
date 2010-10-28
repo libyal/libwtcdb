@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _WTCDB_THUMBNAIL_ENTRY_H )
-#define _WTCDB_THUMBNAIL_ENTRY_H
+#if !defined( _WTCDB_CACHE_ENTRY_H )
+#define _WTCDB_CACHE_ENTRY_H
 
 #include <common.h>
 #include <types.h>
@@ -44,10 +44,10 @@ struct wtcdb_cache_entry_vista
 	 */
 	uint8_t size[ 4 ];
 
-	/* Unknown
+	/* The entry hash
 	 * Consists of 8 bytes
 	 */
-	uint8_t unknown1[ 8 ];
+	uint8_t entry_hash[ 8 ];
 
 	/* The file extension
 	 * Consists of 8 bytes
@@ -73,7 +73,7 @@ struct wtcdb_cache_entry_vista
 	/* Unknown
 	 * Consists of 4 bytes
 	 */
-	uint8_t unknown2[ 4 ];
+	uint8_t unknown1[ 4 ];
 
 	/* A CRC-64 of the data
 	 * Consists of 8 bytes
@@ -107,10 +107,10 @@ struct wtcdb_cache_entry_win7
 	 */
 	uint8_t size[ 4 ];
 
-	/* Unknown
+	/* The entry hash
 	 * Consists of 8 bytes
 	 */
-	uint8_t unknown1[ 8 ];
+	uint8_t entry_hash[ 8 ];
 
 	/* The identifier string size
 	 * Consists of 4 bytes
@@ -130,7 +130,7 @@ struct wtcdb_cache_entry_win7
 	/* Unknown
 	 * Consists of 4 bytes
 	 */
-	uint8_t unknown2[ 4 ];
+	uint8_t unknown1[ 4 ];
 
 	/* A CRC-64 of the data
 	 * Consists of 8 bytes
