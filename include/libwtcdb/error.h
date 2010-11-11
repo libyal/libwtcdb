@@ -280,7 +280,11 @@ enum LIBWTCDB_RUNTIME_ERROR
  */
 enum LIBWTCDB_OUTPUT_ERROR
 {
-	LIBWTCDB_OUTPUT_ERROR_GENERIC			= 0
+	LIBWTCDB_OUTPUT_ERROR_GENERIC			= 0,
+
+	/* There is insuficient space to write the output
+	 */
+	LIBWTCDB_OUTPUT_ERROR_INSUFFICIENT_SPACE	= 1
 };
 
 #endif

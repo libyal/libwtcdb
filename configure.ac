@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libwtcdb],
-  [20101028],
+  [20101111],
   [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
@@ -980,6 +980,7 @@ AC_CONFIG_FILES([include/libwtcdb/types.h])
 AC_CONFIG_FILES([libwtcdb/libwtcdb_definitions.h])
 dnl Have configure make distribution specific files
 AC_CONFIG_FILES([common/types.h])
+AC_CONFIG_FILES([libwtcdb/libwtcdb.rc])
 AC_CONFIG_FILES([macosx/Introduction.rtf])
 AC_CONFIG_FILES([libwtcdb.pc])
 AC_CONFIG_FILES([libwtcdb.spec])

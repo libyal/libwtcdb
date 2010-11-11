@@ -7,6 +7,12 @@ TODO:
 
 * wtcdbexport export items in directories using the entry hash as filename
 
+20101111
+* updated libfvalue
+* added libwtcdb.rc
+* updated include/error.h
+* updated liberror, libsystem, libbfio
+
 20101028
 * updated configure.ac
 * updated include/types.h

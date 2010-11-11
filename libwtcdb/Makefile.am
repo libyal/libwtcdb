@@ -45,13 +45,16 @@ libwtcdb_la_LIBADD = \
 libwtcdb_la_LDFLAGS = -no-undefined -version-info 1:0:0
 
 EXTRA_DIST = \
-	libwtcdb_definitions.h.in
+	libwtcdb_definitions.h.in \
+	libwtcdb.rc \
+	libwtcdb.rc.in
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
 distclean: clean
 	/bin/rm -f libwtcdb_definitions.h
+	/bin/rm -f libwtcdb.rc
 	/bin/rm -f Makefile
 
 splint:
