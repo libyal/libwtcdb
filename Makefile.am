@@ -12,9 +12,17 @@ SUBDIRS = \
 	libwtcdb \
 	libsystem \
 	wtcdbtools \
+	po \
 	manuals \
 	macosx \
 	msvscpp
+
+GETTEXT_FILES = \
+	config.rpath \
+	po/Makevars.in
+
+PKGCONFIG_FILES = \
+	libwtcdb.pc.in
 
 SPEC_FILES = \
 	libwtcdb.spec \
@@ -22,7 +30,8 @@ SPEC_FILES = \
 
 EXTRA_DIST = \
 	README.mingw \
-	libwtcdb.pc.in \
+	$(GETTEXT_FILES) \
+	$(PKGCONFIG_FILES) \
         $(SPEC_FILES)
 
 MAINTAINERCLEANFILES = \
@@ -47,6 +56,7 @@ library:
 	(cd $(srcdir)/libbfio && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfvalue && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libwtcdb && $(MAKE) $(AM_MAKEFLAGS))
+	(cd $(srcdir)/po && $(MAKE) $(AM_MAKEFLAGS))
 
 distclean: clean
 	/bin/rm -f Makefile
@@ -70,4 +80,5 @@ splint:
 	(cd $(srcdir)/libwtcdb && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libsystem && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/wtcdbtools && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/po && $(MAKE) splint $(AM_MAKEFLAGS))
 

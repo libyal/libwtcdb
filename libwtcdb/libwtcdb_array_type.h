@@ -97,6 +97,13 @@ int libwtcdb_array_empty(
             liberror_error_t **error ),
      liberror_error_t **error );
 
+int libwtcdb_array_clear(
+     libwtcdb_array_t *array,
+     int (*entry_free_function)(
+            intptr_t *entry,
+            liberror_error_t **error ),
+     liberror_error_t **error );
+
 int libwtcdb_array_clone(
      libwtcdb_array_t **destination_array,
      libwtcdb_array_t *source_array,

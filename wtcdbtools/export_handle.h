@@ -1,7 +1,7 @@
 /* 
  * Export handle
  *
- * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -49,6 +49,22 @@ typedef struct export_handle export_handle_t;
 
 struct export_handle
 {
+	/* The target path
+	 */
+	libcstring_system_character_t *target_path;
+
+	/* The target path size
+	 */
+	size_t target_path_size;
+
+	/* The export path
+	 */
+	libcstring_system_character_t *export_path;
+
+	/* The export path size
+	 */
+	size_t export_path_size;
+
 	/* The nofication output stream
 	 */
 	FILE *notify_stream;
@@ -60,6 +76,25 @@ int export_handle_initialize(
 
 int export_handle_free(
      export_handle_t **export_handle,
+     liberror_error_t **error );
+
+int export_handle_set_target_path(
+     export_handle_t *export_handle,
+     const libcstring_system_character_t *target_path,
+     liberror_error_t **error );
+
+int export_handle_set_export_path(
+     export_handle_t *export_handle,
+     const libcstring_system_character_t *base_path,
+     size_t base_path_length,
+     const libcstring_system_character_t *suffix,
+     size_t suffix_length,
+     libcstring_system_character_t **export_path,
+     size_t *export_path_size,
+     liberror_error_t **error );
+
+int export_handle_create_export_path(
+     export_handle_t *export_handle,
      liberror_error_t **error );
 
 int export_handle_make_directory(
@@ -84,36 +119,9 @@ int export_handle_create_target_path(
      size_t *target_path_size,
      liberror_error_t **error );
 
-int export_handle_print_data(
-     export_handle_t *export_handle,
-     FILE *stream,
-     const uint8_t *data,
-     size_t data_size,
-     liberror_error_t **error );
-
-int export_handle_export_alias(
-     export_handle_t *export_handle,
-     libwtcdb_item_t *item,
-     int item_index,
-     int number_of_items,
-     libcstring_system_character_t *export_path,
-     size_t export_path_size,
-     log_handle_t *log_handle,
-     liberror_error_t **error );
-
-int export_handle_export_item_values(
-     export_handle_t *export_handle,
-     libwtcdb_item_t *item,
-     libcstring_system_character_t *export_path,
-     size_t export_path_size,
-     log_handle_t *log_handle,
-     liberror_error_t **error );
-
 int export_handle_export_file(
      export_handle_t *export_handle,
      libwtcdb_file_t *file,
-     libcstring_system_character_t *export_path,
-     size_t export_path_size,
      log_handle_t *log_handle,
      liberror_error_t **error );
 

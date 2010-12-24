@@ -1,5 +1,5 @@
 /*
- * Extracts items from a Windows Explorer thumbnail cache database file
+ * Extracts thumbnails from a Windows Explorer thumbnail cache database file
  *
  * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
  *
@@ -60,7 +60,7 @@ void usage_fprint(
 	{
 		return;
 	}
-	fprintf( stream, "Use wtcdbexport to export items stored in a Windows Explorer\n"
+	fprintf( stream, "Use wtcdbexport to export thumbnails stored in a Windows Explorer\n"
 	                 "thumbnail cache database (thumbcache.db) file.\n\n" );
 
 	fprintf( stream, "Usage: wtcdbexport [ -l logfile ] [ -t target ] [ -hvV ] source\n\n" );
@@ -68,7 +68,7 @@ void usage_fprint(
 	fprintf( stream, "\tsource: the source file\n\n" );
 
 	fprintf( stream, "\t-h:     shows this help\n" );
-	fprintf( stream, "\t-l:     logs information about the exported items\n" );
+	fprintf( stream, "\t-l:     logs information about the exported thumbnails\n" );
 	fprintf( stream, "\t-t:     specify the target directory to export to\n"
 	                 "\t        (default is the source filename followed by .export)\n" );
 	fprintf( stream, "\t-v:     verbose output to stderr\n" );
@@ -83,18 +83,16 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
-	export_handle_t *export_handle                    = NULL;
+	export_handle_t *wtcdbexport_export_handle        = NULL;
 	liberror_error_t *error                           = NULL;
-	libwtcdb_file_t *wtcdb_file                       = NULL;
+	libwtcdb_file_t *wtcdbexport_file                 = NULL;
 	log_handle_t *log_handle                          = NULL;
 	libcstring_system_character_t *log_filename       = NULL;
 	libcstring_system_character_t *option_target_path = NULL;
 	libcstring_system_character_t *path_separator     = NULL;
 	libcstring_system_character_t *source             = NULL;
-	libcstring_system_character_t *target_path        = NULL;
-	char *program                                     = "wtcdbexport";
+	const char *program                               = "wtcdbexport";
 	size_t source_length                              = 0;
-	size_t target_path_length                         = 0;
 	libcstring_system_integer_t option                = 0;
 	int result                                        = 0;
 	int verbose                                       = 0;
@@ -113,12 +111,7 @@ int main( int argc, char * const argv[] )
 		 stderr,
 		 "Unable to initialize system values.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 	wtcdboutput_version_fprint(
 	 stdout,
@@ -184,42 +177,7 @@ int main( int argc, char * const argv[] )
 	}
 	source = argv[ optind ];
 
-	if( option_target_path != NULL )
-	{
-		target_path_length = libcstring_system_string_length(
-		                      option_target_path );
-
-		if( target_path_length > 0 )
-		{
-			target_path = (libcstring_system_character_t *) memory_allocate(
-			                                                 sizeof( libcstring_system_character_t ) * ( target_path_length + 1 ) );
-
-			if( target_path == NULL )
-			{
-				fprintf(
-				 stderr,
-				 "Unable to create target path.\n" );
-
-				return( EXIT_FAILURE );
-			}
-			else if( libcstring_system_string_copy(
-			          target_path,
-			          option_target_path,
-			          target_path_length ) == NULL )
-			{
-				fprintf(
-				 stderr,
-				 "Unable to set target path.\n" );
-
-				memory_free(
-				 target_path );
-
-				return( EXIT_FAILURE );
-			}
-			target_path[ target_path_length ] = 0;
-		}
-	}
-	else
+	if( option_target_path == NULL )
 	{
 		source_length = libcstring_system_string_length(
 		                 source );
@@ -237,65 +195,7 @@ int main( int argc, char * const argv[] )
 		{
 			path_separator++;
 		}
-		target_path_length = 7 + libcstring_system_string_length(
-		                          path_separator );
-
-		target_path = (libcstring_system_character_t *) memory_allocate(
-		                                                 sizeof( libcstring_system_character_t ) * ( target_path_length + 1 ) );
-
-		if( target_path == NULL )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to create target path.\n" );
-
-			return( EXIT_FAILURE );
-		}
-		if( libcstring_system_string_sprintf(
-		     target_path,
-		     target_path_length + 1,
-		     _LIBCSTRING_SYSTEM_STRING( "%" ) _LIBCSTRING_SYSTEM_STRING( PRIs_LIBCSTRING_SYSTEM ) _LIBCSTRING_SYSTEM_STRING( ".export" ),
-		     path_separator ) == -1 )
-		{
-			fprintf(
-			 stderr,
-			 "Unable to set target path.\n" );
-
-			memory_free(
-			 target_path );
-
-			return( EXIT_FAILURE );
-		}
-	}
-	result = libsystem_file_exists(
-	          target_path,
-	          &error );
-
-	if( result == -1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to determine if %" PRIs_LIBCSTRING_SYSTEM " exists.\n",
-		 target_path );
-
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-	}
-	else if( result == 1 )
-	{
-		fprintf(
-		 stderr,
-		 "%" PRIs_LIBCSTRING_SYSTEM " already exists.\n",
-		 target_path );
-	}
-	if( result != 0 )
-	{
-		memory_free(
-		 target_path );
-
-		return( EXIT_FAILURE );
+		option_target_path = path_separator;
 	}
 	libsystem_notify_set_verbose(
 	 verbose );
@@ -313,60 +213,59 @@ int main( int argc, char * const argv[] )
 		 stderr,
 		 "Unable to initialize log handle.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		memory_free(
-		 target_path );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 	if( export_handle_initialize(
-	     &export_handle,
+	     &wtcdbexport_export_handle,
 	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
 		 "Unable to initialize export handle.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		log_handle_free(
-		 &log_handle,
-		 NULL );
-		memory_free(
-		 target_path );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
-	if( libwtcdb_file_initialize(
-	     &wtcdb_file,
+	if( export_handle_set_target_path(
+	     wtcdbexport_export_handle,
+	     option_target_path,
 	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to initialize WTCDB file.\n" );
+		 "Unable to set target path.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
+		goto on_error;
+	}
+	result = export_handle_create_export_path(
+	          wtcdbexport_export_handle,
+	          &error );
 
-		export_handle_free(
-		 &export_handle,
-		 NULL );
-		log_handle_free(
-		 &log_handle,
-		 NULL );
-		memory_free(
-		 target_path );
+	if( result == -1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to create export path.\n" );
 
-		return( EXIT_FAILURE );
+		goto on_error;
+	}
+	else if( result == 0 )
+	{
+		fprintf(
+		 stderr,
+		 "%" PRIs_LIBCSTRING_SYSTEM " already exists.\n",
+		 wtcdbexport_export_handle->export_path );
+
+		goto on_error;
+	}
+	if( libwtcdb_file_initialize(
+	     &wtcdbexport_file,
+	     &error ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to initialize file.\n" );
+
+		goto on_error;
 	}
 	if( log_handle_open(
 	     log_handle,
@@ -378,24 +277,7 @@ int main( int argc, char * const argv[] )
 		 "Unable to open log file: %" PRIs_LIBCSTRING_SYSTEM ".\n",
 		 log_filename );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		libwtcdb_file_free(
-		 &wtcdb_file,
-		 NULL );
-		export_handle_free(
-		 &export_handle,
-		 NULL );
-		log_handle_free(
-		 &log_handle,
-		 NULL );
-		memory_free(
-		 target_path );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 	fprintf(
 	 stdout,
@@ -403,13 +285,13 @@ int main( int argc, char * const argv[] )
 
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libwtcdb_file_open_wide(
-	     wtcdb_file,
+	     wtcdbexport_file,
 	     source,
 	     LIBWTCDB_OPEN_READ,
 	     &error ) != 1 )
 #else
 	if( libwtcdb_file_open(
-	     wtcdb_file,
+	     wtcdbexport_file,
 	     source,
 	     LIBWTCDB_OPEN_READ,
 	     &error ) != 1 )
@@ -417,37 +299,18 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Error opening file: %" PRIs_LIBCSTRING_SYSTEM ".\n",
+		 "Unable to open file: %" PRIs_LIBCSTRING_SYSTEM ".\n",
 		 source );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		libwtcdb_file_free(
-		 &wtcdb_file,
-		 NULL );
-		export_handle_free(
-		 &export_handle,
-		 NULL );
-		log_handle_free(
-		 &log_handle,
-		 NULL );
-		memory_free(
-		 target_path );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 	fprintf(
 	 stdout,
 	 "Exporting aliases.\n" );
 
 	result = export_handle_export_file(
-	          export_handle,
-	          wtcdb_file,
-	          target_path,
-	          target_path_length + 1,
+	          wtcdbexport_export_handle,
+	          wtcdbexport_file,
 	          log_handle,
 	          &error );
 
@@ -457,97 +320,37 @@ int main( int argc, char * const argv[] )
 		 stderr,
 		 "Unable to export file.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		libwtcdb_file_close(
-		 wtcdb_file,
-		 NULL );
-		libwtcdb_file_free(
-		 &wtcdb_file,
-		 NULL );
-		export_handle_free(
-		 &export_handle,
-		 NULL );
-		log_handle_free(
-		 &log_handle,
-		 NULL );
-		memory_free(
-		 target_path );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
-	memory_free(
-	 target_path );
-
 	if( libwtcdb_file_close(
-	     wtcdb_file,
+	     wtcdbexport_file,
 	     &error ) != 0 )
 	{
 		fprintf(
 		 stderr,
-		 "Error closing file: %" PRIs_LIBCSTRING_SYSTEM ".\n",
-		 source );
+		 "Unable to close file.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		libwtcdb_file_free(
-		 &wtcdb_file,
-		 NULL );
-		export_handle_free(
-		 &export_handle,
-		 NULL );
-		log_handle_free(
-		 &log_handle,
-		 NULL );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 	if( libwtcdb_file_free(
-	     &wtcdb_file,
+	     &wtcdbexport_file,
 	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to free WTCDB file.\n" );
+		 "Unable to free file.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		export_handle_free(
-		 &export_handle,
-		 NULL );
-		log_handle_free(
-		 &log_handle,
-		 NULL );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 	if( export_handle_free(
-	     &export_handle,
+	     &wtcdbexport_export_handle,
 	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
 		 "Unable to free export handle.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		log_handle_free(
-		 &log_handle,
-		 NULL );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 	if( log_handle_close(
 	     log_handle,
@@ -555,19 +358,9 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to close log file: %" PRIs_LIBCSTRING_SYSTEM ".\n",
-		 log_filename );
+		 "Unable to close log file.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		log_handle_free(
-		 &log_handle,
-		 NULL );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 	if( log_handle_free(
 	     &log_handle,
@@ -577,12 +370,7 @@ int main( int argc, char * const argv[] )
 		 stderr,
 		 "Unable to free log handle.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 	if( result == 0 )
 	{
@@ -597,5 +385,39 @@ int main( int argc, char * const argv[] )
 		 "Export completed.\n" );
 	}
 	return( EXIT_SUCCESS );
+
+on_error:
+	if( error != NULL )
+	{
+		libsystem_notify_print_error_backtrace(
+		 error );
+		liberror_error_free(
+		 &error );
+	}
+	if( wtcdbexport_file != NULL )
+	{
+		libwtcdb_file_close(
+		 wtcdbexport_file,
+		 NULL );
+		libwtcdb_file_free(
+		 &wtcdbexport_file,
+		 NULL );
+	}
+	if( log_handle != NULL )
+	{
+		log_handle_close(
+		 log_handle,
+		 NULL );
+		log_handle_free(
+		 &log_handle,
+		 NULL );
+	}
+	if( wtcdbexport_export_handle != NULL )
+	{
+		export_handle_free(
+		 &wtcdbexport_export_handle,
+		 NULL );
+	}
+	return( EXIT_FAILURE );
 }
 

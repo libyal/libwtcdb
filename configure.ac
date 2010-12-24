@@ -2,8 +2,8 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libwtcdb],
-  [20101111],
-  [jbmetz@users.sourceforge.net])
+ [20101224],
+ [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
  [include/libwtcdb.h.in])
@@ -28,7 +28,7 @@ LIBWTCDB_TEST_ENABLE(
  [winapi],
  [winapi],
  [enable WINAPI support for cross-compilation],
- [no])
+ [auto-detect])
 LIBWTCDB_TEST_ENABLE(
  [static-executables],
  [static_executables],
@@ -56,9 +56,29 @@ AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 AC_SUBST(LIBTOOL_DEPS)
 
+dnl Support of internationalization (i18n)
+AM_GNU_GETTEXT([external])
+
 dnl Check for compiler language support
 AC_C_CONST
 AC_C_VOLATILE
+
+dnl Automatically enable winapi support for mingw
+AS_IF(
+ [test "x$ac_cv_libwtcdb_enable_winapi" = xauto-detect],
+ [ac_libwtcdb_target_string="$target";
+
+ AS_IF(
+  [test "x$ac_libwtcdb_target_string" = x],
+  [ac_libwtcdb_target_string="$build"])
+
+ AS_CASE(
+  [$ac_libwtcdb_target_string],
+  [*mingw*],[AC_MSG_NOTICE(
+             [Detected MinGW enabling WINAPI support for cross-compilation])
+            ac_cv_libwtcdb_enable_winapi=yes],
+  [*],[ac_cv_libwtcdb_enable_winapi=no])
+ ])
 
 dnl Check for headers
 dnl Headers included in libwtcdb/types.h
@@ -350,12 +370,9 @@ AC_CHECK_FUNCS(
  [AC_CHECK_FUNCS(
   [strncmp],
   [],
-  [AC_CHECK_FUNCS(
-   [strcmp],
-   [],
-   [AC_MSG_FAILURE(
-    [Missing functions: memcmp, strncmp and strcmp],
-    [1]) ]) ]) ])
+  [AC_MSG_FAILURE(
+   [Missing functions: memcmp and strncmp],
+   [1]) ]) ])
 
 AC_CHECK_FUNCS(
  [memcpy],
@@ -363,12 +380,9 @@ AC_CHECK_FUNCS(
  [AC_CHECK_FUNCS(
   [strncpy],
   [],
-  [AC_CHECK_FUNCS(
-   [strcpy],
-   [],
-   [AC_MSG_FAILURE(
-    [Missing functions: memcpy, strncpy and strcpy],
-    [1]) ]) ]) ])
+  [AC_MSG_FAILURE(
+   [Missing functions: memcpy and strncpy],
+   [1]) ]) ])
 
 AC_CHECK_FUNCS(
  [memrchr],
@@ -790,12 +804,9 @@ AS_IF(
   [AC_CHECK_FUNCS(
    [wcsncmp],
    [],
-   [AC_CHECK_FUNCS(
-    [wcscmp],
-    [],
-    [AC_MSG_FAILURE(
-     [Missing functions: wmemcmp, wcsncmp and wcscmp],
-     [1]) ]) ]) ])
+   [AC_MSG_FAILURE(
+    [Missing functions: wmemcmp and wcsncmp],
+    [1]) ]) ])
 
  AC_CHECK_FUNCS(
   [wmemcpy],
@@ -803,12 +814,9 @@ AS_IF(
   [AC_CHECK_FUNCS(
    [wcsncpy],
    [],
-   [AC_CHECK_FUNCS(
-    [wcscpy],
-    [],
-    [AC_MSG_FAILURE(
-     [Missing functions: wmemcpy, wcsncpy and wcscpy],
-     [1]) ]) ]) ])
+   [AC_MSG_FAILURE(
+    [Missing functions: wmemcpy and wcsncpy],
+    [1]) ]) ])
 
  AC_CHECK_FUNCS(
   [wmemrchr],
@@ -859,6 +867,14 @@ AS_IF(
   [],
   [AC_MSG_FAILURE(
    [Missing function: wcstoull],
+   [1]) ])
+
+ dnl Wide character string functions used in liberror/liberror_error.h
+ AC_CHECK_FUNCS(
+  [wcstombs],
+  [],
+  [AC_MSG_FAILURE(
+   [Missing function: wcstombs],
    [1]) ])
 
  dnl Make the necessary definitions
@@ -969,6 +985,8 @@ AC_CONFIG_FILES([libfvalue/Makefile])
 AC_CONFIG_FILES([libwtcdb/Makefile])
 AC_CONFIG_FILES([libsystem/Makefile])
 AC_CONFIG_FILES([wtcdbtools/Makefile])
+AC_CONFIG_FILES([po/Makefile.in])
+AC_CONFIG_FILES([po/Makevars])
 AC_CONFIG_FILES([manuals/Makefile])
 AC_CONFIG_FILES([macosx/Makefile])
 AC_CONFIG_FILES([msvscpp/Makefile])

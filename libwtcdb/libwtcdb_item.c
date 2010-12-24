@@ -82,8 +82,8 @@ int libwtcdb_item_initialize(
 	}
 	if( *item == NULL )
 	{
-		internal_item = (libwtcdb_internal_item_t *) memory_allocate(
-		                                              sizeof( libwtcdb_internal_item_t ) );
+		internal_item = memory_allocate_structure(
+		                 libwtcdb_internal_item_t );
 
 		if( internal_item == NULL )
 		{
@@ -94,7 +94,7 @@ int libwtcdb_item_initialize(
 			 "%s: unable to create internal item.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		if( memory_set(
 		     internal_item,
@@ -131,7 +131,7 @@ int libwtcdb_item_initialize(
 				 "%s: unable to copy file IO handle.",
 				 function );
 
-				return( -1 );
+				goto on_error;
 			}
 			if( libbfio_handle_set_open_on_demand(
 			     internal_item->file_io_handle,
@@ -145,7 +145,7 @@ int libwtcdb_item_initialize(
 				 "%s: unable to set open on demand in file IO handle.",
 				 function );
 
-				return( -1 );
+				goto on_error;
 			}
 		}
 		internal_item->io_handle    = io_handle;
@@ -155,6 +155,23 @@ int libwtcdb_item_initialize(
 		*item = (libwtcdb_item_t *) internal_item;
 	}
 	return( 1 );
+
+on_error:
+	if( internal_item != NULL )
+	{
+		if( ( flags & LIBWTCDB_ITEM_FLAG_MANAGED_FILE_IO_HANDLE ) != 0 )
+		{
+			if( internal_item->file_io_handle != NULL )
+			{
+				libbfio_handle_close(
+				 internal_item->file_io_handle,
+				 error );
+			}
+		}
+		memory_free(
+		 internal_item );
+	}
+	return( -1 );
 }
 
 /* Frees an item
@@ -166,6 +183,7 @@ int libwtcdb_item_free(
 {
 	libwtcdb_internal_item_t *internal_item = NULL;
 	static char *function                   = "libwtcdb_item_free";
+	int result                              = 1;
 
 	if( item == NULL )
 	{
@@ -200,7 +218,7 @@ int libwtcdb_item_free(
 					 "%s: unable to close file IO handle.",
 					 function );
 
-					return( -1 );
+					result = -1;
 				}
 				if( libbfio_handle_free(
 				     &( internal_item->file_io_handle ),
@@ -213,13 +231,13 @@ int libwtcdb_item_free(
 					 "%s: unable to free file IO handle.",
 					 function );
 
-					return( -1 );
+					result = -1;
 				}
 			}
 		}
 		memory_free(
 		 internal_item );
 	}
-	return( 1 );
+	return( result );
 }
 

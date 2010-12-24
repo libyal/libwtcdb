@@ -67,8 +67,8 @@ int libwtcdb_io_handle_initialize(
 	}
 	if( *io_handle == NULL )
 	{
-		*io_handle = (libwtcdb_io_handle_t *) memory_allocate(
-		                                       sizeof( libwtcdb_io_handle_t ) );
+		*io_handle = memory_allocate_structure(
+		              libwtcdb_io_handle_t );
 
 		if( *io_handle == NULL )
 		{
@@ -79,7 +79,7 @@ int libwtcdb_io_handle_initialize(
 			 "%s: unable to create IO handle.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		if( memory_set(
 		     *io_handle,
@@ -93,15 +93,20 @@ int libwtcdb_io_handle_initialize(
 			 "%s: unable to clear file.",
 			 function );
 
-			memory_free(
-			 *io_handle );
-
-			*io_handle = NULL;
-
-			return( -1 );
+			goto on_error;
 		}
 	}
 	return( 1 );
+
+on_error:
+	if( *io_handle != NULL )
+	{
+		memory_free(
+		 *io_handle );
+
+		*io_handle = NULL;
+	}
+	return( -1 );
 }
 
 /* Frees an exisisting IO handle
@@ -420,7 +425,9 @@ int libwtcdb_io_handle_read_items(
 	uint32_t padding_size                       = 0;
 	uint32_t cache_entry_offset                 = 0;
 	uint32_t cache_entry_size                   = 0;
+/* TODO
 	int item_entry_index                        = 0;
+*/
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	libcstring_system_character_t *value_string = NULL;
@@ -518,7 +525,7 @@ int libwtcdb_io_handle_read_items(
 		 "%s: unable to create item entry data.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	for( item_iterator = 0;
 	     item_iterator < number_of_items;
@@ -555,10 +562,7 @@ int libwtcdb_io_handle_read_items(
 				 item_iterator,
 				 first_entry_offset );
 
-				memory_free(
-				 item_entry_data );
-
-				return( -1 );
+				goto on_error;
 			}
 		}
 		read_count = libbfio_handle_read(
@@ -578,10 +582,7 @@ int libwtcdb_io_handle_read_items(
 			 type_string,
 			 item_iterator );
 
-			memory_free(
-			 item_entry_data );
-
-			return( -1 );
+			goto on_error;
 		}
 		cache_entry_offset = item_entry_data_size;
 
@@ -613,10 +614,7 @@ int libwtcdb_io_handle_read_items(
 				 function,
 				 item_iterator );
 
-				memory_free(
-				 item_entry_data );
-
-				return( -1 );
+				goto on_error;
 			}
 			byte_stream_copy_to_uint32_little_endian(
 			 ( (wtcdb_cache_entry_vista_t *) item_entry_data )->size,
@@ -800,7 +798,7 @@ int libwtcdb_io_handle_read_items(
 				 "%s: unable to calculate CRC-64.",
 				 function );
 
-				return( -1 );
+				goto on_error;
 			}
 			if( stored_header_crc != calculated_crc )
 			{
@@ -826,10 +824,7 @@ int libwtcdb_io_handle_read_items(
 					 "%s: invalid identifier string size value exceeds cache entry size.",
 					 function );
 
-					memory_free(
-					 item_entry_data );
-
-					return( -1 );
+					goto on_error;
 				}
 				/* TODO store string in runtime cache entry */
 				identifier_string_data = (uint8_t *) memory_allocate(
@@ -844,10 +839,7 @@ int libwtcdb_io_handle_read_items(
 					 "%s: unable to create identifier string data.",
 					 function );
 
-					memory_free(
-					 item_entry_data );
-
-					return( -1 );
+					goto on_error;
 				}
 				read_count = libbfio_handle_read(
 					      file_io_handle,
@@ -865,12 +857,7 @@ int libwtcdb_io_handle_read_items(
 					 function,
 					 item_iterator );
 
-					memory_free(
-					 identifier_string_data );
-					memory_free(
-					 item_entry_data );
-
-					return( -1 );
+					goto on_error;
 				}
 				cache_entry_offset += identifier_string_size;
 
@@ -915,15 +902,10 @@ int libwtcdb_io_handle_read_items(
 						 "%s: unable to determine size of volume label string.",
 						 function );
 
-						memory_free(
-						 identifier_string_data );
-						memory_free(
-						 item_entry_data );
-
-						return( -1 );
+						goto on_error;
 					}
-					value_string = (libcstring_system_character_t *) memory_allocate(
-					                                                  sizeof( libcstring_system_character_t ) * value_string_size );
+					value_string = libcstring_system_string_allocate(
+					                value_string_size );
 
 					if( value_string == NULL )
 					{
@@ -934,12 +916,7 @@ int libwtcdb_io_handle_read_items(
 						 "%s: unable to create volume label string.",
 						 function );
 
-						memory_free(
-						 identifier_string_data );
-						memory_free(
-						 item_entry_data );
-
-						return( -1 );
+						goto on_error;
 					}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 					result = libuna_utf16_string_copy_from_utf16_stream(
@@ -969,12 +946,8 @@ int libwtcdb_io_handle_read_items(
 
 						memory_free(
 						 value_string );
-						memory_free(
-						 identifier_string_data );
-						memory_free(
-						 item_entry_data );
 
-						return( -1 );
+						goto on_error;
 					}
 					libnotify_printf(
 					 "%s: cache entry: %04" PRIu32 " identifier string\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
@@ -988,6 +961,8 @@ int libwtcdb_io_handle_read_items(
 #endif
 				memory_free(
 				 identifier_string_data );
+
+				identifier_string_data = NULL;
 			}
 			if( padding_size > 0 )
 			{
@@ -1000,10 +975,7 @@ int libwtcdb_io_handle_read_items(
 					 "%s: invalid padding size value exceeds cache entry size.",
 					 function );
 
-					memory_free(
-					 item_entry_data );
-
-					return( -1 );
+					goto on_error;
 				}
 				/* TODO print padding
 				cache_entry_offset += padding_size;
@@ -1022,10 +994,7 @@ int libwtcdb_io_handle_read_items(
 					 "%s: invalid data size value exceeds cache entry size.",
 					 function );
 
-					memory_free(
-					 item_entry_data );
-
-					return( -1 );
+					goto on_error;
 				}
 				cache_entry_offset += data_size;
 
@@ -1192,10 +1161,7 @@ fprintf( stderr, "SIZE MISMATCH: %" PRIu32 " %" PRIu32 "n",
 			 "%s: unable to append item values to items array.",
 			 function );
 
-			memory_free(
-			 item_entry_data );
-
-			return( -1 );
+			goto on_error;
 		}
 		values_table = NULL;
 */
@@ -1204,5 +1170,18 @@ fprintf( stderr, "SIZE MISMATCH: %" PRIu32 " %" PRIu32 "n",
 	 item_entry_data );
 
 	return( 1 );
+
+on_error:
+	if( identifier_string_data != NULL )
+	{
+		memory_free(
+		 identifier_string_data );
+	}
+	if( item_entry_data != NULL )
+	{
+		memory_free(
+		 item_entry_data );
+	}
+	return( -1 );
 }
 

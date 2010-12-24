@@ -1,7 +1,7 @@
 /*
  * Shows information obtained from a Windows Explorer thumbnail cache database file
  *
- * Copyright (c) 2009-2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
  *
  * Refer to AUTHORS for acknowledgements.
  *

@@ -60,8 +60,8 @@ int libwtcdb_file_initialize(
 	}
 	if( *file == NULL )
 	{
-		internal_file = (libwtcdb_internal_file_t *) memory_allocate(
-		                                              sizeof( libwtcdb_internal_file_t ) );
+		internal_file = memory_allocate_structure(
+		                 libwtcdb_internal_file_t );
 
 		if( internal_file == NULL )
 		{
@@ -72,7 +72,7 @@ int libwtcdb_file_initialize(
 			 "%s: unable to create file.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		if( memory_set(
 		     internal_file,
@@ -103,10 +103,7 @@ int libwtcdb_file_initialize(
 			 "%s: unable to create items array.",
 			 function );
 
-			memory_free(
-			 internal_file );
-
-			return( -1 );
+			goto on_error;
 		}
 		if( libwtcdb_io_handle_initialize(
 		     &( internal_file->io_handle ),
@@ -119,18 +116,26 @@ int libwtcdb_file_initialize(
 			 "%s: unable to create IO handle.",
 			 function );
 
-			libwtcdb_array_free(
-			 &( internal_file->items ),
-			 NULL,
-			 NULL );
-			memory_free(
-			 internal_file );
-
-			return( -1 );
+			goto on_error;
 		}
 		*file = (libwtcdb_file_t *) internal_file;
 	}
 	return( 1 );
+
+on_error:
+	if( internal_file != NULL )
+	{
+		if( internal_file->items != NULL )
+		{
+			libwtcdb_array_free(
+			 &( internal_file->items ),
+			 NULL,
+			 NULL );
+		}
+		memory_free(
+		 internal_file );
+	}
+	return( -1 );
 }
 
 /* Frees a file
@@ -179,7 +184,7 @@ int libwtcdb_file_free(
 
 		if( libwtcdb_array_free(
 		     &( internal_file->items ),
-		     &libfvalue_table_free,
+		     &libfvalue_table_free_as_value,
 		     error ) != 1 )
 		{
 			liberror_error_set(
@@ -743,7 +748,7 @@ int libwtcdb_file_close(
 	if( libwtcdb_array_resize(
 	     internal_file->items,
 	     0,
-	     &libfvalue_table_free,
+	     &libfvalue_table_free_as_value,
 	     error ) != 1 )
 	{
 		liberror_error_set(

@@ -1,5 +1,5 @@
 /*
- * Common output functions for the wtcdbtools
+ * The internal unused definition
  *
  * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
  *
@@ -9,41 +9,35 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _WTCDBOUTPUT_H )
-#define _WTCDBOUTPUT_H
+#if !defined( _LIBWTCDB_INTERNAL_UNUSED_H )
+#define _LIBWTCDB_INTERNAL_UNUSED_H
 
 #include <common.h>
-#include <types.h>
 
-#include <libsystem.h>
-
-#if defined( __cplusplus )
-extern "C" {
+#if !defined( LIBWTCDB_ATTRIBUTE_UNUSED )
+#if defined( __GNUC__ ) && __GNUC__ >= 3
+#define LIBWTCDB_ATTRIBUTE_UNUSED	__attribute__ ((__unused__))
+#else
+#define LIBWTCDB_ATTRIBUTE_UNUSED
+#endif
 #endif
 
-void wtcdboutput_copyright_fprint(
-      FILE *stream );
-
-void wtcdboutput_version_fprint(
-      FILE *stream,
-      const char *program );
-
-void wtcdboutput_version_detailed_fprint(
-      FILE *stream,
-      const char *program );
-
-#if defined( __cplusplus )
-}
+#if defined( _MSC_VER )
+#define LIBWTCDB_UNREFERENCED_PARAMETER( parameter ) \
+	UNREFERENCED_PARAMETER( parameter );
+#else
+#define LIBWTCDB_UNREFERENCED_PARAMETER( parameter ) \
+	/* parameter */
 #endif
 
 #endif
