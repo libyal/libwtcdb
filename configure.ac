@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libwtcdb],
- [20101224],
+ [20101225],
  [jbmetz@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(
@@ -682,6 +682,56 @@ AM_CONDITIONAL(
  [HAVE_LOCAL_LIBBFIO],
  [test "x$ac_libwtcdb_have_libbfio" = xlocal])
 
+dnl Check for enabling libfdatetime for file date and time support
+LIBWTCDB_CHECK_LIBFDATETIME
+
+AS_IF(
+ [test "x$ac_libwtcdb_have_libfdatetime" = xyes],
+ [dnl libfdatetime is available
+ AC_SUBST(
+  [libwtcdb_pc_libs_private_libfdatetime],
+  [-lfdatetime])
+ AC_SUBST(
+  [libwtcdb_spec_requires_libfdatetime],
+  [libfdatetime])
+ AC_SUBST(
+  [libwtcdb_spec_build_requires_libfdatetime],
+  [libfdatetime-devel])
+ AC_SUBST(
+  [LIBFDATETIME_CPPFLAGS],
+  [])
+ AC_SUBST(
+  [LIBFDATETIME_LIBADD],
+  []) ],
+ [dnl libfdatetime is not available, using the (local) version that came with the source package
+ AC_DEFINE(
+  [HAVE_LOCAL_LIBFDATETIME],
+  [1],
+  [Define to 1 if the local version of libfdatetime is used.])
+ AC_SUBST(
+  [HAVE_LOCAL_LIBFDATETIME],
+  [1])
+ AC_SUBST(
+  [libwtcdb_pc_libs_private_libfdatetime],
+  [])
+ AC_SUBST(
+  [libwtcdb_spec_requires_libfdatetime],
+  [])
+ AC_SUBST(
+  [libwtcdb_spec_build_requires_libfdatetime],
+  [])
+ AC_SUBST(
+  [LIBFDATETIME_CPPFLAGS],
+  [-I../libfdatetime])
+ AC_SUBST(
+  [LIBFDATETIME_LIBADD],
+  [../libfdatetime/libfdatetime.la])
+ ac_libwtcdb_have_libfdatetime=local])
+
+AM_CONDITIONAL(
+ [HAVE_LOCAL_LIBFDATETIME],
+ [test "x$ac_libwtcdb_have_libfdatetime" = xlocal])
+
 dnl Check for enabling libfvalue for file values support
 AC_CHECK_HEADERS(
  [libfvalue.h],
@@ -926,7 +976,7 @@ AS_IF(
 
 dnl Check if requires and build requires should be set in spec file
 AS_IF(
- [test "x$ac_libwtcdb_have_libuna" = xyes || test "x$ac_libwtcdb_have_libbfio" = xyes || test "x$ac_libwtcdb_have_libfvalue" = xyes],
+ [test "x$ac_libwtcdb_have_libuna" = xyes || test "x$ac_libwtcdb_have_libbfio" = xyes || test "x$ac_libwtcdb_have_libfdatetime" = xyes || test "x$ac_libwtcdb_have_libfvalue" = xyes],
  [AC_SUBST(
   [libwtcdb_spec_requires],
   [Requires:])
@@ -981,6 +1031,7 @@ AC_CONFIG_FILES([liberror/Makefile])
 AC_CONFIG_FILES([libnotify/Makefile])
 AC_CONFIG_FILES([libuna/Makefile])
 AC_CONFIG_FILES([libbfio/Makefile])
+AC_CONFIG_FILES([libfdatetime/Makefile])
 AC_CONFIG_FILES([libfvalue/Makefile])
 AC_CONFIG_FILES([libwtcdb/Makefile])
 AC_CONFIG_FILES([libsystem/Makefile])
@@ -1012,6 +1063,7 @@ AC_MSG_NOTICE([
 Building:
    libuna support:                             $ac_libwtcdb_have_libuna
    libbfio support:                            $ac_libwtcdb_have_libbfio
+   libfdatetime support:                       $ac_libwtcdb_have_libfdatetime
    libfvalue support:                          $ac_libwtcdb_have_libfvalue
 
 Features:

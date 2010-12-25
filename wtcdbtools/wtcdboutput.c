@@ -35,6 +35,12 @@
 #include <libbfio.h>
 #endif
 
+#if defined( HAVE_LOCAL_LIBFDATETIME )
+#include <libfdatetime_definitions.h>
+#elif defined( HAVE_LIBFDATETIME_H )
+#include <libfdatetime.h>
+#endif
+
 #if defined( HAVE_LOCAL_LIBFVALUE )
 #include <libfvalue_definitions.h>
 #elif defined( HAVE_LIBFVALUE_H )
@@ -122,6 +128,11 @@ void wtcdboutput_version_detailed_fprint(
 	 stream,
 	 ", libbfio %s",
 	 LIBBFIO_VERSION_STRING );
+
+	fprintf(
+	 stream,
+	 ", libfdatetime %s",
+	 LIBFDATETIME_VERSION_STRING );
 
 	fprintf(
 	 stream,

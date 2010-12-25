@@ -6,6 +6,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/libnotify \
 	@LIBUNA_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
+	@LIBFDATETIME_CPPFLAGS@ \
 	@LIBFVALUE_CPPFLAGS@ \
 	@MEMWATCH_CPPFLAGS@
 
@@ -40,6 +41,7 @@ libwtcdb_la_LIBADD = \
 	../libnotify/libnotify.la \
 	@LIBUNA_LIBADD@ \
 	@LIBBFIO_LIBADD@ \
+	@LIBFDATETIME_LIBADD@ \
 	@LIBFVALUE_LIBADD@
 
 libwtcdb_la_LDFLAGS = -no-undefined -version-info 1:0:0

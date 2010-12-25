@@ -7,11 +7,16 @@ TODO:
 
 * wtcdbexport export items in directories using the entry hash as filename
 
+20101225
+* worked on item support
+* added libfdatetime
+
 20101224
 * updated configure, added gettext support
 * updated array type
 * updated common, libcstring, liberror, libnotify, libsystem, libuna, libbfio,
   libfvalue
+* worked on wtcdbexport
 
 20101111
 * updated libfvalue

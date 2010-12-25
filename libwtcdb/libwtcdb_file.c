@@ -309,7 +309,7 @@ int libwtcdb_file_open(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: write access to Nickfiles currently not supported.",
+		 "%s: write access currently not supported.",
 		 function );
 
 		return( -1 );
@@ -325,7 +325,7 @@ int libwtcdb_file_open(
 		 "%s: unable to create file IO handle.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libbfio_handle_set_track_offsets_read(
@@ -340,11 +340,7 @@ int libwtcdb_file_open(
                  "%s: unable to set track offsets read in file IO handle.",
                  function );
 
-		libbfio_handle_free(
-		 &file_io_handle,
-		 NULL );
-
-                return( -1 );
+		goto on_error;
 	}
 #endif
 	if( libbfio_file_set_name(
@@ -361,11 +357,7 @@ int libwtcdb_file_open(
                  "%s: unable to set filename in file IO handle.",
                  function );
 
-		libbfio_handle_free(
-		 &file_io_handle,
-		 NULL );
-
-                return( -1 );
+		goto on_error;
 	}
 	if( libwtcdb_file_open_file_io_handle(
 	     file,
@@ -381,15 +373,20 @@ int libwtcdb_file_open(
 		 function,
 		 filename );
 
-		libbfio_handle_free(
-		 &file_io_handle,
-		 NULL );
-
-		return( -1 );
+		goto on_error;
 	}
 	internal_file->file_io_handle_created_in_library = 1;
 
 	return( 1 );
+
+on_error:
+	if( file_io_handle != NULL )
+	{
+		libbfio_handle_free(
+		 &file_io_handle,
+		 NULL );
+	}
+	return( -1 );
 }
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
@@ -449,7 +446,7 @@ int libwtcdb_file_open_wide(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: write access to Nickfiles currently not supported.",
+		 "%s: write access currently not supported.",
 		 function );
 
 		return( -1 );
@@ -465,7 +462,7 @@ int libwtcdb_file_open_wide(
 		 "%s: unable to create file IO handle.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libbfio_handle_set_track_offsets_read(
@@ -480,11 +477,7 @@ int libwtcdb_file_open_wide(
                  "%s: unable to set track offsets read in file IO handle.",
                  function );
 
-		libbfio_handle_free(
-		 &file_io_handle,
-		 NULL );
-
-                return( -1 );
+		goto on_error;
 	}
 #endif
 	if( libbfio_file_set_name_wide(
@@ -501,11 +494,7 @@ int libwtcdb_file_open_wide(
                  "%s: unable to set filename in file IO handle.",
                  function );
 
-		libbfio_handle_free(
-		 &file_io_handle,
-		 NULL );
-
-                return( -1 );
+		goto on_error;
 	}
 	if( libwtcdb_file_open_file_io_handle(
 	     file,
@@ -521,15 +510,20 @@ int libwtcdb_file_open_wide(
 		 function,
 		 filename );
 
-		libbfio_handle_free(
-		 &file_io_handle,
-		 NULL );
-
-		return( -1 );
+		goto on_error;
 	}
 	internal_file->file_io_handle_created_in_library = 1;
 
 	return( 1 );
+
+on_error:
+	if( file_io_handle != NULL )
+	{
+		libbfio_handle_free(
+		 &file_io_handle,
+		 NULL );
+	}
+	return( -1 );
 }
 
 #endif
@@ -601,7 +595,7 @@ int libwtcdb_file_open_file_io_handle(
 		 error,
 		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
-		 "%s: write access to Nickfile currently not supported.",
+		 "%s: write access currently not supported.",
 		 function );
 
 		return( -1 );

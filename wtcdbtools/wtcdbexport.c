@@ -1,5 +1,5 @@
 /*
- * Extracts thumbnails from a Windows Explorer thumbnail cache database file
+ * Extracts items from a Windows Explorer thumbnail cache database file
  *
  * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
  *
@@ -60,7 +60,7 @@ void usage_fprint(
 	{
 		return;
 	}
-	fprintf( stream, "Use wtcdbexport to export thumbnails stored in a Windows Explorer\n"
+	fprintf( stream, "Use wtcdbexport to export items stored in a Windows Explorer\n"
 	                 "thumbnail cache database (thumbcache.db) file.\n\n" );
 
 	fprintf( stream, "Usage: wtcdbexport [ -l logfile ] [ -t target ] [ -hvV ] source\n\n" );
@@ -68,7 +68,7 @@ void usage_fprint(
 	fprintf( stream, "\tsource: the source file\n\n" );
 
 	fprintf( stream, "\t-h:     shows this help\n" );
-	fprintf( stream, "\t-l:     logs information about the exported thumbnails\n" );
+	fprintf( stream, "\t-l:     logs information about the exported items\n" );
 	fprintf( stream, "\t-t:     specify the target directory to export to\n"
 	                 "\t        (default is the source filename followed by .export)\n" );
 	fprintf( stream, "\t-v:     verbose output to stderr\n" );

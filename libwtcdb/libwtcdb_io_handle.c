@@ -33,6 +33,7 @@
 #include "libwtcdb_definitions.h"
 #include "libwtcdb_io_handle.h"
 #include "libwtcdb_libbfio.h"
+#include "libwtcdb_libfdatetime.h"
 #include "libwtcdb_libfvalue.h"
 #include "libwtcdb_libuna.h"
 #include "libwtcdb_value_identifier.h"
@@ -152,11 +153,13 @@ int libwtcdb_io_handle_read_file_header(
 {
 	uint8_t file_header_data[ 24 ];
 
-	static char *function = "libwtcdb_io_handle_read_file_header";
-	ssize_t read_count    = 0;
+	static char *function     = "libwtcdb_io_handle_read_file_header";
+	ssize_t read_count        = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	uint32_t value_32bit  = 0;
+	uint8_t *trailing_data    = NULL;
+	size_t trailing_data_size = 0;
+	uint32_t value_32bit      = 0;
 #endif
 
 	if( io_handle == NULL )
@@ -394,8 +397,59 @@ int libwtcdb_io_handle_read_file_header(
 
 		return( -1 );
 	}
-	/* TODO print trailing data */
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libnotify_verbose != 0 )
+	{
+		if( *first_entry_offset > 24 )
+		{
+			trailing_data_size = (size_t) ( *first_entry_offset - 24 );
 
+			trailing_data = (uint8_t *) memory_allocate(
+			                             sizeof( uint8_t ) * trailing_data_size );
+
+			if( trailing_data == NULL )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_MEMORY,
+				 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+				 "%s: unable to create trailing data.",
+				 function );
+
+				return( -1 );
+			}
+			read_count = libbfio_handle_read(
+				      file_io_handle,
+				      trailing_data,
+				      trailing_data_size,
+				      error );
+
+			if( read_count != (ssize_t) trailing_data_size )
+			{
+				liberror_error_set(
+				 error,
+				 LIBERROR_ERROR_DOMAIN_IO,
+				 LIBERROR_IO_ERROR_READ_FAILED,
+				 "%s: unable to read trailing data.",
+				 function );
+
+				memory_free(
+				 trailing_data );
+
+				return( -1 );
+			}
+			libnotify_printf(
+			 "%s: trailing data:\n",
+			 function );
+			libnotify_print_data(
+			 trailing_data,
+			 trailing_data_size );
+
+			memory_free(
+			 trailing_data );
+		}
+	}
+#endif
 	return( 1 );
 }
 
@@ -430,6 +484,9 @@ int libwtcdb_io_handle_read_items(
 */
 
 #if defined( HAVE_DEBUG_OUTPUT )
+	libcstring_system_character_t filetime_string[ 24 ];
+
+	libfdatetime_filetime_t *filetime           = NULL;
 	libcstring_system_character_t *value_string = NULL;
 	const char *type_string                     = NULL;
 	size_t value_string_size                    = 0;
@@ -514,7 +571,7 @@ int libwtcdb_io_handle_read_items(
 #endif
 	}
 	item_entry_data = (uint8_t *) memory_allocate(
-	                               item_entry_data_size );
+	                               sizeof( uint8_t ) * item_entry_data_size );
 
 	if( item_entry_data == NULL )
 	{
@@ -828,7 +885,7 @@ int libwtcdb_io_handle_read_items(
 				}
 				/* TODO store string in runtime cache entry */
 				identifier_string_data = (uint8_t *) memory_allocate(
-								      identifier_string_size );
+								      sizeof( uint8_t ) * identifier_string_size );
 
 				if( identifier_string_data == NULL )
 				{
@@ -873,8 +930,6 @@ int libwtcdb_io_handle_read_items(
 					 identifier_string_size );
 				}
 #endif
-				/* TODO print formatted identifier string */
-
 #if defined( HAVE_DEBUG_OUTPUT )
 				if( libnotify_verbose != 0 )
 				{
@@ -978,7 +1033,6 @@ int libwtcdb_io_handle_read_items(
 					goto on_error;
 				}
 				/* TODO print padding
-				cache_entry_offset += padding_size;
 				*/
 
 				cache_entry_offset += padding_size;
@@ -1027,7 +1081,87 @@ fprintf( stderr, "SIZE MISMATCH: %" PRIu32 " %" PRIu32 "n",
 				 item_iterator,
 				 value_64bit );
 
-				/* TODO print modification time */
+				if( libfdatetime_filetime_initialize(
+				     &filetime,
+				     error ) != 1 )
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+					 "%s: unable to create filetime.",
+					 function );
+
+					return( -1 );
+				}
+				if( libfdatetime_filetime_copy_from_byte_stream(
+				     filetime,
+				     ( (wtcdb_index_entry_vista_t *) item_entry_data )->modification_time,
+				     8,
+				     LIBFDATETIME_ENDIAN_LITTLE,
+				     error ) != 1 )
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBERROR_RUNTIME_ERROR_COPY_FAILED,
+					 "%s: unable to copy byte stream to filetime.",
+					 function );
+
+					libfdatetime_filetime_free(
+					 &filetime,
+					 NULL );
+
+					return( -1 );
+				}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+				result = libfdatetime_filetime_copy_to_utf16_string(
+					  filetime,
+					  (uint16_t *) filetime_string,
+					  24,
+					  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME,
+					  LIBFDATETIME_DATE_TIME_FORMAT_CTIME,
+					  error );
+#else
+				result = libfdatetime_filetime_copy_to_utf8_string(
+					  filetime,
+					  (uint8_t *) filetime_string,
+					  24,
+					  LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME,
+					  LIBFDATETIME_DATE_TIME_FORMAT_CTIME,
+					  error );
+#endif
+				if( result != 1 )
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBERROR_RUNTIME_ERROR_COPY_FAILED,
+					 "%s: unable to copy filetime to string.",
+					 function );
+
+					libfdatetime_filetime_free(
+					 &filetime,
+					 NULL );
+
+					return( -1 );
+				}
+				if( libfdatetime_filetime_free(
+				     &filetime,
+				     error ) != 1 )
+				{
+					liberror_error_set(
+					 error,
+					 LIBERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+					 "%s: unable to free filetime.",
+					 function );
+
+					return( -1 );
+				}
+				libnotify_printf(
+				 "%s: modification time\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n\n",
+				 filetime_string );
 
 				if( io_handle->version == 20 )
 				{

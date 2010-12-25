@@ -890,7 +890,7 @@ int export_handle_export_file(
 			return( -1 );
 		}
 /* TODO
-		if( export_handle_export_thumbnail(
+		if( export_handle_export_item(
 		     export_handle,
 		     item,
 		     item_iterator,
@@ -900,14 +900,14 @@ int export_handle_export_file(
 		{
 			fprintf(
 			 stdout,
-			 "Unable to export thumbnail %d out of %d.\n",
+			 "Unable to export item %d out of %d.\n",
 			 item_iterator + 1,
 			 number_of_items );
 
 			if( libsystem_notify_verbose != 0 )
 			{
 				libsystem_notify_printf(
-				 "%s: unable to export thumbnail: %d.\n",
+				 "%s: unable to export item: %d.\n",
 				 function,
 				 item_iterator + 1 );
 			}

@@ -576,3 +576,51 @@ AC_DEFUN([LIBWTCDB_CHECK_LIBBFIO],
   ])
  ])
 
+dnl Function to detect if libfdatetime available
+AC_DEFUN([LIBWTCDB_CHECK_LIBFDATETIME],
+ [AC_CHECK_HEADERS([libfdatetime.h])
+
+ AS_IF(
+  [test "x$ac_cv_header_libfdatetime_h" = xno],
+  [ac_libwtcdb_have_libfdatetime=no],
+  [ac_libwtcdb_have_libfdatetime=yes
+  AC_CHECK_LIB(
+   fdatetime,
+   libfdatetime_get_version,
+   [],
+   [ac_libwtcdb_have_libfdatetime=no])
+ 
+  dnl Filetime functions
+  AC_CHECK_LIB(
+   fdatetime,
+   libfdatetime_filetime_initialize,
+   [ac_libwtcdb_dummy=yes],
+   [ac_libwtcdb_have_libfdatetime=no])
+  AC_CHECK_LIB(
+   fdatetime,
+   libfdatetime_filetime_free,
+   [ac_libwtcdb_dummy=yes],
+   [ac_libwtcdb_have_libfdatetime=no])
+  AC_CHECK_LIB(
+   fdatetime,
+   libfdatetime_filetime_copy_from_byte_stream,
+   [ac_libwtcdb_dummy=yes],
+   [ac_libwtcdb_have_libfdatetime=no])
+  AC_CHECK_LIB(
+   fdatetime,
+   libfdatetime_filetime_copy_from_uint64,
+   [ac_libwtcdb_dummy=yes],
+   [ac_libwtcdb_have_libfdatetime=no])
+  AC_CHECK_LIB(
+   fdatetime,
+   libfdatetime_filetime_copy_to_utf8_string,
+   [ac_libwtcdb_dummy=yes],
+   [ac_libwtcdb_have_libfdatetime=no])
+  AC_CHECK_LIB(
+   fdatetime,
+   libfdatetime_filetime_add,
+   [ac_libwtcdb_dummy=yes],
+   [ac_libwtcdb_have_libfdatetime=no])
+  ])
+ ])
+
