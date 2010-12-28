@@ -32,11 +32,11 @@
 #include "libwtcdb_debug.h"
 #include "libwtcdb_definitions.h"
 #include "libwtcdb_io_handle.h"
+#include "libwtcdb_item_value.h"
 #include "libwtcdb_libbfio.h"
 #include "libwtcdb_libfdatetime.h"
 #include "libwtcdb_libfvalue.h"
 #include "libwtcdb_libuna.h"
-#include "libwtcdb_value_identifier.h"
 
 #include "wtcdb_cache_entry.h"
 #include "wtcdb_file_header.h"
@@ -465,8 +465,8 @@ int libwtcdb_io_handle_read_items(
      libwtcdb_array_t *items_array,
      liberror_error_t **error )
 {
+	libwtcdb_item_value_t *item_value           = NULL;
 	uint8_t *item_entry_data                    = NULL;
-	uint8_t *identifier_string_data             = NULL;
 	static char *function                       = "libwtcdb_io_handle_read_items";
 	size_t item_entry_data_size                 = 0;
 	ssize_t read_count                          = 0;
@@ -474,20 +474,18 @@ int libwtcdb_io_handle_read_items(
 	uint64_t stored_data_crc                    = 0;
 	uint64_t stored_header_crc                  = 0;
 	uint32_t data_size                          = 0;
-	uint32_t identifier_string_size             = 0;
 	uint32_t item_iterator                      = 0;
 	uint32_t padding_size                       = 0;
 	uint32_t cache_entry_offset                 = 0;
 	uint32_t cache_entry_size                   = 0;
-/* TODO
 	int item_entry_index                        = 0;
-*/
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	libcstring_system_character_t filetime_string[ 24 ];
 
 	libfdatetime_filetime_t *filetime           = NULL;
 	libcstring_system_character_t *value_string = NULL;
+	uint8_t *padding_data                       = NULL;
 	const char *type_string                     = NULL;
 	size_t value_string_size                    = 0;
 	uint64_t value_64bit                        = 0;
@@ -656,6 +654,19 @@ int libwtcdb_io_handle_read_items(
 			 item_entry_data_size );
 		}
 #endif
+		if( libwtcdb_item_value_initialize(
+		     &item_value,
+		     error ) != 1 )
+		{
+			liberror_error_set(
+			 error,
+			 LIBERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create item value.",
+			 function );
+
+			goto on_error;
+		}
 		if( io_handle->file_type == LIBWTCDB_FILE_TYPE_CACHE )
 		{
 			if( memory_compare(
@@ -681,7 +692,7 @@ int libwtcdb_io_handle_read_items(
 			{
 				byte_stream_copy_to_uint32_little_endian(
 				 ( (wtcdb_cache_entry_vista_t *) item_entry_data )->identifier_string_size,
-				 identifier_string_size );
+				 item_value->identifier_size );
 
 				byte_stream_copy_to_uint32_little_endian(
 				 ( (wtcdb_cache_entry_vista_t *) item_entry_data )->padding_size,
@@ -703,7 +714,7 @@ int libwtcdb_io_handle_read_items(
 			{
 				byte_stream_copy_to_uint32_little_endian(
 				 ( (wtcdb_cache_entry_win7_t *) item_entry_data )->identifier_string_size,
-				 identifier_string_size );
+				 item_value->identifier_size );
 
 				byte_stream_copy_to_uint32_little_endian(
 				 ( (wtcdb_cache_entry_win7_t *) item_entry_data )->padding_size,
@@ -788,12 +799,11 @@ int libwtcdb_io_handle_read_items(
 					libnotify_printf(
 					 "\n" );
 				}
-
 				libnotify_printf(
 				 "%s: cache entry: %04" PRIu32 " identifier string size\t\t: %" PRIu32 "\n",
 				 function,
 				 item_iterator,
-				 identifier_string_size );
+				 item_value->identifier_size );
 
 				libnotify_printf(
 				 "%s: cache entry: %04" PRIu32 " padding size\t\t\t: %" PRIu32 "\n",
@@ -870,9 +880,9 @@ int libwtcdb_io_handle_read_items(
 				}
 #endif
 			}
-			if( identifier_string_size > 0 )
+			if( item_value->identifier_size > 0 )
 			{
-				if( ( cache_entry_offset + identifier_string_size ) > cache_entry_size )
+				if( ( cache_entry_offset + item_value->identifier_size ) > cache_entry_size )
 				{
 					liberror_error_set(
 					 error,
@@ -883,28 +893,27 @@ int libwtcdb_io_handle_read_items(
 
 					goto on_error;
 				}
-				/* TODO store string in runtime cache entry */
-				identifier_string_data = (uint8_t *) memory_allocate(
-								      sizeof( uint8_t ) * identifier_string_size );
+				item_value->identifier = (uint8_t *) memory_allocate(
+								      sizeof( uint8_t ) * item_value->identifier_size );
 
-				if( identifier_string_data == NULL )
+				if( item_value->identifier == NULL )
 				{
 					liberror_error_set(
 					 error,
 					 LIBERROR_ERROR_DOMAIN_MEMORY,
 					 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-					 "%s: unable to create identifier string data.",
+					 "%s: unable to create identifier.",
 					 function );
 
 					goto on_error;
 				}
 				read_count = libbfio_handle_read(
 					      file_io_handle,
-					      identifier_string_data,
-					      identifier_string_size,
+					      item_value->identifier,
+					      item_value->identifier_size,
 					      error );
 
-				if( read_count != (ssize_t) identifier_string_size )
+				if( read_count != (ssize_t) item_value->identifier_size )
 				{
 					liberror_error_set(
 					 error,
@@ -916,7 +925,7 @@ int libwtcdb_io_handle_read_items(
 
 					goto on_error;
 				}
-				cache_entry_offset += identifier_string_size;
+				cache_entry_offset += item_value->identifier_size;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 				if( libnotify_verbose != 0 )
@@ -926,8 +935,8 @@ int libwtcdb_io_handle_read_items(
 					 function,
 					 item_iterator );
 					libnotify_print_data(
-					 identifier_string_data,
-					 identifier_string_size );
+					 item_value->identifier,
+					 item_value->identifier_size );
 				}
 #endif
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -935,15 +944,15 @@ int libwtcdb_io_handle_read_items(
 				{
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 					result = libuna_utf16_string_size_from_utf16_stream(
-						  identifier_string_data,
-						  identifier_string_size,
+						  item_value->identifier,
+						  item_value->identifier_size,
 						  LIBUNA_ENDIAN_LITTLE,
 						  &value_string_size,
 						  error );
 #else
 					result = libuna_utf8_string_size_from_utf16_stream(
-						  identifier_string_data,
-						  identifier_string_size,
+						  item_value->identifier,
+						  item_value->identifier_size,
 						  LIBUNA_ENDIAN_LITTLE,
 						  &value_string_size,
 						  error );
@@ -977,16 +986,16 @@ int libwtcdb_io_handle_read_items(
 					result = libuna_utf16_string_copy_from_utf16_stream(
 						  (libuna_utf16_character_t *) value_string,
 						  value_string_size,
-						  identifier_string_data,
-						  identifier_string_size,
+						  item_value->identifier,
+						  item_value->identifier_size,
 						  LIBUNA_ENDIAN_LITTLE,
 						  error );
 #else
 					result = libuna_utf8_string_copy_from_utf16_stream(
 						  (libuna_utf8_character_t *) value_string,
 						  value_string_size,
-						  identifier_string_data,
-						  identifier_string_size,
+						  item_value->identifier,
+						  item_value->identifier_size,
 						  LIBUNA_ENDIAN_LITTLE,
 						  error );
 #endif
@@ -1014,10 +1023,12 @@ int libwtcdb_io_handle_read_items(
 					 value_string );
 				}
 #endif
-				memory_free(
-				 identifier_string_data );
+				/* TODO remove when value is appended */
+				libwtcdb_item_value_free(
+				 item_value,
+				 NULL );
 
-				identifier_string_data = NULL;
+				item_value = NULL;
 			}
 			if( padding_size > 0 )
 			{
@@ -1032,9 +1043,56 @@ int libwtcdb_io_handle_read_items(
 
 					goto on_error;
 				}
-				/* TODO print padding
-				*/
+#if defined( HAVE_DEBUG_OUTPUT )
+				if( libnotify_verbose != 0 )
+				{
+					padding_data = (uint8_t *) memory_allocate(
+					                            sizeof( uint8_t ) * padding_size );
 
+					if( padding_data == NULL )
+					{
+						liberror_error_set(
+						 error,
+						 LIBERROR_ERROR_DOMAIN_MEMORY,
+						 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+						 "%s: unable to create padding data.",
+						 function );
+
+						goto on_error;
+					}
+					read_count = libbfio_handle_read(
+						      file_io_handle,
+						      padding_data,
+						      padding_size,
+						      error );
+
+					if( read_count != (ssize_t) padding_size )
+					{
+						liberror_error_set(
+						 error,
+						 LIBERROR_ERROR_DOMAIN_IO,
+						 LIBERROR_IO_ERROR_READ_FAILED,
+						 "%s: unable to read padding data.",
+						 function );
+
+						memory_free(
+						 padding_data );
+
+						goto on_error;
+					}
+					libnotify_printf(
+					 "%s: %s entry: %04" PRIu32 " padding data:\n",
+					 function,
+					 type_string,
+					 item_iterator );
+					libnotify_print_data(
+					 padding_data,
+					 padding_size );
+
+					memory_free(
+					 padding_data );
+				}
+#endif
 				cache_entry_offset += padding_size;
 			}
 			if( data_size > 0 )
@@ -1306,10 +1364,11 @@ fprintf( stderr, "SIZE MISMATCH: %" PRIu32 " %" PRIu32 "n",
 	return( 1 );
 
 on_error:
-	if( identifier_string_data != NULL )
+	if( item_value != NULL )
 	{
-		memory_free(
-		 identifier_string_data );
+		libwtcdb_item_value_free(
+		 item_value,
+		 NULL );
 	}
 	if( item_entry_data != NULL )
 	{

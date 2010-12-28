@@ -28,9 +28,9 @@
 #include "libwtcdb_definitions.h"
 #include "libwtcdb_io_handle.h"
 #include "libwtcdb_item.h"
+#include "libwtcdb_item_value.h"
 #include "libwtcdb_libbfio.h"
 #include "libwtcdb_libfvalue.h"
-#include "libwtcdb_value_identifier.h"
 
 /* Initializes the item and its values
  * Returns 1 if successful or -1 on error
