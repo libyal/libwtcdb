@@ -1,7 +1,7 @@
 /* 
  * Export handle
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2010-2013, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -23,65 +23,91 @@
 #include <memory.h>
 #include <types.h>
 
-#include <libcstring.h>
-#include <liberror.h>
-
-#include <libsystem.h>
-
 #include "export_handle.h"
 #include "log_handle.h"
+#include "wtcdbtools_libcerror.h"
+#include "wtcdbtools_libcfile.h"
+#include "wtcdbtools_libcpath.h"
+#include "wtcdbtools_libcstring.h"
+#include "wtcdbtools_libcsystem.h"
+#include "wtcdbtools_libwtcdb.h"
+
+#define EXPORT_HANDLE_NOTIFY_STREAM	stdout
 
 /* Initializes the export handle
  * Returns 1 if successful or -1 on error
  */
 int export_handle_initialize(
      export_handle_t **export_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "export_handle_initialize";
 
 	if( export_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid export handle.",
 		 function );
 
 		return( -1 );
 	}
+	if( *export_handle != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid export handle value already set.",
+		 function );
+
+		return( -1 );
+	}
+	*export_handle = memory_allocate_structure(
+	                  export_handle_t );
+
 	if( *export_handle == NULL )
 	{
-		*export_handle = memory_allocate_structure(
-		                  export_handle_t );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create export handle.",
+		 function );
 
-		if( *export_handle == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create export handle.",
-			 function );
-
-			goto on_error;
-		}
-		if( memory_set(
-		     *export_handle,
-		     0,
-		     sizeof( export_handle_t ) ) == NULL )
-		{
-			liberror_error_set(
-			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear export handle.",
-			 function );
-
-			goto on_error;
-		}
+		goto on_error;
 	}
+	if( memory_set(
+	     *export_handle,
+	     0,
+	     sizeof( export_handle_t ) ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear export handle.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwtcdb_file_initialize(
+	     &( ( *export_handle )->input_file ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to initialize input file.",
+		 function );
+
+		goto on_error;
+	}
+	( *export_handle )->notify_stream = EXPORT_HANDLE_NOTIFY_STREAM;
+
 	return( 1 );
 
 on_error:
@@ -100,16 +126,16 @@ on_error:
  */
 int export_handle_free(
      export_handle_t **export_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "export_handle_free";
 
 	if( export_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid export handle.",
 		 function );
 
@@ -122,6 +148,11 @@ int export_handle_free(
 			memory_free(
 			 ( *export_handle )->target_path );
 		}
+		if( ( *export_handle )->items_export_path != NULL )
+		{
+			memory_free(
+			 ( *export_handle )->items_export_path );
+		}
 		memory_free(
 		 *export_handle );
 
@@ -130,324 +161,29 @@ int export_handle_free(
 	return( 1 );
 }
 
-/* Create a directory
+/* Signals the export handle to abort
  * Returns 1 if successful or -1 on error
  */
-int export_handle_make_directory(
+int export_handle_signal_abort(
      export_handle_t *export_handle,
-     libcstring_system_character_t *directory_name,
-     log_handle_t *log_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
-	static char *function = "export_handle_make_directory";
+	static char *function = "export_handle_signal_abort";
 
 	if( export_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid export handle.",
 		 function );
 
 		return( -1 );
 	}
-	if( directory_name == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid directory name.",
-		 function );
-
-		return( -1 );
-	}
-	if( libsystem_directory_make(
-	     directory_name ) != 0 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_WRITE_FAILED,
-		 "%s: unable to make directory: %" PRIs_LIBCSTRING_SYSTEM ".",
-		 function,
-		 directory_name );
-
-		return( -1 );
-	}
-	log_handle_printf(
-	 log_handle,
-	 "Created directory: %" PRIs_LIBCSTRING_SYSTEM ".\n",
-	 directory_name );
+	export_handle->abort = 1;
 
 	return( 1 );
-}
-
-/* Sanitizes the filename
- * Returns 1 if successful or -1 on error
- */
-int export_handle_sanitize_filename(
-     export_handle_t *export_handle,
-     libcstring_system_character_t *filename,
-     size_t filename_size,
-     liberror_error_t **error )
-{
-	static char *function = "export_handle_sanitize_filename";
-	size_t iterator       = 0;
-
-	if( export_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid export handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( filename == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid filename.",
-		 function );
-
-		return( -1 );
-	}
-	if( filename_size > (size_t) SSIZE_MAX )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid filename size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-	for( iterator = 0; iterator < filename_size; iterator++ )
-	{
-		if( ( ( filename[ iterator ] >= 0x01 )
-		  && ( filename[ iterator ] <= 0x1f ) )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '!' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '$' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '%' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '&' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '*' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '+' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '/' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) ':' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) ';' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '<' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '>' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '?' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '@' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '\\' )
-		 || ( filename[ iterator ] == (libcstring_system_character_t) '~' )
-		 || ( filename[ iterator ] == 0x7e ) )
-		{
-			filename[ iterator ] = (libcstring_system_character_t) '_';
-		}
-	}
-	return( 1 );
-}
-
-/* Creates the target path
- * Returns 1 if successful or -1 on error
- */
-int export_handle_create_target_path(
-     export_handle_t *export_handle,
-     libcstring_system_character_t *export_path,
-     size_t export_path_size,
-     uint8_t *utf8_filename,
-     size_t utf8_filename_size,
-     libcstring_system_character_t **target_path,
-     size_t *target_path_size,
-     liberror_error_t **error )
-{
-	static char *function = "export_handle_create_target_path";
-	size_t filename_size  = 0;
-
-	if( export_handle == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid export handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( export_path == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid export path.",
-		 function );
-
-		return( -1 );
-	}
-	if( utf8_filename == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid UTF-8 filename.",
-		 function );
-
-		return( -1 );
-	}
-	if( utf8_filename_size > (size_t) SSIZE_MAX )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid UTF-8 filename size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-	if( target_path == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid target path.",
-		 function );
-
-		return( -1 );
-	}
-	if( *target_path != NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid target path already set.",
-		 function );
-
-		return( -1 );
-	}
-	if( target_path_size == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid target path size.",
-		 function );
-
-		return( -1 );
-	}
-	/* Make sure to check the UTF-8 filename length
-	 * the conversion routines are very strict about the string size
-	 */
-	utf8_filename_size = 1 + libcstring_narrow_string_length(
-	                          (char *) utf8_filename );
-
-	if( libsystem_string_size_from_utf8_string(
-	     utf8_filename,
-	     utf8_filename_size,
-	     &filename_size,
-	     error ) != 1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_CONVERSION,
-		 LIBERROR_CONVERSION_ERROR_GENERIC,
-		 "%s: unable to determine UTF-8 filename size.",
-		 function );
-
-		goto on_error;
-	}
-	/* Include space for the separator and the end of string character
-	 */
-	*target_path_size = export_path_size + filename_size;
-
-	*target_path = libcstring_system_string_allocate(
-	                *target_path_size );
-
-	if( *target_path == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create target path.",
-		 function );
-
-		goto on_error;
-	}
-	if( libcstring_system_string_copy(
-	     *target_path,
-	     export_path,
-	     export_path_size ) == NULL )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_COPY_FAILED,
-		 "%s: unable to set export path in target path.",
-		 function );
-
-		goto on_error;
-	}
-	( *target_path )[ export_path_size - 1 ] = (libcstring_system_character_t) LIBSYSTEM_PATH_SEPARATOR;
-
-	if( libsystem_string_copy_from_utf8_string(
-	     &( ( *target_path )[ export_path_size ] ),
-	     filename_size,
-	     utf8_filename,
-	     utf8_filename_size,
-	     error ) != 1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_CONVERSION,
-		 LIBERROR_CONVERSION_ERROR_GENERIC,
-		 "%s: unable to set filename in target path.",
-		 function );
-
-		goto on_error;
-	}
-	if( export_handle_sanitize_filename(
-	     export_handle,
-	     &( ( *target_path )[ export_path_size ] ),
-	     filename_size,
-	     error ) != 1 )
-	{
-		liberror_error_set(
-		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable sanitize filename in target path.",
-		 function );
-
-		goto on_error;
-	}
-	return( 1 );
-
-on_error:
-	if( *target_path != NULL )
-	{
-		memory_free(
-		 target_path );
-
-		*target_path = NULL;
-	}
-	*target_path_size = 0;
-
-	return( -1 );
 }
 
 /* Sets an export path consisting of a base path and a suffix
@@ -461,16 +197,16 @@ int export_handle_set_export_path(
      size_t suffix_length,
      libcstring_system_character_t **export_path,
      size_t *export_path_size,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "export_handle_set_export_path";
 
 	if( export_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid export handle.",
 		 function );
 
@@ -478,10 +214,10 @@ int export_handle_set_export_path(
 	}
 	if( base_path == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid base path.",
 		 function );
 
@@ -489,10 +225,10 @@ int export_handle_set_export_path(
 	}
 	if( base_path_length > (size_t) SSIZE_MAX )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid base path length value exceeds maximum.",
 		 function );
 
@@ -500,10 +236,10 @@ int export_handle_set_export_path(
 	}
 	if( suffix == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid suffix.",
 		 function );
 
@@ -511,10 +247,10 @@ int export_handle_set_export_path(
 	}
 	if( suffix_length > (size_t) SSIZE_MAX )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid suffix length value exceeds maximum.",
 		 function );
 
@@ -522,10 +258,10 @@ int export_handle_set_export_path(
 	}
 	if( export_path == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid export path.",
 		 function );
 
@@ -533,10 +269,10 @@ int export_handle_set_export_path(
 	}
 	if( export_path_size == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid export path size.",
 		 function );
 
@@ -557,10 +293,10 @@ int export_handle_set_export_path(
 
 	if( *export_path == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_MEMORY,
-		 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 		 "%s: unable to create export path.",
 		 function );
 
@@ -571,10 +307,10 @@ int export_handle_set_export_path(
 	     base_path,
 	     base_path_length ) == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_COPY_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
 		 "%s: unable to copy base path to item export path.",
 		 function );
 
@@ -585,10 +321,10 @@ int export_handle_set_export_path(
 	     suffix,
 	     suffix_length ) == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_COPY_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
 		 "%s: unable to copy suffix to item export path.",
 		 function );
 
@@ -610,22 +346,22 @@ on_error:
 	return( -1 );
 }
 
-/* Creates the export path
+/* Creates the items export path
  * Returns 1 if successful, 0 if already exists or -1 on error
  */
-int export_handle_create_export_path(
+int export_handle_create_items_export_path(
      export_handle_t *export_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
-	static char *function = "export_handle_create_export_path";
+	static char *function = "export_handle_create_items_export_path";
 	int result            = 0;
 
 	if( export_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid export handle.",
 		 function );
 
@@ -637,32 +373,37 @@ int export_handle_create_export_path(
 	     export_handle->target_path_size - 1,
 	     _LIBCSTRING_SYSTEM_STRING( ".export" ),
 	     7,
-	     &( export_handle->export_path ),
-	     &( export_handle->export_path_size ),
+	     &( export_handle->items_export_path ),
+	     &( export_handle->items_export_path_size ),
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to set export path.",
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set items export path.",
 		 function );
 
 		return( -1 );
 	}
-	result = libsystem_file_exists(
-		  export_handle->export_path,
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libcfile_file_exists_wide(
+		  export_handle->items_export_path,
 		  error );
-
+#else
+	result = libcfile_file_exists(
+		  export_handle->items_export_path,
+		  error );
+#endif
 	if( result == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_GENERIC,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_GENERIC,
 		 "%s: unable to determine if %" PRIs_LIBCSTRING_SYSTEM " exists.",
 		 function,
-		 export_handle->export_path );
+		 export_handle->items_export_path );
 
 		return( -1 );
 	}
@@ -679,7 +420,7 @@ int export_handle_create_export_path(
 int export_handle_set_target_path(
      export_handle_t *export_handle,
      const libcstring_system_character_t *target_path,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function                                      = "export_handle_set_target_path";
 	size_t target_path_length                                  = 0;
@@ -692,10 +433,10 @@ int export_handle_set_target_path(
 
 	if( export_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid export handle.",
 		 function );
 
@@ -703,10 +444,10 @@ int export_handle_set_target_path(
 	}
 	if( target_path == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid target path.",
 		 function );
 
@@ -733,10 +474,10 @@ int export_handle_set_target_path(
 
         if( result == -1 )
         {
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to create extended-length target path.",
 		 function );
 
@@ -755,10 +496,10 @@ int export_handle_set_target_path(
 
 		if( export_handle->target_path == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 			 "%s: unable to create target path.",
 			 function );
 
@@ -773,10 +514,10 @@ int export_handle_set_target_path(
 		     target_path,
 		     target_path_length ) == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_COPY_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
 			 "%s: unable to copy target path.",
 			 function );
 
@@ -802,64 +543,122 @@ int export_handle_set_target_path(
 	return( 1 );
 }
 
-/* Exports the file
- * Returns the 1 if succesful, 0 if no items are available or -1 on error
+/* Opens the export handle
+ * Returns 1 if successful or -1 on error
  */
-int export_handle_export_file(
+int export_handle_open(
      export_handle_t *export_handle,
-     libwtcdb_file_t *file,
-     log_handle_t *log_handle,
-     liberror_error_t **error )
+     const libcstring_system_character_t *filename,
+     libcerror_error_t **error )
 {
-	libwtcdb_item_t *item = NULL;
-	static char *function = "export_handle_export_file";
-	int number_of_items   = 0;
-	int item_iterator     = 0;
+	static char *function = "export_handle_open";
 
 	if( export_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid export handle.",
 		 function );
 
 		return( -1 );
 	}
-	if( file == NULL )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	if( libwtcdb_file_open_wide(
+	     export_handle->input_file,
+	     filename,
+	     LIBWTCDB_OPEN_READ,
+	     error ) != 1 )
+#else
+	if( libwtcdb_file_open(
+	     export_handle->input_file,
+	     filename,
+	     LIBWTCDB_OPEN_READ,
+	     error ) != 1 )
+#endif
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid file.",
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
+		 "%s: unable to open input file.",
 		 function );
 
 		return( -1 );
 	}
-	if( libsystem_directory_make(
-	     export_handle->export_path ) != 0 )
+	return( 1 );
+}
+
+/* Closes the export handle
+ * Returns the 0 if succesful or -1 on error
+ */
+int export_handle_close(
+     export_handle_t *export_handle,
+     libcerror_error_t **error )
+{
+	static char *function = "export_handle_close";
+
+	if( export_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: unable to make directory: %" PRIs_LIBCSTRING_SYSTEM ".\n",
-		 function,
-		 export_handle->export_path );
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid export handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( libwtcdb_file_close(
+	     export_handle->input_file,
+	     error ) != 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_CLOSE_FAILED,
+		 "%s: unable to close input file.",
+		 function );
+
+		return( -1 );
+	}
+	return( 0 );
+}
+
+/* Exports the file
+ * Returns the 1 if succesful, 0 if no items are available or -1 on error
+ */
+int export_handle_export_file(
+     export_handle_t *export_handle,
+     log_handle_t *log_handle,
+     libcerror_error_t **error )
+{
+	libwtcdb_item_t *item = NULL;
+	static char *function = "export_handle_export_file";
+	int number_of_items   = 0;
+	int item_index        = 0;
+
+	if( export_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid export handle.",
+		 function );
 
 		return( -1 );
 	}
 	if( libwtcdb_file_get_number_of_items(
-	     file,
+	     export_handle->input_file,
 	     &number_of_items,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve number of items.",
 		 function );
 
@@ -869,23 +668,48 @@ int export_handle_export_file(
 	{
 		return( 0 );
 	}
-	for( item_iterator = 0;
-	     item_iterator < number_of_items;
-	     item_iterator++ )
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	if( libcpath_path_make_directory_wide(
+	     export_handle->items_export_path,
+	     error ) != 1 )
+#else
+	if( libcpath_path_make_directory(
+	     export_handle->items_export_path,
+	     error ) != 1 )
+#endif
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_WRITE_FAILED,
+		 "%s: unable to make directory: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 function,
+		 export_handle->items_export_path );
+
+		return( -1 );
+	}
+	log_handle_printf(
+	 log_handle,
+	 "Created directory: %" PRIs_LIBCSTRING_SYSTEM ".\n",
+	 export_handle->items_export_path );
+
+	for( item_index = 0;
+	     item_index < number_of_items;
+	     item_index++ )
 	{
 		if( libwtcdb_file_get_item(
-		     file,
-		     item_iterator,
+		     export_handle->input_file,
+		     item_index,
 		     &item,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve item: %d.",
 			 function,
-			 item_iterator + 1 );
+			 item_index + 1 );
 
 			return( -1 );
 		}
@@ -893,7 +717,7 @@ int export_handle_export_file(
 		if( export_handle_export_item(
 		     export_handle,
 		     item,
-		     item_iterator,
+		     item_index,
 		     number_of_items,
 		     log_handle,
 		     error ) != 1 )
@@ -901,7 +725,7 @@ int export_handle_export_file(
 			fprintf(
 			 stdout,
 			 "Unable to export item %d out of %d.\n",
-			 item_iterator + 1,
+			 item_index + 1,
 			 number_of_items );
 
 			if( libsystem_notify_verbose != 0 )
@@ -909,7 +733,7 @@ int export_handle_export_file(
 				libsystem_notify_printf(
 				 "%s: unable to export item: %d.\n",
 				 function,
-				 item_iterator + 1 );
+				 item_index + 1 );
 			}
 			if( ( error != NULL )
 			 && ( *error != NULL ) )
@@ -917,7 +741,7 @@ int export_handle_export_file(
 				libsystem_notify_print_error_backtrace(
 				 *error );
 			}
-			liberror_error_free(
+			libcerror_error_free(
 			 error );
 		}
 */
@@ -925,13 +749,13 @@ int export_handle_export_file(
 		     &item,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 			 "%s: unable to free item: %d.",
 			 function,
-			 item_iterator + 1 );
+			 item_index + 1 );
 
 			return( -1 );
 		}

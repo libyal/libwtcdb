@@ -1,7 +1,7 @@
 /*
  * Item value functions
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2010-2013, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -25,9 +25,8 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #include "libwtcdb_extern.h"
+#include "libwtcdb_libcerror.h"
 #include "libwtcdb_types.h"
 
 #if defined( __cplusplus )
@@ -49,11 +48,11 @@ struct libwtcdb_item_value
 
 int libwtcdb_item_value_initialize(
      libwtcdb_item_value_t **item_value,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libwtcdb_item_value_free(
-     intptr_t *item_value,
-     liberror_error_t **error );
+     libwtcdb_item_value_t **item_value,
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

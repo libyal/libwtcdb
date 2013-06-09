@@ -1,7 +1,7 @@
 /*
  * CRC-64 functions
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2010-2013, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -25,7 +25,7 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
+#include "libwtcdb_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -36,7 +36,7 @@ int libwtcdb_crc64_weak_calculate(
      uint8_t *buffer,
      size_t size,
      uint64_t initial_value,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

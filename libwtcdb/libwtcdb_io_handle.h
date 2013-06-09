@@ -1,7 +1,7 @@
 /*
  * Input/Output (IO) handle
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2010-2013, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -25,10 +25,9 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
-#include "libwtcdb_array_type.h"
 #include "libwtcdb_libbfio.h"
+#include "libwtcdb_libcdata.h"
+#include "libwtcdb_libcerror.h"
 #include "libwtcdb_libfvalue.h"
 
 #if defined( __cplusplus )
@@ -57,11 +56,11 @@ struct libwtcdb_io_handle
 
 int libwtcdb_io_handle_initialize(
      libwtcdb_io_handle_t **io_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libwtcdb_io_handle_free(
      libwtcdb_io_handle_t **io_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libwtcdb_io_handle_read_file_header(
      libwtcdb_io_handle_t *io_handle,
@@ -69,7 +68,7 @@ int libwtcdb_io_handle_read_file_header(
      uint32_t *first_entry_offset,
      uint32_t *available_cache_entry_offset,
      uint32_t *number_of_entries,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int libwtcdb_io_handle_read_items(
      libwtcdb_io_handle_t *io_handle,
@@ -77,8 +76,8 @@ int libwtcdb_io_handle_read_items(
      uint32_t first_entry_offset,
      uint32_t available_cache_entry_offset,
      uint32_t number_of_items,
-     libwtcdb_array_t *items_array,
-     liberror_error_t **error );
+     libcdata_array_t *items_array,
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

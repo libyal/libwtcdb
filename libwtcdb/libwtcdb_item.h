@@ -1,7 +1,7 @@
 /*
  * Item functions
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2010-2013, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -25,11 +25,10 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #include "libwtcdb_extern.h"
 #include "libwtcdb_io_handle.h"
 #include "libwtcdb_libbfio.h"
+#include "libwtcdb_libcerror.h"
 #include "libwtcdb_libfvalue.h"
 #include "libwtcdb_types.h"
 
@@ -72,11 +71,12 @@ int libwtcdb_item_initialize(
      libbfio_handle_t *file_io_handle,
      libfvalue_table_t *values_table,
      uint8_t flags,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
-LIBWTCDB_EXTERN int libwtcdb_item_free(
-                     libwtcdb_item_t **item,
-                     liberror_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_item_free(
+     libwtcdb_item_t **item,
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

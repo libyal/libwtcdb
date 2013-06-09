@@ -1,7 +1,7 @@
 /*
  * libwtcdb file
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2010-2013, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -23,17 +23,16 @@
 #include <memory.h>
 #include <types.h>
 
-#include <libcstring.h>
-#include <liberror.h>
-#include <libnotify.h>
-
-#include "libwtcdb_array_type.h"
 #include "libwtcdb_debug.h"
 #include "libwtcdb_definitions.h"
 #include "libwtcdb_io_handle.h"
 #include "libwtcdb_item.h"
 #include "libwtcdb_file.h"
 #include "libwtcdb_libbfio.h"
+#include "libwtcdb_libcdata.h"
+#include "libwtcdb_libcerror.h"
+#include "libwtcdb_libcnotify.h"
+#include "libwtcdb_libcstring.h"
 #include "libwtcdb_libfvalue.h"
 
 /* Initializes a file
@@ -42,17 +41,17 @@
  */
 int libwtcdb_file_initialize(
      libwtcdb_file_t **file,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libwtcdb_internal_file_t *internal_file = NULL;
 	static char *function                   = "libwtcdb_file_initialize";
 
 	if( file == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file.",
 		 function );
 
@@ -65,10 +64,10 @@ int libwtcdb_file_initialize(
 
 		if( internal_file == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 			 "%s: unable to create file.",
 			 function );
 
@@ -79,10 +78,10 @@ int libwtcdb_file_initialize(
 		     0,
 		     sizeof( libwtcdb_internal_file_t ) ) == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_SET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
 			 "%s: unable to clear file.",
 			 function );
 
@@ -91,15 +90,15 @@ int libwtcdb_file_initialize(
 
 			return( -1 );
 		}
-		if( libwtcdb_array_initialize(
+		if( libcdata_array_initialize(
 		     &( internal_file->items ),
 		     0,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 			 "%s: unable to create items array.",
 			 function );
 
@@ -109,10 +108,10 @@ int libwtcdb_file_initialize(
 		     &( internal_file->io_handle ),
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 			 "%s: unable to create IO handle.",
 			 function );
 
@@ -127,7 +126,7 @@ on_error:
 	{
 		if( internal_file->items != NULL )
 		{
-			libwtcdb_array_free(
+			libcdata_array_free(
 			 &( internal_file->items ),
 			 NULL,
 			 NULL );
@@ -143,7 +142,7 @@ on_error:
  */
 int libwtcdb_file_free(
      libwtcdb_file_t **file,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libwtcdb_internal_file_t *internal_file = NULL;
 	static char *function                   = "libwtcdb_file_free";
@@ -151,10 +150,10 @@ int libwtcdb_file_free(
 
 	if( file == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file.",
 		 function );
 
@@ -170,10 +169,10 @@ int libwtcdb_file_free(
 			     *file,
 			     error ) != 0 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_IO,
-				 LIBERROR_IO_ERROR_CLOSE_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_CLOSE_FAILED,
 				 "%s: unable to close file.",
 				 function );
 
@@ -182,15 +181,15 @@ int libwtcdb_file_free(
 		}
 		*file = NULL;
 
-		if( libwtcdb_array_free(
+		if( libcdata_array_free(
 		     &( internal_file->items ),
-		     &libfvalue_table_free_as_value,
+		     (int (*)(intptr_t **, libcerror_error_t **)) &libfvalue_table_free,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 			 "%s: unable to free items array.",
 			 function );
 
@@ -200,10 +199,10 @@ int libwtcdb_file_free(
 		     &( internal_file->io_handle ),
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 			 "%s: unable to free IO handle.",
 			 function );
 
@@ -220,17 +219,17 @@ int libwtcdb_file_free(
  */
 int libwtcdb_file_signal_abort(
      libwtcdb_file_t *file,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libwtcdb_internal_file_t *internal_file = NULL;
 	static char *function                   = "libwtcdb_file_signal_abort";
 
 	if( file == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file.",
 		 function );
 
@@ -240,10 +239,10 @@ int libwtcdb_file_signal_abort(
 
 	if( internal_file->io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid internal file - missing IO handle.",
 		 function );
 
@@ -261,7 +260,7 @@ int libwtcdb_file_open(
      libwtcdb_file_t *file,
      const char *filename,
      int access_flags,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_handle_t *file_io_handle        = NULL;
 	libwtcdb_internal_file_t *internal_file = NULL;
@@ -269,10 +268,10 @@ int libwtcdb_file_open(
 
 	if( file == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file.",
 		 function );
 
@@ -282,10 +281,10 @@ int libwtcdb_file_open(
 
 	if( filename == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid filename.",
 		 function );
 
@@ -294,10 +293,10 @@ int libwtcdb_file_open(
 	if( ( ( access_flags & LIBWTCDB_ACCESS_FLAG_READ ) == 0 )
 	 && ( ( access_flags & LIBWTCDB_ACCESS_FLAG_WRITE ) == 0 ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
 		 "%s: unsupported access flags.",
 		 function );
 
@@ -305,10 +304,10 @@ int libwtcdb_file_open(
 	}
 	if( ( access_flags & LIBWTCDB_ACCESS_FLAG_WRITE ) != 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
 		 "%s: write access currently not supported.",
 		 function );
 
@@ -318,10 +317,10 @@ int libwtcdb_file_open(
 	     &file_io_handle,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to create file IO handle.",
 		 function );
 
@@ -333,10 +332,10 @@ int libwtcdb_file_open(
 	     1,
 	     error ) != 1 )
 	{
-                liberror_error_set(
+                libcerror_error_set(
                  error,
-                 LIBERROR_ERROR_DOMAIN_RUNTIME,
-                 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+                 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+                 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
                  "%s: unable to set track offsets read in file IO handle.",
                  function );
 
@@ -350,10 +349,10 @@ int libwtcdb_file_open(
 	      filename ) + 1,
 	     error ) != 1 )
 	{
-                liberror_error_set(
+                libcerror_error_set(
                  error,
-                 LIBERROR_ERROR_DOMAIN_RUNTIME,
-                 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+                 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+                 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
                  "%s: unable to set filename in file IO handle.",
                  function );
 
@@ -365,10 +364,10 @@ int libwtcdb_file_open(
 	     access_flags,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_OPEN_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
 		 "%s: unable to open file: %s.",
 		 function,
 		 filename );
@@ -398,7 +397,7 @@ int libwtcdb_file_open_wide(
      libwtcdb_file_t *file,
      const wchar_t *filename,
      int access_flags,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libbfio_handle_t *file_io_handle        = NULL;
 	libwtcdb_internal_file_t *internal_file = NULL;
@@ -406,10 +405,10 @@ int libwtcdb_file_open_wide(
 
 	if( file == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file.",
 		 function );
 
@@ -419,10 +418,10 @@ int libwtcdb_file_open_wide(
 
 	if( filename == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid filename.",
 		 function );
 
@@ -431,10 +430,10 @@ int libwtcdb_file_open_wide(
 	if( ( ( access_flags & LIBWTCDB_ACCESS_FLAG_READ ) == 0 )
 	 && ( ( access_flags & LIBWTCDB_ACCESS_FLAG_WRITE ) == 0 ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
 		 "%s: unsupported access flags.",
 		 function );
 
@@ -442,10 +441,10 @@ int libwtcdb_file_open_wide(
 	}
 	if( ( access_flags & LIBWTCDB_ACCESS_FLAG_WRITE ) != 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
 		 "%s: write access currently not supported.",
 		 function );
 
@@ -455,10 +454,10 @@ int libwtcdb_file_open_wide(
 	     &file_io_handle,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to create file IO handle.",
 		 function );
 
@@ -470,10 +469,10 @@ int libwtcdb_file_open_wide(
 	     1,
 	     error ) != 1 )
 	{
-                liberror_error_set(
+                libcerror_error_set(
                  error,
-                 LIBERROR_ERROR_DOMAIN_RUNTIME,
-                 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+                 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+                 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
                  "%s: unable to set track offsets read in file IO handle.",
                  function );
 
@@ -487,10 +486,10 @@ int libwtcdb_file_open_wide(
 	      filename ) + 1,
 	     error ) != 1 )
 	{
-                liberror_error_set(
+                libcerror_error_set(
                  error,
-                 LIBERROR_ERROR_DOMAIN_RUNTIME,
-                 LIBERROR_RUNTIME_ERROR_SET_FAILED,
+                 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+                 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
                  "%s: unable to set filename in file IO handle.",
                  function );
 
@@ -502,10 +501,10 @@ int libwtcdb_file_open_wide(
 	     access_flags,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_OPEN_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
 		 "%s: unable to open file: %ls.",
 		 function,
 		 filename );
@@ -535,7 +534,7 @@ int libwtcdb_file_open_file_io_handle(
      libwtcdb_file_t *file,
      libbfio_handle_t *file_io_handle,
      int access_flags,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libwtcdb_internal_file_t *internal_file = NULL;
 	static char *function                   = "libwtcdb_file_open_file_io_handle";
@@ -544,10 +543,10 @@ int libwtcdb_file_open_file_io_handle(
 
 	if( file == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file.",
 		 function );
 
@@ -557,10 +556,10 @@ int libwtcdb_file_open_file_io_handle(
 
 	if( internal_file->file_io_handle != NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
 		 "%s: invalid internal file - file IO handle already set.",
 		 function );
 
@@ -568,10 +567,10 @@ int libwtcdb_file_open_file_io_handle(
 	}
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle.",
 		 function );
 
@@ -580,10 +579,10 @@ int libwtcdb_file_open_file_io_handle(
 	if( ( ( access_flags & LIBWTCDB_ACCESS_FLAG_READ ) == 0 )
 	 && ( ( access_flags & LIBWTCDB_ACCESS_FLAG_WRITE ) == 0 ) )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
 		 "%s: unsupported access flags.",
 		 function );
 
@@ -591,10 +590,10 @@ int libwtcdb_file_open_file_io_handle(
 	}
 	if( ( access_flags & LIBWTCDB_ACCESS_FLAG_WRITE ) != 0 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
 		 "%s: write access currently not supported.",
 		 function );
 
@@ -602,7 +601,7 @@ int libwtcdb_file_open_file_io_handle(
 	}
 	if( ( access_flags & LIBWTCDB_ACCESS_FLAG_READ ) != 0 )
 	{
-		bfio_access_flags = LIBBFIO_FLAG_READ;
+		bfio_access_flags = LIBBFIO_ACCESS_FLAG_READ;
 	}
 	internal_file->file_io_handle = file_io_handle;
 
@@ -612,10 +611,10 @@ int libwtcdb_file_open_file_io_handle(
 
 	if( file_io_handle_is_open == -1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_OPEN_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
 		 "%s: unable to open file.",
 		 function );
 
@@ -628,10 +627,10 @@ int libwtcdb_file_open_file_io_handle(
 		     bfio_access_flags,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_OPEN_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
 			 "%s: unable to open file IO handle.",
 			 function );
 
@@ -642,10 +641,10 @@ int libwtcdb_file_open_file_io_handle(
 	     internal_file,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_READ_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
 		 "%s: unable to read from file handle.",
 		 function );
 
@@ -659,7 +658,7 @@ int libwtcdb_file_open_file_io_handle(
  */
 int libwtcdb_file_close(
      libwtcdb_file_t *file,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libwtcdb_internal_file_t *internal_file = NULL;
 	static char *function                   = "libwtcdb_file_close";
@@ -667,10 +666,10 @@ int libwtcdb_file_close(
 
 	if( file == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file.",
 		 function );
 
@@ -680,10 +679,10 @@ int libwtcdb_file_close(
 
 	if( internal_file->file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid file - missing file IO handle.",
 		 function );
 
@@ -692,16 +691,16 @@ int libwtcdb_file_close(
 	if( internal_file->file_io_handle_created_in_library != 0 )
 	{
 #if defined( HAVE_DEBUG_OUTPUT )
-		if( libnotify_verbose != 0 )
+		if( libcnotify_verbose != 0 )
 		{
 			if( libwtcdb_debug_print_read_offsets(
 			     internal_file->file_io_handle,
 			     error ) != 1 )
 			{
-				liberror_error_set(
+				libcerror_error_set(
 				 error,
-				 LIBERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
 				 "%s: unable to print the read offsets.",
 				 function );
 
@@ -713,10 +712,10 @@ int libwtcdb_file_close(
 		     internal_file->file_io_handle,
 		     error ) != 0 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_IO,
-			 LIBERROR_IO_ERROR_CLOSE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_CLOSE_FAILED,
 			 "%s: unable to close file IO handle.",
 			 function );
 
@@ -726,10 +725,10 @@ int libwtcdb_file_close(
 		     &( internal_file->file_io_handle ),
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
 			 "%s: unable to free file IO handle.",
 			 function );
 
@@ -739,17 +738,16 @@ int libwtcdb_file_close(
 	internal_file->file_io_handle                    = NULL;
 	internal_file->file_io_handle_created_in_library = 0;
 
-	if( libwtcdb_array_resize(
+	if( libcdata_array_empty(
 	     internal_file->items,
-	     0,
-	     &libfvalue_table_free_as_value,
+	     (int (*)(intptr_t **, libcerror_error_t **)) &libfvalue_table_free,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_RESIZE_FAILED,
-		 "%s: unable to resize items array.",
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to empty items array.",
 		 function );
 
 		result = -1;
@@ -762,7 +760,7 @@ int libwtcdb_file_close(
  */
 int libwtcdb_file_open_read(
      libwtcdb_internal_file_t *internal_file,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function          = "libwtcdb_file_open_read";
 	uint32_t first_item_offset     = 0;
@@ -772,10 +770,10 @@ int libwtcdb_file_open_read(
 
 	if( internal_file == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid internal file.",
 		 function );
 
@@ -783,10 +781,10 @@ int libwtcdb_file_open_read(
 	}
 	if( internal_file->io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid internal file - missing IO handle.",
 		 function );
 
@@ -797,9 +795,9 @@ int libwtcdb_file_open_read(
 		internal_file->io_handle->abort = 0;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
-	if( libnotify_verbose != 0 )
+	if( libcnotify_verbose != 0 )
 	{
-		libnotify_printf(
+		libcnotify_printf(
 		 "Reading file header:\n" );
 	}
 #endif
@@ -811,19 +809,19 @@ int libwtcdb_file_open_read(
 	     &number_of_items,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_READ_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
 		 "%s: unable to read file header.",
 		 function );
 
 		return( -1 );
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
-	if( libnotify_verbose != 0 )
+	if( libcnotify_verbose != 0 )
 	{
-		libnotify_printf(
+		libcnotify_printf(
 		 "Reading items:\n" );
 	}
 #endif
@@ -838,10 +836,10 @@ int libwtcdb_file_open_read(
 
 	if( result != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_IO,
-		 LIBERROR_IO_ERROR_READ_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
 		 "%s: unable to read items.",
 		 function );
 	}
@@ -858,17 +856,17 @@ int libwtcdb_file_open_read(
 int libwtcdb_file_get_type(
      libwtcdb_file_t *file,
      uint8_t *type,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libwtcdb_internal_file_t *internal_file = NULL;
 	static char *function                   = "libwtcdb_file_get_type";
 
 	if( file == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file.",
 		 function );
 
@@ -878,10 +876,10 @@ int libwtcdb_file_get_type(
 
 	if( internal_file->io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid internal file - missing IO handle.",
 		 function );
 
@@ -889,10 +887,10 @@ int libwtcdb_file_get_type(
 	}
 	if( type == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid type.",
 		 function );
 
@@ -909,17 +907,17 @@ int libwtcdb_file_get_type(
 int libwtcdb_file_get_number_of_items(
      libwtcdb_file_t *file,
      int *number_of_items,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libwtcdb_internal_file_t *internal_file = NULL;
 	static char *function                   = "libwtcdb_file_get_number_of_items";
 
 	if( file == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file.",
 		 function );
 
@@ -927,15 +925,15 @@ int libwtcdb_file_get_number_of_items(
 	}
 	internal_file = (libwtcdb_internal_file_t *) file;
 
-	if( libwtcdb_array_get_number_of_entries(
+	if( libcdata_array_get_number_of_entries(
 	     internal_file->items,
 	     number_of_items,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve number of items.",
 		 function );
 
@@ -951,7 +949,7 @@ int libwtcdb_file_get_item(
      libwtcdb_file_t *file,
      int item_index,
      libwtcdb_item_t **item,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	libwtcdb_internal_file_t *internal_file = NULL;
 	libfvalue_table_t *values_table         = NULL;
@@ -959,10 +957,10 @@ int libwtcdb_file_get_item(
 
 	if( file == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file.",
 		 function );
 
@@ -972,10 +970,10 @@ int libwtcdb_file_get_item(
 
 	if( internal_file->items == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid internal file - missing items array.",
 		 function );
 
@@ -983,25 +981,25 @@ int libwtcdb_file_get_item(
 	}
 	if( item == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid item.",
 		 function );
 
 		return( -1 );
 	}
-	if( libwtcdb_array_get_entry_by_index(
+	if( libcdata_array_get_entry_by_index(
 	     internal_file->items,
 	     item_index,
 	     (intptr_t **) &values_table,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve item values: %d.",
 		 function,
 		 item_index );
@@ -1016,10 +1014,10 @@ int libwtcdb_file_get_item(
 	     LIBWTCDB_ITEM_FLAGS_DEFAULT,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
 		 "%s: unable to create item.",
 		 function );
 

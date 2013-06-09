@@ -1,7 +1,7 @@
 /*
  * CRC-64 functions
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2010-2013, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -22,7 +22,7 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
+#include "libwtcdb_libcerror.h"
 
 /* Table of CRC-64 values of 8-bit values */
 const uint64_t libwtcdb_crc64_table[ 256 ] = {
@@ -101,7 +101,7 @@ int libwtcdb_crc64_weak_calculate(
      uint8_t *buffer,
      size_t size,
      uint64_t initial_value,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function      = "libwtcdb_crc64_weak_calculate";
 	size_t buffer_offset       = 0;
@@ -109,10 +109,10 @@ int libwtcdb_crc64_weak_calculate(
 
 	if( crc64 == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid CRC-64.",
 		 function );
 
@@ -120,10 +120,10 @@ int libwtcdb_crc64_weak_calculate(
 	}
 	if( buffer == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid buffer.",
 		 function );
 
@@ -131,10 +131,10 @@ int libwtcdb_crc64_weak_calculate(
 	}
 	if( size > (size_t) SSIZE_MAX )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
 		 "%s: invalid size value exceeds maximum.",
 		 function );
 

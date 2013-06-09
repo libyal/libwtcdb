@@ -1,7 +1,7 @@
 /*
  * Support functions
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2010-2013, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -25,34 +25,38 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #include "libwtcdb_extern.h"
 #include "libwtcdb_libbfio.h"
+#include "libwtcdb_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-LIBWTCDB_EXTERN const char *libwtcdb_get_version(
-                             void );
+LIBWTCDB_EXTERN \
+const char *libwtcdb_get_version(
+             void );
 
-LIBWTCDB_EXTERN int libwtcdb_get_access_flags_read(
-                     void );
+LIBWTCDB_EXTERN \
+int libwtcdb_get_access_flags_read(
+     void );
 
-LIBWTCDB_EXTERN int libwtcdb_check_file_signature(
-                     const char *filename,
-                     liberror_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_check_file_signature(
+     const char *filename,
+     libcerror_error_t **error );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
-LIBWTCDB_EXTERN int libwtcdb_check_file_signature_wide(
-                     const wchar_t *filename,
-                     liberror_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_check_file_signature_wide(
+     const wchar_t *filename,
+     libcerror_error_t **error );
 #endif
 
-LIBWTCDB_EXTERN int libwtcdb_check_file_signature_file_io_handle(
-                     libbfio_handle_t *file_io_handle,
-                     liberror_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_check_file_signature_file_io_handle(
+     libbfio_handle_t *file_io_handle,
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

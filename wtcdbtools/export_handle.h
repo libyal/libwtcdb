@@ -1,7 +1,7 @@
 /* 
  * Export handle
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2010-2013, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -25,21 +25,11 @@
 #include <common.h>
 #include <types.h>
 
-#include <libcstring.h>
-#include <liberror.h>
-
-/* If libtool DLL support is enabled set LIBWTCDB_DLL_IMPORT
- * before including libwtcdb_extern.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBWTCDB_DLL_EXPORT
-#endif
-
-#include <libwtcdb.h>
-
-#include <libsystem.h>
-
 #include "log_handle.h"
+#include "wtcdbtools_libcerror.h"
+#include "wtcdbtools_libcstring.h"
+#include "wtcdbtools_libcsystem.h"
+#include "wtcdbtools_libwtcdb.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -49,6 +39,10 @@ typedef struct export_handle export_handle_t;
 
 struct export_handle
 {
+	/* The libwtcdb input file
+	 */
+	libwtcdb_file_t *input_file;
+
 	/* The target path
 	 */
 	libcstring_system_character_t *target_path;
@@ -57,31 +51,39 @@ struct export_handle
 	 */
 	size_t target_path_size;
 
-	/* The export path
+	/* The items export path
 	 */
-	libcstring_system_character_t *export_path;
+	libcstring_system_character_t *items_export_path;
 
-	/* The export path size
+	/* The items export path size
 	 */
-	size_t export_path_size;
+	size_t items_export_path_size;
 
 	/* The nofication output stream
 	 */
 	FILE *notify_stream;
+
+	/* Value to indicate if abort was signalled
+	 */
+	int abort;
 };
 
 int export_handle_initialize(
      export_handle_t **export_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int export_handle_free(
      export_handle_t **export_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
+
+int export_handle_signal_abort(
+     export_handle_t *export_handle,
+     libcerror_error_t **error );
 
 int export_handle_set_target_path(
      export_handle_t *export_handle,
      const libcstring_system_character_t *target_path,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int export_handle_set_export_path(
      export_handle_t *export_handle,
@@ -91,39 +93,25 @@ int export_handle_set_export_path(
      size_t suffix_length,
      libcstring_system_character_t **export_path,
      size_t *export_path_size,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
-int export_handle_create_export_path(
+int export_handle_create_items_export_path(
      export_handle_t *export_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
-int export_handle_make_directory(
+int export_handle_open(
      export_handle_t *export_handle,
-     libcstring_system_character_t *directory_name,
-     log_handle_t *log_handle,
-     liberror_error_t **error );
+     const libcstring_system_character_t *filename,
+     libcerror_error_t **error );
 
-int export_handle_sanitize_filename(
+int export_handle_close(
      export_handle_t *export_handle,
-     libcstring_system_character_t *filename,
-     size_t filename_size,
-     liberror_error_t **error );
-
-int export_handle_create_target_path(
-     export_handle_t *export_handle,
-     libcstring_system_character_t *export_path,
-     size_t export_path_size,
-     uint8_t *utf8_filename,
-     size_t utf8_filename_size,
-     libcstring_system_character_t **target_path,
-     size_t *target_path_size,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 int export_handle_export_file(
      export_handle_t *export_handle,
-     libwtcdb_file_t *file,
      log_handle_t *log_handle,
-     liberror_error_t **error );
+     libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }

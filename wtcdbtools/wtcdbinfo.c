@@ -1,7 +1,7 @@
 /*
  * Shows information obtained from a Windows Explorer thumbnail cache database file
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2010-2013, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -20,13 +20,9 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
 #include <memory.h>
 #include <types.h>
-
-#include <libcstring.h>
-#include <liberror.h>
-
-#include <stdio.h>
 
 #if defined( HAVE_UNISTD_H )
 #include <unistd.h>
@@ -36,18 +32,13 @@
 #include <stdlib.h>
 #endif
 
-/* If libtool DLL support is enabled set LIBWTCDB_DLL_IMPORT
- * before including libwtcdb.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBWTCDB_DLL_IMPORT
-#endif
-
-#include <libwtcdb.h>
-
-#include <libsystem.h>
-
 #include "wtcdboutput.h"
+#include "wtcdbtools_libcerror.h"
+#include "wtcdbtools_libclocale.h"
+#include "wtcdbtools_libcnotify.h"
+#include "wtcdbtools_libcstring.h"
+#include "wtcdbtools_libcsystem.h"
+#include "wtcdbtools_libwtcdb.h"
 
 /* Prints the executable usage information
  */
@@ -76,7 +67,7 @@ void usage_fprint(
 int wtcdbinfo_file_info_fprint(
      FILE *stream,
      libwtcdb_file_t *file,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "wtcdbinfo_file_info_fprint";
 	uint8_t file_type     = 0;
@@ -84,10 +75,10 @@ int wtcdbinfo_file_info_fprint(
 
 	if( stream == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid stream.",
 		 function );
 
@@ -95,10 +86,10 @@ int wtcdbinfo_file_info_fprint(
 	}
 	if( file == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file.",
 		 function );
 
@@ -109,10 +100,10 @@ int wtcdbinfo_file_info_fprint(
 	     &file_type,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve file type.",
 		 function );
 
@@ -123,10 +114,10 @@ int wtcdbinfo_file_info_fprint(
 	     &number_of_items,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve number of items.",
 		 function );
 
@@ -176,39 +167,44 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
-	liberror_error_t *error               = NULL;
+	libcerror_error_t *error              = NULL;
 	libwtcdb_file_t *wtcdb_file           = NULL;
 	libcstring_system_character_t *source = NULL;
 	char *program                         = "wtcdbinfo";
 	libcstring_system_integer_t option    = 0;
 	int verbose                           = 0;
 
-	libsystem_notify_set_stream(
+	libcnotify_stream_set(
 	 stderr,
 	 NULL );
-	libsystem_notify_set_verbose(
+	libcnotify_verbose_set(
 	 1 );
 
-        if( libsystem_initialize(
-             "wtcdbtools",
-             &error ) != 1 )
+	if( libclocale_initialize(
+	     "wtcdbtools",
+	     &error ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to initialize locale values.\n" );
+
+		goto on_error;
+	}
+	if( libcsystem_initialize(
+	     _IONBF,
+	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
 		 "Unable to initialize system values.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 	wtcdboutput_version_fprint(
 	 stdout,
 	 program );
 
-	while( ( option = libsystem_getopt(
+	while( ( option = libcsystem_getopt(
 	                   argc,
 	                   argv,
 	                   _LIBCSTRING_SYSTEM_STRING( "hvV" ) ) ) != (libcstring_system_integer_t) -1 )
@@ -220,7 +216,7 @@ int main( int argc, char * const argv[] )
 				fprintf(
 				 stderr,
 				 "Invalid argument: %" PRIs_LIBCSTRING_SYSTEM "\n",
-				 argv[ optind ] );
+				 argv[ optind - 1 ] );
 
 				usage_fprint(
 				 stdout );
@@ -258,7 +254,7 @@ int main( int argc, char * const argv[] )
 	}
 	source = argv[ optind ];
 
-	libsystem_notify_set_verbose(
+	libcnotify_verbose_set(
 	 verbose );
 	libwtcdb_notify_set_stream(
 	 stderr,
@@ -274,12 +270,7 @@ int main( int argc, char * const argv[] )
 		 stderr,
 		 "Unable to initialize libwtcdb file.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libwtcdb_file_open_wide(
@@ -298,18 +289,9 @@ int main( int argc, char * const argv[] )
 		fprintf(
 		 stderr,
 		 "Error opening file: %" PRIs_LIBCSTRING_SYSTEM ".\n",
-		 argv[ optind ] );
+		 source );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		libwtcdb_file_free(
-		 &wtcdb_file,
-		 NULL );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 	if( wtcdbinfo_file_info_fprint(
 	     stdout,
@@ -320,19 +302,7 @@ int main( int argc, char * const argv[] )
 		 stderr,
 		 "Unable to print file information.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		libwtcdb_file_close(
-		 wtcdb_file,
-		 NULL );
-		libwtcdb_file_free(
-		 &wtcdb_file,
-		 NULL );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 	if( libwtcdb_file_close(
 	     wtcdb_file,
@@ -343,16 +313,7 @@ int main( int argc, char * const argv[] )
 		 "Error closing file: %" PRIs_LIBCSTRING_SYSTEM ".\n",
 		 argv[ optind ] );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		libwtcdb_file_free(
-		 &wtcdb_file,
-		 NULL );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 	if( libwtcdb_file_free(
 	     &wtcdb_file,
@@ -362,13 +323,27 @@ int main( int argc, char * const argv[] )
 		 stderr,
 		 "Unable to free libwtcdb file.\n" );
 
-		libsystem_notify_print_error_backtrace(
-		 error );
-		liberror_error_free(
-		 &error );
-
-		return( EXIT_FAILURE );
+		goto on_error;
 	}
 	return( EXIT_SUCCESS );
+
+on_error:
+	if( error != NULL )
+	{
+		libcnotify_print_error_backtrace(
+		 error );
+		libcerror_error_free(
+		 &error );
+	}
+	if( wtcdb_file != NULL )
+	{
+		libwtcdb_file_close(
+		 wtcdb_file,
+		 NULL );
+		libwtcdb_file_free(
+		 &wtcdb_file,
+		 NULL );
+	}
+	return( EXIT_FAILURE );
 }
 

@@ -1,7 +1,7 @@
 /*
  * Common output functions for the wtcdbtools
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2010-2013, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -24,8 +24,6 @@
 
 #include <common.h>
 #include <types.h>
-
-#include <libsystem.h>
 
 #if defined( __cplusplus )
 extern "C" {

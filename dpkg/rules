@@ -1,0 +1,76 @@
+#!/usr/bin/make -f
+# debian/rules that uses debhelper >= 7.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+# This has to be exported to make some magic below work.
+export DH_OPTIONS
+
+
+%:
+	dh  $@
+
+install_libwtcdb:
+	# Set up libwtcdb package directories and files
+	mkdir -p debian/libwtcdb/usr/lib
+	install -p -m755 debian/tmp/usr/lib/lib*.so.*.*.* debian/libwtcdb/usr/lib
+
+install_libwtcdb_dev:
+	# Set up libwtcdb-dev package directories and files
+	mkdir -p debian/libwtcdb-dev/usr/include
+	mkdir -p debian/libwtcdb-dev/usr/include/libwtcdb
+	mkdir -p debian/libwtcdb-dev/usr/lib
+	mkdir -p debian/libwtcdb-dev/usr/lib/pkgconfig
+	mkdir -p debian/libwtcdb-dev/usr/share/man/man3
+	install -p -m755 debian/tmp/usr/include/*.h debian/libwtcdb-dev/usr/include
+	install -p -m755 debian/tmp/usr/include/libwtcdb/*.h debian/libwtcdb-dev/usr/include/libwtcdb
+	install -p -m755 debian/tmp/usr/lib/*.la debian/libwtcdb-dev/usr/lib
+	install -p -m755 debian/tmp/usr/lib/lib*.a debian/libwtcdb-dev/usr/lib
+	install -p -m755 debian/tmp/usr/lib/lib*.so debian/libwtcdb-dev/usr/lib
+	install -p -m755 debian/tmp/usr/lib/pkgconfig/* debian/libwtcdb-dev/usr/lib/pkgconfig
+	install -p -m755 debian/tmp/usr/share/man/man3/* debian/libwtcdb-dev/usr/share/man/man3
+
+install_libwtcdb_tools:
+	# Set up libwtcdb-tools package directories and files
+	mkdir -p debian/libwtcdb-tools/usr/bin
+	mkdir -p debian/libwtcdb-tools/usr/share/man/man1
+	install -p -m755 debian/tmp/usr/bin/* debian/libwtcdb-tools/usr/bin
+	install -p -m755 debian/tmp/usr/share/man/man1/* debian/libwtcdb-tools/usr/share/man/man1
+
+override_dh_auto_test:
+
+override_dh_installinit: install_libwtcdb install_libwtcdb_dev install_libwtcdb_tools
+
+override_dh_installmenu:
+
+override_dh_installmime:
+
+override_dh_installmodules:
+
+override_dh_installlogcheck:
+
+override_dh_installlogrotate:
+
+override_dh_installpam:
+
+override_dh_installppp:
+
+override_dh_installudev:
+
+override_dh_installwm:
+
+override_dh_installxfonts:
+
+override_dh_gconf:
+
+override_dh_icons:
+
+override_dh_perl:
+
+override_dh_shlibdeps:
+	dh_shlibdeps -Llibwtcdb -l${PWD}/debian/tmp/usr/lib
+
+override_dh_makeshlibs:
+	dh_makeshlibs -Xlibwtcdb-dev
+

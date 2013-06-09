@@ -1,7 +1,7 @@
 /*
  * Extracts items from a Windows Explorer thumbnail cache database file
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2010-2013, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -20,13 +20,9 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
 #include <memory.h>
 #include <types.h>
-
-#include <libcstring.h>
-#include <liberror.h>
-
-#include <stdio.h>
 
 #if defined( HAVE_UNISTD_H )
 #include <unistd.h>
@@ -36,20 +32,19 @@
 #include <stdlib.h>
 #endif
 
-/* If libtool DLL support is enabled set LIBWTCDB_DLL_IMPORT
- * before including libwtcdb.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBWTCDB_DLL_IMPORT
-#endif
-
-#include <libwtcdb.h>
-
-#include <libsystem.h>
-
 #include "export_handle.h"
 #include "log_handle.h"
 #include "wtcdboutput.h"
+#include "wtcdbtools_libcerror.h"
+#include "wtcdbtools_libclocale.h"
+#include "wtcdbtools_libcnotify.h"
+#include "wtcdbtools_libcpath.h"
+#include "wtcdbtools_libcstring.h"
+#include "wtcdbtools_libcsystem.h"
+#include "wtcdbtools_libwtcdb.h"
+
+export_handle_t *wtcdbexport_export_handle = NULL;
+int wtcdbexport_abort                      = 0;
 
 /* Prints the executable usage information
  */
@@ -75,6 +70,45 @@ void usage_fprint(
 	fprintf( stream, "\t-V:     print version\n" );
 }
 
+/* Signal handler for wtcdbexport
+ */
+void wtcdbexport_signal_handler(
+      libcsystem_signal_t signal LIBCSYSTEM_ATTRIBUTE_UNUSED )
+{
+	libcerror_error_t *error = NULL;
+	static char *function   = "wtcdbexport_signal_handler";
+
+	LIBCSYSTEM_UNREFERENCED_PARAMETER( signal )
+
+	wtcdbexport_abort = 1;
+
+	if( wtcdbexport_export_handle != NULL )
+	{
+		if( export_handle_signal_abort(
+		     wtcdbexport_export_handle,
+		     &error ) != 1 )
+		{
+			libcnotify_printf(
+			 "%s: unable to signal export handle to abort.\n",
+			 function );
+
+			libcnotify_print_error_backtrace(
+			 error );
+			libcerror_error_free(
+			 &error );
+		}
+	}
+	/* Force stdin to close otherwise any function reading it will remain blocked
+	 */
+	if( libcsystem_file_io_close(
+	     0 ) != 0 )
+	{
+		libcnotify_printf(
+		 "%s: unable to close stdin.\n",
+		 function );
+	}
+}
+
 /* The main program
  */
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
@@ -83,9 +117,7 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
-	export_handle_t *wtcdbexport_export_handle        = NULL;
-	liberror_error_t *error                           = NULL;
-	libwtcdb_file_t *wtcdbexport_file                 = NULL;
+	libcerror_error_t *error                          = NULL;
 	log_handle_t *log_handle                          = NULL;
 	libcstring_system_character_t *log_filename       = NULL;
 	libcstring_system_character_t *option_target_path = NULL;
@@ -97,15 +129,25 @@ int main( int argc, char * const argv[] )
 	int result                                        = 0;
 	int verbose                                       = 0;
 
-	libsystem_notify_set_stream(
+	libcnotify_stream_set(
 	 stderr,
 	 NULL );
-	libsystem_notify_set_verbose(
+	libcnotify_verbose_set(
 	 1 );
 
-        if( libsystem_initialize(
-             "wtcdbtools",
-             &error ) != 1 )
+	if( libclocale_initialize(
+	     "wtcdbtools",
+	     &error ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to initialize locale values.\n" );
+
+		goto on_error;
+	}
+	if( libcsystem_initialize(
+	     _IONBF,
+	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
@@ -117,7 +159,7 @@ int main( int argc, char * const argv[] )
 	 stdout,
 	 program );
 
-	while( ( option = libsystem_getopt(
+	while( ( option = libcsystem_getopt(
 	                   argc,
 	                   argv,
 	                   _LIBCSTRING_SYSTEM_STRING( "hl:t:vV" ) ) ) != (libcstring_system_integer_t) -1 )
@@ -129,7 +171,7 @@ int main( int argc, char * const argv[] )
 				fprintf(
 				 stderr,
 				 "Invalid argument: %" PRIs_LIBCSTRING_SYSTEM "\n",
-				 argv[ optind ] );
+				 argv[ optind - 1 ] );
 
 				usage_fprint(
 				 stdout );
@@ -184,7 +226,7 @@ int main( int argc, char * const argv[] )
 
 		path_separator = libcstring_system_string_search_character_reverse(
 		                  source,
-		                  (libcstring_system_character_t) LIBSYSTEM_PATH_SEPARATOR,
+		                  (libcstring_system_character_t) LIBCPATH_SEPARATOR,
 		                  source_length );
 
 		if( path_separator == NULL )
@@ -197,7 +239,7 @@ int main( int argc, char * const argv[] )
 		}
 		option_target_path = path_separator;
 	}
-	libsystem_notify_set_verbose(
+	libcnotify_verbose_set(
 	 verbose );
 	libwtcdb_notify_set_stream(
 	 stderr,
@@ -236,7 +278,7 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	result = export_handle_create_export_path(
+	result = export_handle_create_items_export_path(
 	          wtcdbexport_export_handle,
 	          &error );
 
@@ -244,7 +286,7 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to create export path.\n" );
+		 "Unable to create items export path.\n" );
 
 		goto on_error;
 	}
@@ -253,17 +295,7 @@ int main( int argc, char * const argv[] )
 		fprintf(
 		 stderr,
 		 "%" PRIs_LIBCSTRING_SYSTEM " already exists.\n",
-		 wtcdbexport_export_handle->export_path );
-
-		goto on_error;
-	}
-	if( libwtcdb_file_initialize(
-	     &wtcdbexport_file,
-	     &error ) != 1 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to initialize file.\n" );
+		 wtcdbexport_export_handle->items_export_path );
 
 		goto on_error;
 	}
@@ -283,34 +315,40 @@ int main( int argc, char * const argv[] )
 	 stdout,
 	 "Opening file.\n" );
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libwtcdb_file_open_wide(
-	     wtcdbexport_file,
-	     source,
-	     LIBWTCDB_OPEN_READ,
+#ifdef TODO_SIGNAL_ABORT
+	if( libcsystem_signal_attach(
+	     wtcdbexport_signal_handler,
 	     &error ) != 1 )
-#else
-	if( libwtcdb_file_open(
-	     wtcdbexport_file,
-	     source,
-	     LIBWTCDB_OPEN_READ,
-	     &error ) != 1 )
-#endif
 	{
 		fprintf(
 		 stderr,
-		 "Unable to open file: %" PRIs_LIBCSTRING_SYSTEM ".\n",
+		 "Unable to attach signal handler.\n" );
+
+		libcnotify_print_error_backtrace(
+		 error );
+		libcerror_error_free(
+		 &error );
+	}
+#endif
+	if( export_handle_open(
+	     wtcdbexport_export_handle,
+	     source,
+	     &error ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to open: %" PRIs_LIBCSTRING_SYSTEM ".\n",
 		 source );
 
 		goto on_error;
 	}
+/* TODO
 	fprintf(
 	 stdout,
 	 "Exporting aliases.\n" );
-
+*/
 	result = export_handle_export_file(
 	          wtcdbexport_export_handle,
-	          wtcdbexport_file,
 	          log_handle,
 	          &error );
 
@@ -322,23 +360,27 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	if( libwtcdb_file_close(
-	     wtcdbexport_file,
-	     &error ) != 0 )
-	{
-		fprintf(
-		 stderr,
-		 "Unable to close file.\n" );
-
-		goto on_error;
-	}
-	if( libwtcdb_file_free(
-	     &wtcdbexport_file,
+#ifdef TODO_SIGNAL_ABORT
+	if( libcsystem_signal_detach(
 	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to free file.\n" );
+		 "Unable to detach signal handler.\n" );
+
+		libcnotify_print_error_backtrace(
+		 error );
+		libcerror_error_free(
+		 &error );
+	}
+#endif
+	if( export_handle_close(
+	     wtcdbexport_export_handle,
+	     &error ) != 0 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to close export handle.\n" );
 
 		goto on_error;
 	}
@@ -389,33 +431,21 @@ int main( int argc, char * const argv[] )
 on_error:
 	if( error != NULL )
 	{
-		libsystem_notify_print_error_backtrace(
+		libcnotify_print_error_backtrace(
 		 error );
-		liberror_error_free(
+		libcerror_error_free(
 		 &error );
-	}
-	if( wtcdbexport_file != NULL )
-	{
-		libwtcdb_file_close(
-		 wtcdbexport_file,
-		 NULL );
-		libwtcdb_file_free(
-		 &wtcdbexport_file,
-		 NULL );
-	}
-	if( log_handle != NULL )
-	{
-		log_handle_close(
-		 log_handle,
-		 NULL );
-		log_handle_free(
-		 &log_handle,
-		 NULL );
 	}
 	if( wtcdbexport_export_handle != NULL )
 	{
 		export_handle_free(
 		 &wtcdbexport_export_handle,
+		 NULL );
+	}
+	if( log_handle != NULL )
+	{
+		log_handle_free(
+		 &log_handle,
 		 NULL );
 	}
 	return( EXIT_FAILURE );

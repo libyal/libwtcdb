@@ -1,7 +1,7 @@
 /*
  * Notification function
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2010-2013, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -23,13 +23,11 @@
 #define _LIBWTCDB_NOTIFY_H
 
 #include <common.h>
+#include <file_stream.h>
 #include <types.h>
 
-#include <liberror.h>
-
-#include <stdio.h>
-
 #include "libwtcdb_extern.h"
+#include "libwtcdb_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -37,19 +35,23 @@ extern "C" {
 
 #if !defined( HAVE_LOCAL_LIBWTCDB )
 
-LIBWTCDB_EXTERN void libwtcdb_notify_set_verbose(
-                      int verbose );
+LIBWTCDB_EXTERN \
+void libwtcdb_notify_set_verbose(
+      int verbose );
 
-LIBWTCDB_EXTERN int libwtcdb_notify_set_stream(
-                     FILE *stream,
-                     liberror_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_notify_set_stream(
+     FILE *stream,
+     libcerror_error_t **error );
 
-LIBWTCDB_EXTERN int libwtcdb_notify_stream_open(
-                     const char *filename,
-                     liberror_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_notify_stream_open(
+     const char *filename,
+     libcerror_error_t **error );
 
-LIBWTCDB_EXTERN int libwtcdb_notify_stream_close(
-                     liberror_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_notify_stream_close(
+     libcerror_error_t **error );
 
 #endif
 

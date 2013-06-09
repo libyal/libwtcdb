@@ -24,11 +24,11 @@ BEGIN
       VALUE "FileDescription",		"Library to support the Windows Explorer thumbnail cache database format\0"
       VALUE "FileVersion",		"@VERSION@" "\0"
       VALUE "InternalName",		"libwtcdb.dll\0"
-      VALUE "LegalCopyright",		"(c) 2010 Joachim Metz <jbmetz@users.sourceforge.net>\0"
+      VALUE "LegalCopyright",		"(c) 2010-2013, Joachim Metz <joachim.metz@gmail.com>\0"
       VALUE "OriginalFilename",		"libwtcdb.dll\0"
       VALUE "ProductName",		"libwtcdb\0"
       VALUE "ProductVersion",		"@VERSION@" "\0"
-      VALUE "Comments",			"For more information visit http://libwtcdb.sourceforge.net\0"
+      VALUE "Comments",			"For more information visit https://code.google.com/p/libwtcdb/\0"
     END
   END
   BLOCK "VarFileInfo"

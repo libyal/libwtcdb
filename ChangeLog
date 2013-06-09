@@ -1,11 +1,18 @@
 TODO:
-* update macosx files
+* wtcdbinfo: add info handle
+* wtcdbexport: move file into export handle
 * update msvscpp files
+* update man pages
 
 * debug print cache type
 * debug print index entry flags
 
 * wtcdbexport export items in directories using the entry hash as filename
+
+20130609
+* 2013 update
+* changes for project move
+* update dependencies
 
 20101225
 * worked on item support

@@ -1,7 +1,7 @@
 /*
  * Library to support the Windows Explorer thumbnail cache database format
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2010-2013, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -44,37 +44,42 @@ extern "C" {
 
 /* Returns the library version
  */
-LIBWTCDB_EXTERN const char *libwtcdb_get_version(
-                             void );
+LIBWTCDB_EXTERN \
+const char *libwtcdb_get_version(
+             void );
 
 /* Returns the access flags for reading
  */
-LIBWTCDB_EXTERN int libwtcdb_get_access_flags_read(
-                     void );
+LIBWTCDB_EXTERN \
+int libwtcdb_get_access_flags_read(
+     void );
 
 /* Determines if a file is a Windows Explorer thumbnail cache database file
  * Returns 1 if true, 0 if not or -1 on error
  */
-LIBWTCDB_EXTERN int libwtcdb_check_file_signature(
-                     const char *filename,
-                     libwtcdb_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_check_file_signature(
+     const char *filename,
+     libwtcdb_error_t **error );
 
 #if defined( LIBWTCDB_HAVE_WIDE_CHARACTER_TYPE )
 /* Determines if a file is a Windows Explorer thumbnail cache database file
  * Returns 1 if true, 0 if not or -1 on error
  */
-LIBWTCDB_EXTERN int libwtcdb_check_file_signature_wide(
-                     const wchar_t *filename,
-                     libwtcdb_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_check_file_signature_wide(
+     const wchar_t *filename,
+     libwtcdb_error_t **error );
 #endif
 
 #if defined( LIBWTCDB_HAVE_BFIO )
 /* Determines if a file is a Windows Explorer thumbnail cache database file using a Basic File IO (bfio) handle
  * Returns 1 if true, 0 if not or -1 on error
  */
-LIBWTCDB_EXTERN int libwtcdb_check_file_signature_file_io_handle(
-                     libbfio_handle_t *file_io_handle,
-                     libwtcdb_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_check_file_signature_file_io_handle(
+     libbfio_handle_t *file_io_handle,
+     libwtcdb_error_t **error );
 #endif
 
 /* -------------------------------------------------------------------------
@@ -83,29 +88,33 @@ LIBWTCDB_EXTERN int libwtcdb_check_file_signature_file_io_handle(
 
 /* Sets the verbose notification
  */
-LIBWTCDB_EXTERN void libwtcdb_notify_set_verbose(
-                      int verbose );
+LIBWTCDB_EXTERN \
+void libwtcdb_notify_set_verbose(
+      int verbose );
 
 /* Sets the notification stream
  * Returns 1 if successful or -1 on error
  */
-LIBWTCDB_EXTERN int libwtcdb_notify_set_stream(
-                     FILE *stream,
-                     libwtcdb_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_notify_set_stream(
+     FILE *stream,
+     libwtcdb_error_t **error );
 
 /* Opens the notification stream using a filename
  * The stream is opened in append mode
  * Returns 1 if successful or -1 on error
  */
-LIBWTCDB_EXTERN int libwtcdb_notify_stream_open(
-                     const char *filename,
-                     libwtcdb_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_notify_stream_open(
+     const char *filename,
+     libwtcdb_error_t **error );
 
 /* Closes the notification stream if opened using a filename
  * Returns 0 if successful or -1 on error
  */
-LIBWTCDB_EXTERN int libwtcdb_notify_stream_close(
-                   libwtcdb_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_notify_stream_close(
+     libwtcdb_error_t **error );
 
 /* -------------------------------------------------------------------------
  * Error functions
@@ -113,38 +122,43 @@ LIBWTCDB_EXTERN int libwtcdb_notify_stream_close(
 
 /* Frees the error including elements
  */
-LIBWTCDB_EXTERN void libwtcdb_error_free(
-                      libwtcdb_error_t **error );
+LIBWTCDB_EXTERN \
+void libwtcdb_error_free(
+      libwtcdb_error_t **error );
 
 /* Prints a descriptive string of the error to the stream
  * Returns the number of printed characters if successful or -1 on error
  */
-LIBWTCDB_EXTERN int libwtcdb_error_fprint(
-                     libwtcdb_error_t *error,
-                     FILE *stream );
+LIBWTCDB_EXTERN \
+int libwtcdb_error_fprint(
+     libwtcdb_error_t *error,
+     FILE *stream );
 
 /* Prints a descriptive string of the error to the string
  * Returns the number of printed characters if successful or -1 on error
  */
-LIBWTCDB_EXTERN int libwtcdb_error_sprint(
-                     libwtcdb_error_t *error,
-                     char *string,
-                     size_t size );
+LIBWTCDB_EXTERN \
+int libwtcdb_error_sprint(
+     libwtcdb_error_t *error,
+     char *string,
+     size_t size );
 
 /* Prints a backtrace of the error to the stream
  * Returns the number of printed characters if successful or -1 on error
  */
-LIBWTCDB_EXTERN int libwtcdb_error_backtrace_fprint(
-                     libwtcdb_error_t *error,
-                     FILE *stream );
+LIBWTCDB_EXTERN \
+int libwtcdb_error_backtrace_fprint(
+     libwtcdb_error_t *error,
+     FILE *stream );
 
 /* Prints a backtrace of the error to the string
  * Returns the number of printed characters if successful or -1 on error
  */
-LIBWTCDB_EXTERN int libwtcdb_error_backtrace_sprint(
-                     libwtcdb_error_t *error,
-                     char *string,
-                     size_t size );
+LIBWTCDB_EXTERN \
+int libwtcdb_error_backtrace_sprint(
+     libwtcdb_error_t *error,
+     char *string,
+     size_t size );
 
 /* -------------------------------------------------------------------------
  * File functions
@@ -154,86 +168,96 @@ LIBWTCDB_EXTERN int libwtcdb_error_backtrace_sprint(
  * Make sure the value file is pointing to is set to NULL
  * Returns 1 if successful or -1 on error
  */
-LIBWTCDB_EXTERN int libwtcdb_file_initialize(
-                     libwtcdb_file_t **file,
-                     libwtcdb_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_file_initialize(
+     libwtcdb_file_t **file,
+     libwtcdb_error_t **error );
 
 /* Frees a file
  * Returns 1 if successful or -1 on error
  */
-LIBWTCDB_EXTERN int libwtcdb_file_free(
-                     libwtcdb_file_t **file,
-                     libwtcdb_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_file_free(
+     libwtcdb_file_t **file,
+     libwtcdb_error_t **error );
 
 /* Signals the libwtcdb file to abort its current activity
  * Returns 1 if successful or -1 on error
  */
-LIBWTCDB_EXTERN int libwtcdb_file_signal_abort(
-                     libwtcdb_file_t *file,
-                     libwtcdb_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_file_signal_abort(
+     libwtcdb_file_t *file,
+     libwtcdb_error_t **error );
 
 /* Opens a file
  * Returns 1 if successful or -1 on error
  */
-LIBWTCDB_EXTERN int libwtcdb_file_open(
-                     libwtcdb_file_t *file,
-                     const char *filename,
-                     int access_flags,
-                     libwtcdb_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_file_open(
+     libwtcdb_file_t *file,
+     const char *filename,
+     int access_flags,
+     libwtcdb_error_t **error );
 
 #if defined( LIBWTCDB_HAVE_WIDE_CHARACTER_TYPE )
 /* Opens a file
  * Returns 1 if successful or -1 on error
  */
-LIBWTCDB_EXTERN int libwtcdb_file_open_wide(
-                     libwtcdb_file_t *file,
-                     const wchar_t *filename,
-                     int access_flags,
-                     libwtcdb_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_file_open_wide(
+     libwtcdb_file_t *file,
+     const wchar_t *filename,
+     int access_flags,
+     libwtcdb_error_t **error );
 #endif
 
 #if defined( LIBWTCDB_HAVE_BFIO )
 /* Opens a file using a Basic File IO (bfio) handle
  * Returns 1 if successful or -1 on error
  */
-LIBWTCDB_EXTERN int libwtcdb_file_open_file_io_handle(
-                     libwtcdb_file_t *file,
-                     libbfio_handle_t *file_io_handle,
-                     int access_flags,
-                     libwtcdb_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_file_open_file_io_handle(
+     libwtcdb_file_t *file,
+     libbfio_handle_t *file_io_handle,
+     int access_flags,
+     libwtcdb_error_t **error );
 #endif
 
 /* Closes a file
  * Returns 0 if successful or -1 on error
  */
-LIBWTCDB_EXTERN int libwtcdb_file_close(
-                     libwtcdb_file_t *file,
-                     libwtcdb_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_file_close(
+     libwtcdb_file_t *file,
+     libwtcdb_error_t **error );
 
 /* Retrieves the file type
  * Returns 1 if successful or -1 on error
  */
-LIBWTCDB_EXTERN int libwtcdb_file_get_type(
-                     libwtcdb_file_t *file,
-                     uint8_t *type,
-                     libwtcdb_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_file_get_type(
+     libwtcdb_file_t *file,
+     uint8_t *type,
+     libwtcdb_error_t **error );
 
 /* Retrieves the number of items
  * Returns 1 if successful or -1 on error
  */
-LIBWTCDB_EXTERN int libwtcdb_file_get_number_of_items(
-                     libwtcdb_file_t *file,
-                     int *number_of_items,
-                     libwtcdb_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_file_get_number_of_items(
+     libwtcdb_file_t *file,
+     int *number_of_items,
+     libwtcdb_error_t **error );
 
 /* Retrieves a specific item
  * Returns 1 if successful or -1 on error
  */
-LIBWTCDB_EXTERN int libwtcdb_file_get_item(
-                     libwtcdb_file_t *file,
-                     int item_index,
-                     libwtcdb_item_t **item,
-                     libwtcdb_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_file_get_item(
+     libwtcdb_file_t *file,
+     int item_index,
+     libwtcdb_item_t **item,
+     libwtcdb_error_t **error );
 
 /* -------------------------------------------------------------------------
  * Item functions
@@ -242,9 +266,10 @@ LIBWTCDB_EXTERN int libwtcdb_file_get_item(
 /* Frees an item
  * Returns 1 if successful or -1 on error
  */
-LIBWTCDB_EXTERN int libwtcdb_item_free(
-                     libwtcdb_item_t **item,
-                     libwtcdb_error_t **error );
+LIBWTCDB_EXTERN \
+int libwtcdb_item_free(
+     libwtcdb_item_t **item,
+     libwtcdb_error_t **error );
 
 #if defined( __cplusplus )
 }

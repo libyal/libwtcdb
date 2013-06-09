@@ -1,7 +1,7 @@
 /*
  * Error functions
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2010-2013, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -23,9 +23,8 @@
 #define _LIBWTCDB_INTERNAL_ERROR_H
 
 #include <common.h>
+#include <file_stream.h>
 #include <types.h>
-
-#include <stdio.h>
 
 #if !defined( HAVE_LOCAL_LIBWTCDB )
 #include <libwtcdb/error.h>
@@ -39,26 +38,31 @@ extern "C" {
 
 #if !defined( HAVE_LOCAL_LIBWTCDB )
 
-LIBWTCDB_EXTERN void libwtcdb_error_free(
-                      libwtcdb_error_t **error );
+LIBWTCDB_EXTERN \
+void libwtcdb_error_free(
+      libwtcdb_error_t **error );
 
-LIBWTCDB_EXTERN int libwtcdb_error_fprint(
-                     libwtcdb_error_t *error,
-                     FILE *stream );
+LIBWTCDB_EXTERN \
+int libwtcdb_error_fprint(
+     libwtcdb_error_t *error,
+     FILE *stream );
 
-LIBWTCDB_EXTERN int libwtcdb_error_sprint(
-                     libwtcdb_error_t *error,
-                     char *string,
-                     size_t size );
+LIBWTCDB_EXTERN \
+int libwtcdb_error_sprint(
+     libwtcdb_error_t *error,
+     char *string,
+     size_t size );
 
-LIBWTCDB_EXTERN int libwtcdb_error_backtrace_fprint(
-                     libwtcdb_error_t *error,
-                     FILE *stream );
+LIBWTCDB_EXTERN \
+int libwtcdb_error_backtrace_fprint(
+     libwtcdb_error_t *error,
+     FILE *stream );
 
-LIBWTCDB_EXTERN int libwtcdb_error_backtrace_sprint(
-                     libwtcdb_error_t *error,
-                     char *string,
-                     size_t size );
+LIBWTCDB_EXTERN \
+int libwtcdb_error_backtrace_sprint(
+     libwtcdb_error_t *error,
+     char *string,
+     size_t size );
 
 #endif
 

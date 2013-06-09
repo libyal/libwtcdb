@@ -2,8 +2,8 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libwtcdb],
- [20101228],
- [jbmetz@users.sourceforge.net])
+ [20130609],
+ [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
  [include/libwtcdb.h.in])
@@ -18,33 +18,6 @@ AC_CANONICAL_HOST
 dnl Check for large file support
 AC_SYS_LARGEFILE
 
-dnl Check for configure arguments
-LIBWTCDB_TEST_ENABLE(
- [wide-character-type],
- [wide_character_type],
- [enable wide character type support],
- [no])
-LIBWTCDB_TEST_ENABLE(
- [winapi],
- [winapi],
- [enable WINAPI support for cross-compilation],
- [auto-detect])
-LIBWTCDB_TEST_ENABLE(
- [static-executables],
- [static_executables],
- [build the wtcdbtools as static executables],
- [no])
-LIBWTCDB_TEST_ENABLE(
- [verbose-output],
- [verbose_output],
- [enable verbose output],
- [no])
-LIBWTCDB_TEST_ENABLE(
- [debug-output],
- [debug_output],
- [enable debug output],
- [no])
-
 dnl Check for libtool DLL support
 AC_LIBTOOL_WIN32_DLL
 
@@ -53,966 +26,88 @@ AC_PROG_CC
 AC_PROG_GCC_TRADITIONAL
 AC_PROG_MAKE_SET
 AC_PROG_INSTALL
+
+dnl Check for libtool
 AC_PROG_LIBTOOL
 AC_SUBST(LIBTOOL_DEPS)
 
+dnl Check for pkg-config
+AC_PATH_PROG(PKGCONFIG,[pkg-config])
+
 dnl Support of internationalization (i18n)
 AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION([0.18.1])
 
 dnl Check for compiler language support
 AC_C_CONST
 AC_C_VOLATILE
 
-dnl Automatically enable winapi support for mingw
-AS_IF(
- [test "x$ac_cv_libwtcdb_enable_winapi" = xauto-detect],
- [ac_libwtcdb_target_string="$target";
+dnl Check if WINAPI support should be enabled
+AX_COMMON_CHECK_ENABLE_WINAPI
 
- AS_IF(
-  [test "x$ac_libwtcdb_target_string" = x],
-  [ac_libwtcdb_target_string="$build"])
+dnl Check if wide character type should be enabled
+AX_COMMON_CHECK_ENABLE_WIDE_CHARACTER_TYPE
 
- AS_CASE(
-  [$ac_libwtcdb_target_string],
-  [*mingw*],[AC_MSG_NOTICE(
-             [Detected MinGW enabling WINAPI support for cross-compilation])
-            ac_cv_libwtcdb_enable_winapi=yes],
-  [*],[ac_cv_libwtcdb_enable_winapi=no])
- ])
-
-dnl Check for headers
-dnl Headers included in libwtcdb/types.h
-AC_CHECK_HEADERS([sys/types.h inttypes.h stdint.h])
-
-AS_IF(
- [test "x$ac_cv_header_sys_types_h" = xyes],
- [AC_SUBST(
-  [HAVE_SYS_TYPES_H],
-  [1])],
- [AC_SUBST(
-  [HAVE_SYS_TYPES_H],
-  [0])])
-
-AS_IF(
- [test "x$ac_cv_header_inttypes_h" = xyes],
- [AC_SUBST(
-  [HAVE_INTTYPES_H],
-  [1])],
- [AC_SUBST(
-  [HAVE_INTTYPES_H],
-  [0])])
-
-AS_IF(
- [test "x$ac_cv_header_stdint_h" = xyes],
- [AC_SUBST(
-  [HAVE_STDINT_H],
-  [1])],
- [AC_SUBST(
-  [HAVE_STDINT_H],
-  [0])])
-
-dnl Headers included in common/common.h
-AS_IF(
- [test "x$ac_cv_libwtcdb_enable_winapi" = xyes],
- [AC_CHECK_HEADERS([windows.h])
-
- AS_IF(
-  [test "x$ac_cv_header_windows_h" = xno],
-  [AC_MSG_FAILURE(
-   [Missing header: windows.h header is required to compile with winapi support],
-   [1]) ])
- ])
-
-AS_IF(
- [test "x$ac_cv_libwtcdb_enable_winapi" = xno],
- [AC_CHECK_HEADERS([libintl.h]) ])
-
-dnl Headers included in common/types.h
-AC_CHECK_HEADERS([limits.h])
-
-dnl Headers included in common/memory.h and libcstring/libcstring_narrow_string.h
-AC_CHECK_HEADERS([string.h stdlib.h])
-
-dnl Headers included in libcstring/libcstring_locale.c
-AC_CHECK_HEADERS([langinfo.h locale.h])
-
-dnl Headers included in liberror/liberror_error.c and libnotify/libnotify_print.c
-AC_CHECK_HEADERS([stdarg.h])
-
-AS_IF(
- [test "x$ac_cv_header_stdarg_h" != xyes],
- [AC_CHECK_HEADERS([varargs.h]) ])
-
-AS_IF(
- [test "x$ac_cv_header_stdarg_h" != xyes && test "x$ac_cv_header_varargs_h" != xyes],
- [AC_MSG_FAILURE(
-  [Missing headers: stdarg.h and varargs.h],
-  [1]) ])
-
-dnl Headers included in libnotify/libnotify_stream.c and libbfio/libbfio_file.c
-AC_CHECK_HEADERS([errno.h])
-
-dnl Headers included in libbfio/libbfio_file.c, libsystem/libsystem_directory_io.h and libsystem/libsystem_file_io.h
-AC_CHECK_HEADERS([sys/stat.h])
-
-dnl Headers included in libbfio/libbfio_file.c and libsystem/libsystem_file_io.h
-AC_CHECK_HEADERS([fcntl.h unistd.h])
-
-dnl Headers included in libsystem/libsystem_glob.h
-AC_CHECK_HEADERS([glob.h])
-
-AS_IF(
- [test "x$ac_cv_header_glob_h" = xno],
- [AC_CHECK_HEADERS([io.h]) ])
-
-dnl Headers included in libsystem/libsystem_signal.h
-AC_CHECK_HEADERS([signal.h sys/signal.h])
-
-dnl Other headers
-
-dnl Check for declarations and type definitions
-AC_TYPE_OFF_T
-AC_TYPE_SIZE_T
-
-AC_CHECK_TYPE(
- [size32_t],
- [AC_SUBST(
-  [HAVE_SIZE32_T],
-  [1])],
- [AC_SUBST(
-  [HAVE_SIZE32_T],
-  [0])])
-
-AC_CHECK_TYPE(
- [ssize32_t],
- [AC_SUBST(
-  [HAVE_SSIZE32_T],
-  [1])],
- [AC_SUBST(
-  [HAVE_SSIZE32_T],
-  [0])])
-
-AC_CHECK_TYPE(
- [size64_t],
- [AC_SUBST(
-  [HAVE_SIZE64_T],
-  [1])],
- [AC_SUBST(
-  [HAVE_SIZE64_T],
-  [0])])
-
-AC_CHECK_TYPE(
- [ssize64_t],
- [AC_SUBST(
-  [HAVE_SSIZE64_T],
-  [1])],
- [AC_SUBST(
-  [HAVE_SSIZE64_T],
-  [0])])
-
-AC_CHECK_TYPE(
- [off64_t],
- [AC_SUBST(
-  [HAVE_OFF64_T],
-  [1])],
- [AC_SUBST(
-  [HAVE_OFF64_T],
-  [0])])
-
-AC_CHECK_TYPE([ssize_t])
-
-AC_CHECK_SIZEOF([off_t])
-AC_CHECK_SIZEOF([size_t])
-
-dnl Check for functions
-dnl File stream functions used in common/file_stream.h
-AC_CHECK_FUNCS(
- [fclose],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: fclose],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [feof],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: feof],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [fgets],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: fgets],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [fopen],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: fopen],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [fread],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: fread],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [fseeko],
- [],
- [AC_CHECK_FUNCS(
-  [fseeko64],
-  [],
-  [AC_MSG_FAILURE(
-   [Missing function: fseeko and fseeko64],
-   [1]) ]) ])
-
-AC_CHECK_FUNCS(
- [fwrite],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: fwrite],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [vfprintf],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: vfprintf],
-  [1]) ])
-
-dnl Memory functions used in common/memory.h
-AC_CHECK_FUNCS(
- [free],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: free],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [malloc],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: malloc],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [memcmp],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: memcmp],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [memcpy],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: memcpy],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [memset],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: memset],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [realloc],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: realloc],
-  [1]) ])
-
-dnl Check for environment functions in libcstring/libcstring_locale.c
-AC_CHECK_FUNCS(
- [getenv],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: getenv],
-  [1]) ])
-
-dnl Check for localization functions in libcstring/libcstring_locale.c
-AC_CHECK_FUNCS(
- [setlocale],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: setlocale],
-  [1]) ])
-
-LIBWTCDB_CHECK_FUNC_LANGINFO_CODESET
-
-dnl Narrow character string functions used in libcstring/libcstring_narrow_string.h
-AC_CHECK_FUNCS(
- [fgets],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: fgets],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [memchr],
- [],
- [AC_CHECK_FUNCS(
-  [strchr],
-  [],
-  [AC_MSG_FAILURE(
-   [Missing functions: memchr and strchr],
-   [1]) ]) ])
-
-AC_CHECK_FUNCS(
- [memcmp],
- [],
- [AC_CHECK_FUNCS(
-  [strncmp],
-  [],
-  [AC_MSG_FAILURE(
-   [Missing functions: memcmp and strncmp],
-   [1]) ]) ])
-
-AC_CHECK_FUNCS(
- [memcpy],
- [],
- [AC_CHECK_FUNCS(
-  [strncpy],
-  [],
-  [AC_MSG_FAILURE(
-   [Missing functions: memcpy and strncpy],
-   [1]) ]) ])
-
-AC_CHECK_FUNCS(
- [memrchr],
- [AC_CHECK_DECLS(
-  [memrchr],
-  [ac_libwtcdb_have_memrchr=yes],
-  [ac_libwtcdb_have_memrchr=no]) ],
- [ac_libwtcdb_have_memrchr=no])
-
-AS_IF(
- [test "x$ac_libwtcdb_have_memrchr" = xno],
- [AC_CHECK_FUNCS(
-  [strrchr],
-  [],
-  [AC_MSG_FAILURE(
-   [Missing functions: strrchr and memrchr],
-   [1]) ]) ])
-
-AC_CHECK_FUNCS(
- [snprintf],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: snprintf],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [sscanf],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: sscanf],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [strlen],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: strlen],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [strncasecmp],
- [],
- [AC_CHECK_FUNCS(
-  [strcasecmp],
-  [],
-  [AC_MSG_FAILURE(
-   [Missing functions: strncasecmp and strcasecmp],
-   [1]) ]) ])
-
-AC_CHECK_FUNCS(
- [strstr],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: strstr],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [strtoll],
- [],
- [AC_CHECK_FUNCS(
-  [atoll],
-  [],
-  [AC_MSG_FAILURE(
-   [Missing functions: strtoll and atoll],
-   [1]) ]) ])
-
-AC_CHECK_FUNCS(
- [strtoull],
- [],
- [AC_CHECK_FUNCS(
-  [atoll],
-  [],
-  [AC_MSG_FAILURE(
-   [Missing functions: strtoull and atoll],
-   [1]) ]) ])
-
-AC_CHECK_FUNCS(
- [vsnprintf],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: vsnprintf],
-  [1]) ])
-
-dnl File input/output functions used in libbfio/libbfio_file.h
-AC_CHECK_FUNCS(
- [close],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: close],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [fstat],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: fstat],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [lseek],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: lseek],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [open],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: open],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [read],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: read],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [stat],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: stat],
-  [1]) ])
-
-AC_CHECK_FUNCS(
- [write],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: write],
-  [1]) ])
-
-dnl Check for error string functions used in libbfio/libbfio_error_string.h and libsystem/libsystem_error_string.c
-AC_FUNC_STRERROR_R()
-
-AS_IF(
- [test "x$ac_cv_have_decl_strerror_r" = xno],
- [AC_CHECK_FUNCS(
-  [strerror],
-  [],
-  [AC_MSG_FAILURE(
-   [Missing functions: strerror_r and strerror],
-   [1]) ]) ])
-
-dnl Date and time functions used in libsystem/libsystem_date_time.h
-LIBWTCDB_CHECK_FUNC_CTIME
-
-AC_CHECK_FUNCS(
- [gmtime_r],
- [],
- [AC_CHECK_FUNCS(
-  [gmtime],
-  [],
-  [AC_MSG_FAILURE(
-   [Missing functions: gmtime_r and gmtime],
-   [1]) ]) ])
-
-AC_CHECK_FUNCS(
- [time],
- [],
- [AC_MSG_FAILURE(
-  [Missing function: time],
-  [1]) ])
-
-dnl Directory functions used in libsystem/libsystem_directory_io.h
-AC_CHECK_FUNCS(
- [chdir],
- [],
- [AC_MSG_FAILURE(
-  [Missing functions: chdir],
-  [1]) ])
-
-LIBWTCDB_CHECK_FUNC_MKDIR
-
-dnl Commandline argument/option parsing functions in libsystem/libsystem_getopt.h
-AC_CHECK_FUNCS([getopt])
-
-dnl Check for internationalization functions in <library>/<library>_i18n.c and libsystem/libsystem_support.c
-AC_CHECK_FUNCS([bindtextdomain])
-
-dnl Check for internationalization functions in libsystem/libsystem_support.c
-AC_CHECK_FUNCS([textdomain])
-
-dnl Other functions
-
-dnl Check for printf conversion specifier support
-LIBWTCDB_CHECK_FUNC_PRINTF_JD
-LIBWTCDB_CHECK_FUNC_PRINTF_ZD
+dnl Check for type definitions
+AX_TYPES_CHECK_LOCAL
 
 dnl Checks for libraries and library functions
-dnl ac_libwtcdb_dummy is used to prevent AC_CHECK_LIB adding unnecessary -l<library> arguments
+AX_COMMON_CHECK_LOCAL
+
+dnl Check for enabling libcstring for cross-platform C string functions
+AX_LIBCSTRING_CHECK_ENABLE
+
+dnl Check for enabling libcerror for cross-platform C error functions
+AX_LIBCERROR_CHECK_ENABLE
+
+dnl Check for enabling libcdata for cross-platform C generic data functions
+AX_LIBCDATA_CHECK_ENABLE
+
+dnl Check for enabling libclocale for cross-platform C locale functions
+AX_LIBCLOCALE_CHECK_ENABLE
+
+dnl Check for enabling libcnotify for cross-platform C notification functions
+AX_LIBCNOTIFY_CHECK_ENABLE
+
+dnl Check for enabling libcsplit for cross-platform C split string functions
+AX_LIBCSPLIT_CHECK_ENABLE
 
 dnl Check for enabling libuna for Unicode string support
-LIBWTCDB_CHECK_LIBUNA
+AX_LIBUNA_CHECK_ENABLE
 
-AS_IF(
- [test "x$ac_libwtcdb_have_libuna" = xyes],
- [dnl libuna is available
- AC_SUBST(
-  [libwtcdb_pc_libs_private_libuna],
-  [-luna])
- AC_SUBST(
-  [libwtcdb_spec_requires_libuna],
-  [libuna])
- AC_SUBST(
-  [libwtcdb_spec_build_requires_libuna],
-  [libuna-devel])
- AC_SUBST(
-  [LIBUNA_CPPFLAGS],
-  [])
- AC_SUBST(
-  [LIBUNA_LIBADD],
-  []) ],
- [dnl libuna is not available, using the (local) version that came with the source package
- AC_DEFINE(
-  [HAVE_LOCAL_LIBUNA],
-  [1],
-  [Define to 1 if the local version of libuna is used.])
- AC_SUBST(
-  [HAVE_LOCAL_LIBUNA],
-  [1])
- AC_SUBST(
-  [libwtcdb_pc_libs_private_libuna],
-  [])
- AC_SUBST(
-  [libwtcdb_spec_requires_libuna],
-  [])
- AC_SUBST(
-  [libwtcdb_spec_build_requires_libuna],
-  [])
- AC_SUBST(
-  [LIBUNA_CPPFLAGS],
-  [-I../libuna])
- AC_SUBST(
-  [LIBUNA_LIBADD],
-  [../libuna/libuna.la])
- ac_libwtcdb_have_libuna=local])
+dnl Check for enabling libcfile for cross-platform C file functions
+AX_LIBCFILE_CHECK_ENABLE
 
-AM_CONDITIONAL(
- [HAVE_LOCAL_LIBUNA],
- [test "x$ac_libwtcdb_have_libuna" = xlocal])
+dnl Check for enabling libcpath for cross-platform C path functions
+AX_LIBCPATH_CHECK_ENABLE
 
 dnl Check for enabling libbfio for basic file IO support
-LIBWTCDB_CHECK_LIBBFIO
-
-AS_IF(
- [test "x$ac_libwtcdb_have_libbfio" = xyes],
- [dnl libbfio is available
- AC_SUBST(
-  [libwtcdb_pc_libs_private_libbfio],
-  [-lbfio])
- AC_SUBST(
-  [libwtcdb_spec_requires_libbfio],
-  [libbfio])
- AC_SUBST(
-  [libwtcdb_spec_build_requires_libbfio],
-  [libbfio-devel])
- AC_SUBST(
-  [LIBBFIO_CPPFLAGS],
-  [])
- AC_SUBST(
-  [LIBBFIO_LIBADD],
-  [])
- AC_SUBST(
-  [HAVE_LIBBFIO],
-  [1]) ],
- [dnl libbfio is not available, using the (local) version that came with the source package
- AC_DEFINE(
-  [HAVE_LOCAL_LIBBFIO],
-  [1],
-  [Define to 1 if the local version of libbfio is used.])
- AC_SUBST(
-  [HAVE_LOCAL_LIBBFIO],
-  [1])
- AC_SUBST(
-  [libwtcdb_pc_libs_private_libbfio],
-  [])
- AC_SUBST(
-  [libwtcdb_spec_requires_libbfio],
-  [])
- AC_SUBST(
-  [libwtcdb_spec_build_requires_libbfio],
-  [])
- AC_SUBST(
-  [LIBBFIO_CPPFLAGS],
-  [-I../libbfio])
- AC_SUBST(
-  [LIBBFIO_LIBADD],
-  [../libbfio/libbfio.la])
- AC_SUBST(
-  [HAVE_LIBBFIO],
-  [0])
- ac_libwtcdb_have_libbfio=local])
-
-AM_CONDITIONAL(
- [HAVE_LOCAL_LIBBFIO],
- [test "x$ac_libwtcdb_have_libbfio" = xlocal])
+AX_LIBBFIO_CHECK_ENABLE
 
 dnl Check for enabling libfdatetime for file date and time support
-LIBWTCDB_CHECK_LIBFDATETIME
+AX_LIBFDATETIME_CHECK_ENABLE
 
-AS_IF(
- [test "x$ac_libwtcdb_have_libfdatetime" = xyes],
- [dnl libfdatetime is available
- AC_SUBST(
-  [libwtcdb_pc_libs_private_libfdatetime],
-  [-lfdatetime])
- AC_SUBST(
-  [libwtcdb_spec_requires_libfdatetime],
-  [libfdatetime])
- AC_SUBST(
-  [libwtcdb_spec_build_requires_libfdatetime],
-  [libfdatetime-devel])
- AC_SUBST(
-  [LIBFDATETIME_CPPFLAGS],
-  [])
- AC_SUBST(
-  [LIBFDATETIME_LIBADD],
-  []) ],
- [dnl libfdatetime is not available, using the (local) version that came with the source package
- AC_DEFINE(
-  [HAVE_LOCAL_LIBFDATETIME],
-  [1],
-  [Define to 1 if the local version of libfdatetime is used.])
- AC_SUBST(
-  [HAVE_LOCAL_LIBFDATETIME],
-  [1])
- AC_SUBST(
-  [libwtcdb_pc_libs_private_libfdatetime],
-  [])
- AC_SUBST(
-  [libwtcdb_spec_requires_libfdatetime],
-  [])
- AC_SUBST(
-  [libwtcdb_spec_build_requires_libfdatetime],
-  [])
- AC_SUBST(
-  [LIBFDATETIME_CPPFLAGS],
-  [-I../libfdatetime])
- AC_SUBST(
-  [LIBFDATETIME_LIBADD],
-  [../libfdatetime/libfdatetime.la])
- ac_libwtcdb_have_libfdatetime=local])
+dnl Check for enabling libfvalue for file value support
+AX_LIBFVALUE_CHECK_ENABLE
 
-AM_CONDITIONAL(
- [HAVE_LOCAL_LIBFDATETIME],
- [test "x$ac_libwtcdb_have_libfdatetime" = xlocal])
+dnl Check for library function support
+AX_LIBWTCDB_CHECK_LOCAL
 
-dnl Check for enabling libfvalue for file values support
-AC_CHECK_HEADERS(
- [libfvalue.h],
- [],
- [ac_libwtcdb_have_libfvalue=no])
-
-AS_IF(
-	[test "x$ac_libwtcdb_have_libfvalue" != xno],
-	[ac_libwtcdb_have_libfvalue=yes
-	AC_CHECK_LIB(
-	 fvalue,
-	 libfvalue_get_version,
-	 [],
-	 [ac_libwtcdb_have_libfvalue=no])
-
-	])
-
-AS_IF(
-[test "x$ac_libwtcdb_have_libfvalue" = xyes],
- [dnl libfvalue is available
- AC_SUBST(
-  [libwtcdb_pc_libs_private_libfvalue],
-  [-lfvalue])
- AC_SUBST(
-  [libwtcdb_spec_requires_libfvalue],
-  [libfvalue])
- AC_SUBST(
-  [libwtcdb_spec_build_requires_libfvalue],
-  [libfvalue-devel])
- AC_SUBST(
-  [LIBFVALUE_CPPFLAGS],
-  [])
- AC_SUBST(
-  [LIBFVALUE_LIBADD],
-  []) ],
- [dnl libfvalue is not available, using the (local) version that came with the source package
- AC_DEFINE(
-  [HAVE_LOCAL_LIBFVALUE],
-  [1],
-  [Define to 1 if the local version of libfvalue is used.])
- AC_SUBST(
-  [HAVE_LOCAL_LIBFVALUE],
-  [1])
- AC_SUBST(
-  [libwtcdb_pc_libs_private_libfvalue],
-  [])
- AC_SUBST(
-  [libwtcdb_spec_requires_libfvalue],
-  [])
- AC_SUBST(
-  [libwtcdb_spec_build_requires_libfvalue],
-  [])
- AC_SUBST(
-  [LIBFVALUE_CPPFLAGS],
-  [-I../libfvalue])
- AC_SUBST(
-  [LIBFVALUE_LIBADD],
-  [../libfvalue/libfvalue.la])
- ac_libwtcdb_have_libfvalue=local])
-
-AM_CONDITIONAL(
- [HAVE_LOCAL_LIBFVALUE],
- [test "x$ac_libwtcdb_have_libfvalue" = xlocal])
-
-dnl Check if libwtcdb should be build with wide character type support
-AS_IF(
- [test "x$ac_cv_libwtcdb_enable_winapi" = xyes],
- [ac_cv_libwtcdb_enable_wide_character_type=yes])
-
-AS_IF(
- [test "x$ac_cv_libwtcdb_enable_wide_character_type" != xno ],
- [dnl Check for the wide character header
- AC_CHECK_HEADERS(
-  [wchar.h],
-  [AC_DEFINE(
-   [HAVE_WCHAR_H],
-   [1],
-   [Define to 1 if you have the <wchar.h> header file.])
-  AC_SUBST(
-   [HAVE_WCHAR_H],
-   [1]) ],
-  [AC_MSG_FAILURE(
-   [Missing header: wchar.h],
-   [1]) ])
-
- dnl Determine wide character byte size
- AC_CHECK_SIZEOF([wchar_t])
-
- dnl Check for wide character string functions
-
- dnl Wide character string functions used in common/file_stream.h
- AC_CHECK_FUNCS(
-  [fgetws],
-  [],
-  [AC_MSG_FAILURE(
-   [Missing function: fgetws],
-   [1]) ])
-
- dnl Wide character string functions used in libcstring/libcstring_wide_string.h
- AC_CHECK_FUNCS(
-  [swprintf],
-  [],
-  [AC_MSG_FAILURE(
-   [Missing function: swprintf],
-   [1]) ])
-
- AC_CHECK_FUNCS(
-  [wmemchr],
-  [],
-  [AC_CHECK_FUNCS(
-   [wcschr],
-   [],
-   [AC_MSG_FAILURE(
-    [Missing functions: wmemchr and wcschr],
-    [1]) ]) ])
-
- AC_CHECK_FUNCS(
-  [wmemcmp],
-  [],
-  [AC_CHECK_FUNCS(
-   [wcsncmp],
-   [],
-   [AC_MSG_FAILURE(
-    [Missing functions: wmemcmp and wcsncmp],
-    [1]) ]) ])
-
- AC_CHECK_FUNCS(
-  [wmemcpy],
-  [],
-  [AC_CHECK_FUNCS(
-   [wcsncpy],
-   [],
-   [AC_MSG_FAILURE(
-    [Missing functions: wmemcpy and wcsncpy],
-    [1]) ]) ])
-
- AC_CHECK_FUNCS(
-  [wmemrchr],
-  [],
-  [AC_CHECK_FUNCS(
-   [wcsrchr],
-   [],
-   [AC_MSG_FAILURE(
-    [Missing functions: wmemrchr and wcsrchr],
-    [1]) ]) ])
-
- AC_CHECK_FUNCS(
-  [wcslen],
-  [],
-  [AC_MSG_FAILURE(
-   [Missing function: wcslen],
-   [1]) ])
-
- AC_CHECK_FUNCS(
-  [wcsncasecmp],
-  [],
-  [AC_CHECK_FUNCS(
-   [wcscasecmp],
-   [],
-   [AC_CHECK_FUNCS(
-    [towlower],
-    [],
-    [AC_MSG_FAILURE(
-     [Missing functions: wcsncasecmp, wcscasecmp and towlower],
-     [1]) ]) ]) ])
-
- AC_CHECK_FUNCS(
-  [wcsstr],
-  [],
-  [AC_MSG_FAILURE(
-   [Missing function: wcsstr],
-   [1]) ])
-
- AC_CHECK_FUNCS(
-  [wcstoll],
-  [],
-  [AC_MSG_FAILURE(
-   [Missing function: wcstoll],
-   [1]) ])
-
- AC_CHECK_FUNCS(
-  [wcstoull],
-  [],
-  [AC_MSG_FAILURE(
-   [Missing function: wcstoull],
-   [1]) ])
-
- dnl Wide character string functions used in liberror/liberror_error.h
- AC_CHECK_FUNCS(
-  [wcstombs],
-  [],
-  [AC_MSG_FAILURE(
-   [Missing function: wcstombs],
-   [1]) ])
-
- dnl Make the necessary definitions
- AC_DEFINE(
-  [HAVE_WIDE_CHARACTER_TYPE],
-  [1],
-  [Define to 1 if wide character type should be used.])
- AC_SUBST(
-  [HAVE_WIDE_CHARACTER_TYPE],
-  [1])
- ac_cv_libwtcdb_enable_wide_character_type=yes],
- 
- [AC_SUBST(
-  [HAVE_WIDE_CHARACTER_TYPE],
-  [0])
- AC_SUBST(
-  [HAVE_WCHAR_H],
-  [0]) ])
-
-AC_SUBST(
- [HAVE_WIDE_CHARACTER_SUPPORT_FUNCTIONS],
- [0])
+dnl Check for enabling libcsystem for cross-platform C generic system functions
+AX_LIBCSYSTEM_CHECK_ENABLE
 
 dnl Check if wtcdbtools should be build as static executables
-AS_IF(
- [test "x$ac_cv_libwtcdb_enable_static_executables" != xno],
- [STATIC_LDFLAGS="-all-static";
- AC_SUBST(
-  [STATIC_LDFLAGS])
- ac_cv_libwtcdb_enable_static_executables=yes])
+AX_COMMON_CHECK_ENABLE_STATIC_EXECUTABLES
 
 dnl Check if libwtcdb should be build with verbose output
-AS_IF(
- [test "x$ac_cv_libwtcdb_enable_verbose_output" != xno ],
- [AC_DEFINE(
-  [HAVE_VERBOSE_OUTPUT],
-  [1],
-  [Define to 1 if verbose output should be used.])
- ac_cv_libwtcdb_enable_verbose_output=yes])
+AX_COMMON_CHECK_ENABLE_VERBOSE_OUTPUT
 
 dnl Check if libwtcdb should be build with debug output
-AS_IF(
- [test "x$ac_cv_libwtcdb_enable_debug_output" != xno ],
- [AC_DEFINE(
-  [HAVE_DEBUG_OUTPUT],
-  [1],
-  [Define to 1 if debug output should be used.])
- ac_cv_libwtcdb_enable_debug_output=yes])
-
-dnl Check if requires and build requires should be set in spec file
-AS_IF(
- [test "x$ac_libwtcdb_have_libuna" = xyes || test "x$ac_libwtcdb_have_libbfio" = xyes || test "x$ac_libwtcdb_have_libfdatetime" = xyes || test "x$ac_libwtcdb_have_libfvalue" = xyes],
- [AC_SUBST(
-  [libwtcdb_spec_requires],
-  [Requires:])
- AC_SUBST(
-  [libwtcdb_spec_build_requires],
-  [BuildRequires:]) ],
- [AC_SUBST(
-  [libwtcdb_spec_requires],
-  [])
- AC_SUBST(
-  [libwtcdb_spec_build_requires],
-  [])
- ac_libwtcdb_dummy=yes])
-
-dnl Set memwatch support
-ac_libwtcdb_have_memwatch=no
-
-AS_IF(
- [test "x$ac_libwtcdb_have_memwatch" != xno ],
- [AC_SUBST(
-  [MEMWATCH_CPPFLAGS],
-  ["-DMEMWATCH -DMEMWATCH_STDIO"])
- AC_SUBST(
-  [MEMWATCH_LIBADD],
-  [../common/libmemwatch.la]) ])
-
-AM_CONDITIONAL(
- [HAVE_MEMWATCH],
- [test "x$ac_libwtcdb_have_memwatch" != xno])
-
-dnl Set additional compiler flags
-CFLAGS="$CFLAGS -Wall";
+AX_COMMON_CHECK_ENABLE_DEBUG_OUTPUT
 
 dnl Check if DLL support is needed in wtcdbtools
 AS_IF(
- [test x"$enable_shared" = xyes],
+ [test "x$enable_shared" = xyes && test "x$ac_cv_enable_static_executables" = xno],
  [AS_CASE(
   [$host],
   [*cygwin* | *mingw*],
@@ -1022,23 +117,65 @@ AS_IF(
   ])
  ])
 
+dnl Set additional compiler flags
+CFLAGS="$CFLAGS -Wall";
+
+dnl Check if requires and build requires should be set in spec file
+AS_IF(
+ [test "x$ac_cv_libcstring" = xyes || test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libcdata" = xyes ||  test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcnotify" = xyes || test "x$ac_cv_libcsplit" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfdatetime" = xyes || test "x$ac_cv_libfvalue" = xyes],
+ [AC_SUBST(
+  [libwtcdb_spec_requires],
+  [Requires:])
+ AC_SUBST(
+  [libwtcdb_spec_build_requires],
+  [BuildRequires:])
+ ])
+
+AS_IF(
+ [test "x$ac_cv_libcsystem" = xyes],
+ [AC_SUBST(
+  [libwtcdb_spec_tools_build_requires],
+  [BuildRequires:])
+ ])
+
+dnl Set the date for the dpkg files
+AC_SUBST(
+ [DPKG_DATE],
+ [`date -R 2> /dev/null`])
+
+dnl Set the date for the spec file
+AC_SUBST(
+ [SPEC_DATE],
+ [`date +"%a %b %e %Y" 2> /dev/null`])
+
+dnl Set the current working directory for PackageMaker files
+AC_SUBST(
+ [PWD],
+ [`pwd`])
+
 dnl Have configure make the Makefiles
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([include/Makefile])
 AC_CONFIG_FILES([common/Makefile])
 AC_CONFIG_FILES([libcstring/Makefile])
-AC_CONFIG_FILES([liberror/Makefile])
-AC_CONFIG_FILES([libnotify/Makefile])
+AC_CONFIG_FILES([libcerror/Makefile])
+AC_CONFIG_FILES([libcdata/Makefile])
+AC_CONFIG_FILES([libclocale/Makefile])
+AC_CONFIG_FILES([libcnotify/Makefile])
+AC_CONFIG_FILES([libcsplit/Makefile])
 AC_CONFIG_FILES([libuna/Makefile])
+AC_CONFIG_FILES([libcfile/Makefile])
+AC_CONFIG_FILES([libcpath/Makefile])
 AC_CONFIG_FILES([libbfio/Makefile])
 AC_CONFIG_FILES([libfdatetime/Makefile])
 AC_CONFIG_FILES([libfvalue/Makefile])
 AC_CONFIG_FILES([libwtcdb/Makefile])
-AC_CONFIG_FILES([libsystem/Makefile])
+AC_CONFIG_FILES([libcsystem/Makefile])
 AC_CONFIG_FILES([wtcdbtools/Makefile])
 AC_CONFIG_FILES([po/Makefile.in])
 AC_CONFIG_FILES([po/Makevars])
 AC_CONFIG_FILES([manuals/Makefile])
+AC_CONFIG_FILES([tests/Makefile])
 AC_CONFIG_FILES([macosx/Makefile])
 AC_CONFIG_FILES([msvscpp/Makefile])
 dnl Have configure make the include files
@@ -1049,7 +186,14 @@ AC_CONFIG_FILES([include/libwtcdb/types.h])
 AC_CONFIG_FILES([libwtcdb/libwtcdb_definitions.h])
 dnl Have configure make distribution specific files
 AC_CONFIG_FILES([common/types.h])
+AC_CONFIG_FILES([dpkg/changelog])
+AC_CONFIG_FILES([dpkg/copyright])
 AC_CONFIG_FILES([libwtcdb/libwtcdb.rc])
+AC_CONFIG_FILES([macosx/libwtcdb.pmdoc/01bin.xml])
+AC_CONFIG_FILES([macosx/libwtcdb.pmdoc/02include.xml])
+AC_CONFIG_FILES([macosx/libwtcdb.pmdoc/03lib.xml])
+AC_CONFIG_FILES([macosx/libwtcdb.pmdoc/04share.xml])
+AC_CONFIG_FILES([macosx/libwtcdb.pmdoc/index.xml])
 AC_CONFIG_FILES([macosx/Introduction.rtf])
 AC_CONFIG_FILES([libwtcdb.pc])
 AC_CONFIG_FILES([libwtcdb.spec])
@@ -1061,16 +205,25 @@ AC_OUTPUT
 dnl Print a summary
 AC_MSG_NOTICE([
 Building:
-   libuna support:                             $ac_libwtcdb_have_libuna
-   libbfio support:                            $ac_libwtcdb_have_libbfio
-   libfdatetime support:                       $ac_libwtcdb_have_libfdatetime
-   libfvalue support:                          $ac_libwtcdb_have_libfvalue
+   libcstring support:                         $ac_cv_libcstring
+   libcerror support:                          $ac_cv_libcerror
+   libcdata support:                           $ac_cv_libcdata
+   libclocale support:                         $ac_cv_libclocale
+   libcnotify support:                         $ac_cv_libcnotify
+   libcsplit support:                          $ac_cv_libcsplit
+   libuna support:                             $ac_cv_libuna
+   libcfile support:                           $ac_cv_libcfile
+   libcpath support:                           $ac_cv_libcpath
+   libbfio support:                            $ac_cv_libbfio
+   libfdatetime support:                       $ac_cv_libfdatetime
+   libfvalue support:                          $ac_cv_libfvalue
+   libcsystem support:                         $ac_cv_libcsystem
 
 Features:
-   Wide character type support:                $ac_cv_libwtcdb_enable_wide_character_type
-   wtcdbtools are build as static executables: $ac_cv_libwtcdb_enable_static_executables
-   Verbose output:                             $ac_cv_libwtcdb_enable_verbose_output
-   Debug output:                               $ac_cv_libwtcdb_enable_debug_output
+   Wide character type support:                $ac_cv_enable_wide_character_type
+   wtcdbtools are build as static executables: $ac_cv_enable_static_executables
+   Verbose output:                             $ac_cv_enable_verbose_output
+   Debug output:                               $ac_cv_enable_debug_output
 ]);
 
 

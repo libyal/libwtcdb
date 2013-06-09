@@ -1,7 +1,7 @@
 /*
  * Item value functions
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2010-2013, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -23,9 +23,8 @@
 #include <memory.h>
 #include <types.h>
 
-#include <liberror.h>
-
 #include "libwtcdb_item_value.h"
+#include "libwtcdb_libcerror.h"
 #include "libwtcdb_types.h"
 
 /* Initialize an item value
@@ -33,16 +32,16 @@
  */
 int libwtcdb_item_value_initialize(
      libwtcdb_item_value_t **item_value,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libwtcdb_item_value_initialize";
 
 	if( item_value == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid item value.",
 		 function );
 
@@ -55,10 +54,10 @@ int libwtcdb_item_value_initialize(
 
 		if( *item_value == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_INSUFFICIENT,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
 			 "%s: unable to create item value.",
 			 function );
 
@@ -69,10 +68,10 @@ int libwtcdb_item_value_initialize(
 		     0,
 		     sizeof( libwtcdb_item_value_t ) ) == NULL )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_MEMORY,
-			 LIBERROR_MEMORY_ERROR_SET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
 			 "%s: unable to clear item value.",
 			 function );
 
@@ -94,30 +93,34 @@ on_error:
  * Returns 1 if successful or -1 on error
  */
 int libwtcdb_item_value_free(
-     intptr_t *item_value,
-     liberror_error_t **error )
+     libwtcdb_item_value_t **item_value,
+     libcerror_error_t **error )
 {
 	static char *function = "libwtcdb_item_value_free";
 
 	if( item_value == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid item value.",
 		 function );
 
 		return( -1 );
 	}
-	if( ( (libwtcdb_item_value_t *) item_value )->identifier != NULL )
+	if( *item_value != NULL )
 	{
+		if( ( *item_value )->identifier != NULL )
+		{
+			memory_free(
+			 ( *item_value )->identifier );
+		}
 		memory_free(
-		 ( (libwtcdb_item_value_t *) item_value )->identifier );
-	}
-	memory_free(
-	 item_value );
+		 *item_value );
 
+		*item_value = NULL;
+	}
 	return( 1 );
 }
 

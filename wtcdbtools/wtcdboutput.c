@@ -1,7 +1,7 @@
 /*
  * Common output functions for the wtcdbtools
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2010-2013, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -47,18 +47,8 @@
 #include <libfvalue.h>
 #endif
 
-/* If libtool DLL support is enabled set LIBWTCDB_DLL_IMPORT
- * before including libwtcdb.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBWTCDB_DLL_IMPORT
-#endif
-
-#include <libwtcdb.h>
-
-#include <libsystem.h>
-
 #include "wtcdboutput.h"
+#include "wtcdbtools_libwtcdb.h"
 
 /* Prints the copyright information
  */
@@ -71,7 +61,7 @@ void wtcdboutput_copyright_fprint(
 	}
 	fprintf(
 	 stream,
-	 "Copyright (c) 2010, Joachim Metz <%s>.\n"
+	 "Copyright (c) 2010-2013, Joachim Metz <%s>.\n"
 	 "This is free software; see the source for copying conditions. There is NO\n"
 	 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n",
 	 PACKAGE_BUGREPORT );

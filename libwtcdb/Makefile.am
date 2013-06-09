@@ -1,20 +1,23 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	-I$(top_srcdir)/libcstring \
-	-I$(top_srcdir)/liberror \
-	-I$(top_srcdir)/libnotify \
+	@LIBCSTRING_CPPFLAGS@ \
+	@LIBCERROR_CPPFLAGS@ \
+	@LIBCDATA_CPPFLAGS@ \
+	@LIBCLOCALE_CPPFLAGS@ \
+	@LIBCNOTIFY_CPPFLAGS@ \
+	@LIBCSPLIT_CPPFLAGS@ \
 	@LIBUNA_CPPFLAGS@ \
+	@LIBCFILE_CPPFLAGS@ \
+	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
 	@LIBFDATETIME_CPPFLAGS@ \
-	@LIBFVALUE_CPPFLAGS@ \
-	@MEMWATCH_CPPFLAGS@
+	@LIBFVALUE_CPPFLAGS@
 
 lib_LTLIBRARIES = libwtcdb.la
 
 libwtcdb_la_SOURCES = \
 	libwtcdb.c \
-	libwtcdb_array_type.c libwtcdb_array_type.h \
 	libwtcdb_crc.c libwtcdb_crc.h \
 	libwtcdb_debug.c libwtcdb_debug.h \
 	libwtcdb_definitions.h \
@@ -25,6 +28,11 @@ libwtcdb_la_SOURCES = \
 	libwtcdb_item_value.c libwtcdb_item_value.h \
 	libwtcdb_io_handle.c libwtcdb_io_handle.h \
 	libwtcdb_libbfio.h \
+	libwtcdb_libcdata.h \
+	libwtcdb_libcerror.h \
+	libwtcdb_libclocale.h \
+	libwtcdb_libcnotify.h \
+	libwtcdb_libcstring.h \
 	libwtcdb_libfdatetime.h \
 	libwtcdb_libfvalue.h \
 	libwtcdb_libuna.h \
@@ -36,10 +44,15 @@ libwtcdb_la_SOURCES = \
 	wtcdb_index_entry.h
 
 libwtcdb_la_LIBADD = \
-	../libcstring/libcstring.la \
-	../liberror/liberror.la \
-	../libnotify/libnotify.la \
+	@LIBCSTRING_LIBADD@ \
+	@LIBCERROR_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
 	@LIBUNA_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
 	@LIBBFIO_LIBADD@ \
 	@LIBFDATETIME_LIBADD@ \
 	@LIBFVALUE_LIBADD@

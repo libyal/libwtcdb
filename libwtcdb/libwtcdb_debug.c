@@ -1,7 +1,7 @@
 /*
  * Debug functions
  *
- * Copyright (c) 2010, Joachim Metz <jbmetz@users.sourceforge.net>
+ * Copyright (c) 2010-2013, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -22,11 +22,10 @@
 #include <common.h>
 #include <types.h>
 
-#include <liberror.h>
-#include <libnotify.h>
-
 #include "libwtcdb_debug.h"
 #include "libwtcdb_libbfio.h"
+#include "libwtcdb_libcerror.h"
+#include "libwtcdb_libcnotify.h"
 
 #if defined( HAVE_DEBUG_OUTPUT )
 
@@ -35,7 +34,7 @@
  */
 int libwtcdb_debug_print_read_offsets(
      libbfio_handle_t *file_io_handle,
-     liberror_error_t **error )
+     libcerror_error_t **error )
 {
 	static char *function = "libwtcdb_debug_print_read_offsets";
 	off64_t offset        = 0;
@@ -45,10 +44,10 @@ int libwtcdb_debug_print_read_offsets(
 
 	if( file_io_handle == NULL )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid file IO handle.",
 		 function );
 
@@ -59,16 +58,16 @@ int libwtcdb_debug_print_read_offsets(
 	     &number_of_offsets,
 	     error ) != 1 )
 	{
-		liberror_error_set(
+		libcerror_error_set(
 		 error,
-		 LIBERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 		 "%s: unable to retrieve number of offsets read.",
 		 function );
 
 		return( -1 );
 	}
-	libnotify_printf(
+	libcnotify_printf(
 	 "Offsets read:\n" );
 
 	for( offset_iterator = 0;
@@ -82,17 +81,17 @@ int libwtcdb_debug_print_read_offsets(
 		     &size,
 		     error ) != 1 )
 		{
-			liberror_error_set(
+			libcerror_error_set(
 			 error,
-			 LIBERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBERROR_RUNTIME_ERROR_GET_FAILED,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
 			 "%s: unable to retrieve offset: %d.",
 			 function,
 			 ( offset_iterator + 1 ) );
 
 			return( -1 );
 		}
-		libnotify_printf(
+		libcnotify_printf(
 		 "%08" PRIi64 " ( 0x%08" PRIx64 " ) - %08" PRIi64 " ( 0x%08" PRIx64 " ) size: %" PRIu64 "\n",
 		 offset,
 		 offset,
@@ -100,7 +99,7 @@ int libwtcdb_debug_print_read_offsets(
 		 offset + size,
 		 size );
 	}
-	libnotify_printf(
+	libcnotify_printf(
 	 "\n" );
 
 	return( 1 );

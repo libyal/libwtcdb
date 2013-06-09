@@ -39,10 +39,75 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\liberror;..\..\libuna"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBUNA;HAVE_LOCAL_LIBBFIO"
+				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\libcerror;..\..\libcdata;..\..\libclocale;..\..\libcsplit;..\..\libuna;..\..\libcfile;..\..\libcpath"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBCSTRING;HAVE_LOCAL_LIBCERROR;HAVE_LOCAL_LIBCDATA;HAVE_LOCAL_LIBCLOCALE;HAVE_LOCAL_LIBCSPLIT;HAVE_LOCAL_LIBUNA;HAVE_LOCAL_LIBCFILE;HAVE_LOCAL_LIBCPATH;HAVE_LOCAL_LIBBFIO"
 				RuntimeLibrary="2"
 				WarningLevel="4"
+				CompileAs="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="$(OutDir)\libbfio.lib"
+				ModuleDefinitionFile=""
+				IgnoreAllDefaultLibraries="false"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="VSDebug|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="4"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\libcerror;..\..\libcdata;..\..\libclocale;..\..\libcsplit;..\..\libuna;..\..\libcfile;..\..\libcpath"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBCSTRING;HAVE_LOCAL_LIBCERROR;HAVE_LOCAL_LIBCDATA;HAVE_LOCAL_LIBCLOCALE;HAVE_LOCAL_LIBCSPLIT;HAVE_LOCAL_LIBUNA;HAVE_LOCAL_LIBCFILE;HAVE_LOCAL_LIBCPATH;HAVE_LOCAL_LIBBFIO"
+				BasicRuntimeChecks="3"
+				SmallerTypeCheck="true"
+				RuntimeLibrary="3"
+				WarningLevel="4"
+				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
 			<Tool
@@ -90,11 +155,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libbfio\libbfio_error_string.c"
+				RelativePath="..\..\libbfio\libbfio_file.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libbfio\libbfio_file.c"
+				RelativePath="..\..\libbfio\libbfio_file_pool.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libbfio\libbfio_file_range.c"
 				>
 			</File>
 			<File
@@ -106,15 +175,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libbfio\libbfio_list_type.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libbfio\libbfio_memory_range.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_offset_list.c"
 				>
 			</File>
 			<File
@@ -132,15 +193,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\..\libbfio\libbfio_codepage.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libbfio\libbfio_definitions.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\libbfio\libbfio_error.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_error_string.h"
 				>
 			</File>
 			<File
@@ -152,6 +213,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libbfio\libbfio_file_pool.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libbfio\libbfio_file_range.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libbfio\libbfio_handle.h"
 				>
 			</File>
@@ -160,19 +229,35 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libbfio\libbfio_libcdata.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libbfio\libbfio_libcerror.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libbfio\libbfio_libcfile.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libbfio\libbfio_libclocale.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libbfio\libbfio_libcpath.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libbfio\libbfio_libcstring.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libbfio\libbfio_libuna.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libbfio\libbfio_list_type.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libbfio\libbfio_memory_range.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libbfio\libbfio_offset_list.h"
 				>
 			</File>
 			<File
@@ -185,6 +270,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libbfio\libbfio_types.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libbfio\libbfio_unused.h"
 				>
 			</File>
 		</Filter>
