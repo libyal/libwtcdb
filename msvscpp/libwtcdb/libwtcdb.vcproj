@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="libwtcdb_dll"
-	ProjectGUID="{B5225323-AC67-411D-8FBA-199E9467FAB5}"
+	Name="libwtcdb"
+	ProjectGUID="{A7406395-A3D5-41C4-9BF9-F40165EABB35}"
 	RootNamespace="libwtcdb"
 	TargetFrameworkVersion="131072"
 	>
@@ -20,6 +20,7 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -55,11 +56,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)\libwtcdb.dll"
+				OutputFile="$(OutDir)\$(ProjectName).dll"
 				AdditionalLibraryDirectories="&quot;$(OutDir)&quot;"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)\libwtcdb.lib"
+				RandomizedBaseAddress="2"
+				DataExecutionPrevention="2"
+				TargetMachine="1"
+				ImportLibrary="$(OutDir)\$(ProjectName).lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -88,6 +90,7 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -106,6 +109,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="0"
 				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\libcerror;..\..\libcdata;..\..\libclocale;..\..\libcnotify;..\..\libcsplit;..\..\libuna;..\..\libcfile;..\..\libcpath;..\..\libbfio;..\..\libfdatetime;..\..\libfvalue"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBCSTRING;HAVE_LOCAL_LIBCERROR;HAVE_LOCAL_LIBCDATA;HAVE_LOCAL_LIBCLOCALE;HAVE_LOCAL_LIBCNOTIFY;HAVE_LOCAL_LIBCSPLIT;HAVE_LOCAL_LIBUNA;HAVE_LOCAL_LIBCFILE;HAVE_LOCAL_LIBCPATH;HAVE_LOCAL_LIBBFIO;HAVE_LOCAL_LIBFDATETIME;HAVE_LOCAL_LIBFVALUE;LIBWTCDB_DLL_EXPORT"
 				BasicRuntimeChecks="3"
@@ -126,12 +130,13 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)\libwtcdb.dll"
+				OutputFile="$(OutDir)\$(ProjectName).dll"
 				AdditionalLibraryDirectories="&quot;$(OutDir)&quot;"
 				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)\libwtcdb.lib"
+				DataExecutionPrevention="1"
+				TargetMachine="1"
+				ImportLibrary="$(OutDir)\$(ProjectName).lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -169,27 +174,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_data_block.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_data_block_strings.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_data_string.c"
+				RelativePath="..\..\libwtcdb\libwtcdb_crc.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\libwtcdb\libwtcdb_debug.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_distributed_link_tracker.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_distributed_link_tracker_properties.c"
 				>
 			</File>
 			<File
@@ -201,35 +190,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_file_information.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libwtcdb\libwtcdb_io_handle.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_known_folder_location.c"
+				RelativePath="..\..\libwtcdb\libwtcdb_item.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_link_information.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_link_target_identifier.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_location_information.c"
+				RelativePath="..\..\libwtcdb\libwtcdb_item_value.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\libwtcdb\libwtcdb_notify.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_special_folder_location.c"
 				>
 			</File>
 			<File
@@ -243,19 +216,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_codepage.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_data_block.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_data_block_strings.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_data_string.h"
+				RelativePath="..\..\libwtcdb\libwtcdb_crc.h"
 				>
 			</File>
 			<File
@@ -264,14 +225,6 @@
 			</File>
 			<File
 				RelativePath="..\..\libwtcdb\libwtcdb_definitions.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_distributed_link_tracker.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_distributed_link_tracker_properties.h"
 				>
 			</File>
 			<File
@@ -287,15 +240,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_file_information.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libwtcdb\libwtcdb_io_handle.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_known_folder_location.h"
+				RelativePath="..\..\libwtcdb\libwtcdb_item.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libwtcdb\libwtcdb_item_value.h"
 				>
 			</File>
 			<File
@@ -303,7 +256,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libwtcdb\libwtcdb_libcdata.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libwtcdb\libwtcdb_libcerror.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libwtcdb\libwtcdb_libclocale.h"
 				>
 			</File>
 			<File
@@ -327,23 +288,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_link_information.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_link_target_identifier.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_location_information.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libwtcdb\libwtcdb_notify.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_special_folder_location.h"
 				>
 			</File>
 			<File
@@ -355,11 +300,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_unused.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwtcdb\wtcdb_data_blocks.h"
+				RelativePath="..\..\libwtcdb\wtcdb_cache_entry.h"
 				>
 			</File>
 			<File
@@ -367,7 +308,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libwtcdb\wtcdb_location_information.h"
+				RelativePath="..\..\libwtcdb\wtcdb_index_entry.h"
 				>
 			</File>
 		</Filter>

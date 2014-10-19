@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="wtcdbinfo"
-	ProjectGUID="{A7545354-5D50-49F6-A3D0-1F97F6228955}"
+	ProjectGUID="{2AE7161C-B52A-46B6-85EF-D5CEC50C56B3}"
 	RootNamespace="wtcdbinfo"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
@@ -44,10 +44,7 @@
 				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\libcerror;..\..\libcdata;..\..\libclocale;..\..\libcnotify;..\..\libcsplit;..\..\libuna;..\..\libcfile;..\..\libcpath;..\..\libbfio;..\..\libfdatetime;..\..\libfvalue;..\..\libcsystem"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBCSTRING;HAVE_LOCAL_LIBCERROR;HAVE_LOCAL_LIBCDATA;HAVE_LOCAL_LIBCLOCALE;HAVE_LOCAL_LIBCNOTIFY;HAVE_LOCAL_LIBCSPLIT;HAVE_LOCAL_LIBUNA;HAVE_LOCAL_LIBCFILE;HAVE_LOCAL_LIBCPATH;HAVE_LOCAL_LIBBFIO;HAVE_LOCAL_LIBFDATETIME;HAVE_LOCAL_LIBFVALUE;HAVE_LOCAL_LIBCSYSTEM;LIBWTCDB_DLL_IMPORT"
 				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
 			<Tool
@@ -63,12 +60,11 @@
 				Name="VCLinkerTool"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(OutDir)&quot;"
-				GenerateDebugInformation="false"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
+				RandomizedBaseAddress="2"
+				DataExecutionPrevention="2"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -99,7 +95,6 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
-			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -118,14 +113,13 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="0"
 				AdditionalIncludeDirectories="..\..\include;..\..\common;..\..\libcstring;..\..\libcerror;..\..\libcdata;..\..\libclocale;..\..\libcnotify;..\..\libcsplit;..\..\libuna;..\..\libcfile;..\..\libcpath;..\..\libbfio;..\..\libfdatetime;..\..\libfvalue;..\..\libcsystem"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;HAVE_LOCAL_LIBCSTRING;HAVE_LOCAL_LIBCERROR;HAVE_LOCAL_LIBCDATA;HAVE_LOCAL_LIBCLOCALE;HAVE_LOCAL_LIBCNOTIFY;HAVE_LOCAL_LIBCSPLIT;HAVE_LOCAL_LIBUNA;HAVE_LOCAL_LIBCFILE;HAVE_LOCAL_LIBCPATH;HAVE_LOCAL_LIBBFIO;HAVE_LOCAL_LIBFDATETIME;HAVE_LOCAL_LIBFVALUE;HAVE_LOCAL_LIBCSYSTEM;LIBWTCDB_DLL_IMPORT"
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="true"
 				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CompileAs="1"
 			/>
@@ -147,7 +141,7 @@
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
+				DataExecutionPrevention="1"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -182,10 +176,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\wtcdbtools\info_handle.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\wtcdbtools\wtcdbinfo.c"
 				>
 			</File>
@@ -200,10 +190,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\wtcdbtools\info_handle.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\wtcdbtools\wtcdboutput.h"
 				>
 			</File>
@@ -216,7 +202,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\wtcdbtools\wtcdbtools_libcstring.h"
+				RelativePath="..\..\wtcdbtools\wtcdbtools_libcnotify.h"
 				>
 			</File>
 			<File
@@ -225,10 +211,6 @@
 			</File>
 			<File
 				RelativePath="..\..\wtcdbtools\wtcdbtools_libfdatetime.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\wtcdbtools\wtcdbtools_libfguid.h"
 				>
 			</File>
 			<File

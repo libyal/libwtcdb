@@ -1,7 +1,7 @@
 /*
  * Input/Output (IO) handle functions
  *
- * Copyright (c) 2010-2013, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2010-2014, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -468,6 +468,7 @@ int libwtcdb_io_handle_read_items(
 {
 	libwtcdb_item_value_t *item_value           = NULL;
 	uint8_t *item_entry_data                    = NULL;
+	const char *type_string                     = NULL;
 	static char *function                       = "libwtcdb_io_handle_read_items";
 	size_t item_entry_data_size                 = 0;
 	ssize_t read_count                          = 0;
@@ -487,7 +488,6 @@ int libwtcdb_io_handle_read_items(
 	libfdatetime_filetime_t *filetime           = NULL;
 	libcstring_system_character_t *value_string = NULL;
 	uint8_t *padding_data                       = NULL;
-	const char *type_string                     = NULL;
 	size_t value_string_size                    = 0;
 	uint64_t value_64bit                        = 0;
 	uint32_t value_32bit                        = 0;
@@ -551,9 +551,7 @@ int libwtcdb_io_handle_read_items(
 		{
 			item_entry_data_size = sizeof( wtcdb_cache_entry_win7_t );
 		}
-#if defined( HAVE_DEBUG_OUTPUT )
 		type_string = "cache";
-#endif
 	}
 	else if( io_handle->file_type == LIBWTCDB_FILE_TYPE_INDEX )
 	{
@@ -565,9 +563,7 @@ int libwtcdb_io_handle_read_items(
 		{
 			item_entry_data_size = sizeof( wtcdb_index_entry_win7_t );
 		}
-#if defined( HAVE_DEBUG_OUTPUT )
 		type_string = "index";
-#endif
 	}
 	item_entry_data = (uint8_t *) memory_allocate(
 	                               sizeof( uint8_t ) * item_entry_data_size );

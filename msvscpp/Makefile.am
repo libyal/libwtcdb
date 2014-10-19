@@ -9,12 +9,14 @@ MSVSCPP_FILES = \
 	libcsplit/libcsplit.vcproj \
 	libcstring/libcstring.vcproj \
 	libcsystem/libcsystem.vcproj \
+	libcthreads/libcthreads.vcproj \
 	libfdatetime/libfdatetime.vcproj \
 	libfvalue/libfvalue.vcproj \
-	libwtcdb_dll/libwtcdb_dll.vcproj \
 	libuna/libuna.vcproj \
-	libwtcdb.sln \
-	wtcdbinfo/wtcdbinfo.vcproj
+	libwtcdb/libwtcdb.vcproj \
+	wtcdbexport/wtcdbexport.vcproj \
+	wtcdbinfo/wtcdbinfo.vcproj \
+	libwtcdb.sln
 
 SCRIPT_FILES = \
 	scripts/vs2008_x64.sh \
