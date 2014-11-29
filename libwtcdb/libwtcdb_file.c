@@ -1054,7 +1054,6 @@ int libwtcdb_file_get_item(
 	     internal_file->io_handle,
 	     internal_file->file_io_handle,
 	     values_table,
-	     LIBWTCDB_ITEM_FLAGS_DEFAULT,
 	     error ) != 1 )
 	{
 		libcerror_error_set(

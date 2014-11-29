@@ -1,5 +1,6 @@
 TODO:
-* remove LIBWTCDB_ITEM_FLAG_MANAGED_FILE_IO_HANDLE
+* libwtcdb:
+  - merge libwtcdb_item and libwtcdb_item_values?
 * wtcdbinfo: add info handle
 * wtcdbexport: move file into export handle
 * update man pages

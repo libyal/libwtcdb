@@ -36,14 +36,6 @@
 extern "C" {
 #endif
 
-#define LIBWTCDB_ITEM_FLAGS_DEFAULT			LIBWTCDB_ITEM_FLAG_NON_MANAGED_FILE_IO_HANDLE
-
-enum LIBWTCDB_ITEM_FLAGS
-{
-	LIBWTCDB_ITEM_FLAG_NON_MANAGED_FILE_IO_HANDLE	= 0x00,
-	LIBWTCDB_ITEM_FLAG_MANAGED_FILE_IO_HANDLE	= 0x01,
-};
-
 typedef struct libwtcdb_internal_item libwtcdb_internal_item_t;
 
 struct libwtcdb_internal_item
@@ -59,10 +51,6 @@ struct libwtcdb_internal_item
 	/* The values table
 	 */
 	libfvalue_table_t *values_table;
-
-	/* The flags
-	 */
-	uint8_t flags;
 };
 
 int libwtcdb_item_initialize(
@@ -70,7 +58,6 @@ int libwtcdb_item_initialize(
      libwtcdb_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      libfvalue_table_t *values_table,
-     uint8_t flags,
      libcerror_error_t **error );
 
 LIBWTCDB_EXTERN \
