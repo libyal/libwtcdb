@@ -1,7 +1,6 @@
 TODO:
 * wtcdbinfo: add info handle
 * wtcdbexport: move file into export handle
-* update msvscpp files
 * update man pages
 
 * debug print cache type
@@ -11,6 +10,7 @@ TODO:
 
 20141129
 * code clean up
+* updated msvscpp files
 
 20141026
 * changes for deployment
