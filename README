@@ -1,4 +1,4 @@
-libwtcdb is a library to access the Windows (Vista/7) Explorer thumbnail cache database format (thumbcache.db).
+libwtcdb is a library to access the Windows (Vista/7) Explorer thumbnail cache database (WTCDB) format (thumbcache.db).
 
 Note that this project currently only focuses on the analysis of the format.
 

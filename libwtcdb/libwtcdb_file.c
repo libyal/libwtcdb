@@ -35,8 +35,8 @@
 #include "libwtcdb_libcstring.h"
 #include "libwtcdb_libfvalue.h"
 
-/* Initializes a file
- * Make sure the value file is pointing to is set to NULL
+/* Creates a file
+ * Make sure the value file is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int libwtcdb_file_initialize(
@@ -57,68 +57,77 @@ int libwtcdb_file_initialize(
 
 		return( -1 );
 	}
-	if( *file == NULL )
+	if( *file != NULL )
 	{
-		internal_file = memory_allocate_structure(
-		                 libwtcdb_internal_file_t );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid file value already set.",
+		 function );
 
-		if( internal_file == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create file.",
-			 function );
-
-			goto on_error;
-		}
-		if( memory_set(
-		     internal_file,
-		     0,
-		     sizeof( libwtcdb_internal_file_t ) ) == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear file.",
-			 function );
-
-			memory_free(
-			 internal_file );
-
-			return( -1 );
-		}
-		if( libcdata_array_initialize(
-		     &( internal_file->items ),
-		     0,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create items array.",
-			 function );
-
-			goto on_error;
-		}
-		if( libwtcdb_io_handle_initialize(
-		     &( internal_file->io_handle ),
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create IO handle.",
-			 function );
-
-			goto on_error;
-		}
-		*file = (libwtcdb_file_t *) internal_file;
+		return( -1 );
 	}
+	internal_file = memory_allocate_structure(
+	                 libwtcdb_internal_file_t );
+
+	if( internal_file == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create file.",
+		 function );
+
+		goto on_error;
+	}
+	if( memory_set(
+	     internal_file,
+	     0,
+	     sizeof( libwtcdb_internal_file_t ) ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear file.",
+		 function );
+
+		memory_free(
+		 internal_file );
+
+		return( -1 );
+	}
+	if( libcdata_array_initialize(
+	     &( internal_file->items ),
+	     0,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create items array.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwtcdb_io_handle_initialize(
+	     &( internal_file->io_handle ),
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create IO handle.",
+		 function );
+
+		goto on_error;
+	}
+	*file = (libwtcdb_file_t *) internal_file;
+
 	return( 1 );
 
 on_error:

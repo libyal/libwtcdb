@@ -31,7 +31,8 @@
 #include "libwtcdb_libcerror.h"
 #include "libwtcdb_libfvalue.h"
 
-/* Initializes the item and its values
+/* Creates an item
+ * Make sure the value item is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int libwtcdb_item_initialize(
@@ -52,6 +53,17 @@ int libwtcdb_item_initialize(
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid item.",
+		 function );
+
+		return( -1 );
+	}
+	if( *item != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid item value already set.",
 		 function );
 
 		return( -1 );
@@ -79,80 +91,78 @@ int libwtcdb_item_initialize(
 
 		return( -1 );
 	}
-	if( *item == NULL )
-	{
-		internal_item = memory_allocate_structure(
-		                 libwtcdb_internal_item_t );
+	internal_item = memory_allocate_structure(
+	                 libwtcdb_internal_item_t );
 
-		if( internal_item == NULL )
+	if( internal_item == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create internal item.",
+		 function );
+
+		goto on_error;
+	}
+	if( memory_set(
+	     internal_item,
+	     0,
+	     sizeof( libwtcdb_internal_item_t ) ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear internal item.",
+		 function );
+
+		memory_free(
+		 internal_item );
+
+		return( -1 );
+	}
+	if( ( flags & LIBWTCDB_ITEM_FLAG_MANAGED_FILE_IO_HANDLE ) == 0 )
+	{
+		internal_item->file_io_handle = file_io_handle;
+	}
+	else
+	{
+		if( libbfio_handle_clone(
+		     &( internal_item->file_io_handle ),
+		     file_io_handle,
+		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create internal item.",
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to copy file IO handle.",
 			 function );
 
 			goto on_error;
 		}
-		if( memory_set(
-		     internal_item,
-		     0,
-		     sizeof( libwtcdb_internal_item_t ) ) == NULL )
+		if( libbfio_handle_set_open_on_demand(
+		     internal_item->file_io_handle,
+		     1,
+		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear internal item.",
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
+			 "%s: unable to set open on demand in file IO handle.",
 			 function );
 
-			memory_free(
-			 internal_item );
-
-			return( -1 );
+			goto on_error;
 		}
-		if( ( flags & LIBWTCDB_ITEM_FLAG_MANAGED_FILE_IO_HANDLE ) == 0 )
-		{
-			internal_item->file_io_handle = file_io_handle;
-		}
-		else
-		{
-			if( libbfio_handle_clone(
-			     &( internal_item->file_io_handle ),
-			     file_io_handle,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-				 "%s: unable to copy file IO handle.",
-				 function );
-
-				goto on_error;
-			}
-			if( libbfio_handle_set_open_on_demand(
-			     internal_item->file_io_handle,
-			     1,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-				 "%s: unable to set open on demand in file IO handle.",
-				 function );
-
-				goto on_error;
-			}
-		}
-		internal_item->io_handle    = io_handle;
-		internal_item->flags        = flags;
-		internal_item->values_table = values_table;
-
-		*item = (libwtcdb_item_t *) internal_item;
 	}
+	internal_item->io_handle    = io_handle;
+	internal_item->flags        = flags;
+	internal_item->values_table = values_table;
+
+	*item = (libwtcdb_item_t *) internal_item;
+
 	return( 1 );
 
 on_error:

@@ -1,4 +1,5 @@
 TODO:
+* remove LIBWTCDB_ITEM_FLAG_MANAGED_FILE_IO_HANDLE
 * wtcdbinfo: add info handle
 * wtcdbexport: move file into export handle
 * update man pages

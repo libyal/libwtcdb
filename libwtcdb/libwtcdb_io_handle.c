@@ -44,8 +44,8 @@
 const uint8_t *wtcdb_cache_file_signature = (uint8_t *) "CMMM";
 const uint8_t *wtcdb_index_file_signature = (uint8_t *) "IMMM";
 
-/* Initialize an IO handle
- * Make sure the value io_handle is pointing to is set to NULL
+/* Creates an IO handle
+ * Make sure the value io_handle is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int libwtcdb_io_handle_initialize(
@@ -117,7 +117,7 @@ on_error:
 	return( -1 );
 }
 
-/* Frees an existing IO handle
+/* Frees an IO handle
  * Returns 1 if successful or -1 on error
  */
 int libwtcdb_io_handle_free(

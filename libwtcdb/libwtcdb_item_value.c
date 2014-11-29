@@ -27,7 +27,8 @@
 #include "libwtcdb_libcerror.h"
 #include "libwtcdb_types.h"
 
-/* Initialize an item value
+/* Creates an item value
+ * Make sure the value item_value is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int libwtcdb_item_value_initialize(
@@ -47,36 +48,44 @@ int libwtcdb_item_value_initialize(
 
 		return( -1 );
 	}
+	if( *item_value != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid item value value already set.",
+		 function );
+
+		return( -1 );
+	}
+	*item_value = memory_allocate_structure(
+	               libwtcdb_item_value_t );
+
 	if( *item_value == NULL )
 	{
-		*item_value = memory_allocate_structure(
-		               libwtcdb_item_value_t );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create item value.",
+		 function );
 
-		if( *item_value == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create item value.",
-			 function );
+		goto on_error;
+	}
+	if( memory_set(
+	     *item_value,
+	     0,
+	     sizeof( libwtcdb_item_value_t ) ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear item value.",
+		 function );
 
-			goto on_error;
-		}
-		if( memory_set(
-		     *item_value,
-		     0,
-		     sizeof( libwtcdb_item_value_t ) ) == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear item value.",
-			 function );
-
-			goto on_error;
-		}
+		goto on_error;
 	}
 	return( 1 );
 
