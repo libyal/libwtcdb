@@ -1,8 +1,10 @@
 TODO:
-* libwtcdb:
+* libwtcdb
   - merge libwtcdb_item and libwtcdb_item_values?
-* wtcdbinfo: add info handle
-* wtcdbexport: move file into export handle
+* wtcdbinfo
+  - add info handle
+* wtcdbexport
+  - move file into export handle
 * update man pages
 
 * debug print cache type

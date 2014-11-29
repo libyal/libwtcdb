@@ -33,6 +33,7 @@ wtcdbexport_SOURCES = \
 	wtcdbtools_libclocale.h \
 	wtcdbtools_libcnotify.h \
 	wtcdbtools_libcpath.h \
+	wtcdbtools_libcstring.h \
 	wtcdbtools_libcsystem.h \
 	wtcdbtools_libfdatetime.h \
 	wtcdbtools_libfvalue.h \
@@ -54,11 +55,17 @@ wtcdbexport_LDADD = \
 wtcdbinfo_SOURCES = \
 	wtcdbinfo.c \
 	wtcdboutput.c wtcdboutput.h \
+	wtcdbtools_libbfio.h \
 	wtcdbtools_libcerror.h \
+	wtcdbtools_libcfile.h \
 	wtcdbtools_libclocale.h \
 	wtcdbtools_libcnotify.h \
+	wtcdbtools_libcpath.h \
+	wtcdbtools_libcstring.h \
 	wtcdbtools_libcsystem.h \
 	wtcdbtools_libfdatetime.h \
+	wtcdbtools_libfvalue.h \
+	wtcdbtools_libuna.h \
 	wtcdbtools_libwtcdb.h
 
 wtcdbinfo_LDADD = \
