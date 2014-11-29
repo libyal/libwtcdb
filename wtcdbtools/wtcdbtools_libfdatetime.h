@@ -1,5 +1,5 @@
 /*
- * The libfvalue header wrapper
+ * The libfdatetime header wrapper
  *
  * Copyright (C) 2010-2014, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,31 +19,32 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBWTCDB_LIBFVALUE_H )
-#define _LIBWTCDB_LIBFVALUE_H
+#if !defined( _WTCDBTOOLS_LIBFDATETIME_H )
+#define _WTCDBTOOLS_LIBFDATETIME_H
 
 #include <common.h>
 
-/* Define HAVE_LOCAL_LIBFVALUE for local use of libfvalue
+/* Define HAVE_LOCAL_LIBFDATETIME for local use of libfdatetime
  */
-#if defined( HAVE_LOCAL_LIBFVALUE )
+#if defined( HAVE_LOCAL_LIBFDATETIME )
 
-#include <libfvalue_codepage.h>
-#include <libfvalue_definitions.h>
-#include <libfvalue_table.h>
-#include <libfvalue_types.h>
-#include <libfvalue_value.h>
+#include <libfdatetime_date_time_values.h>
+#include <libfdatetime_definitions.h>
+#include <libfdatetime_fat_date_time.h>
+#include <libfdatetime_filetime.h>
+#include <libfdatetime_nsf_timedate.h>
+#include <libfdatetime_types.h>
 
 #else
 
-/* If libtool DLL support is enabled set LIBFVALUE_DLL_IMPORT
- * before including libfvalue.h
+/* If libtool DLL support is enabled set LIBFDATETIME_DLL_IMPORT
+ * before including libfdatetime.h
  */
 #if defined( _WIN32 ) && defined( DLL_IMPORT )
-#define LIBFVALUE_DLL_IMPORT
+#define LIBFDATETIME_DLL_IMPORT
 #endif
 
-#include <libfvalue.h>
+#include <libfdatetime.h>
 
 #endif
 

@@ -1,9 +1,9 @@
-.Dd October 19, 2014
+.Dd November 29, 2014
 .Dt wtcdbexport
 .Os libwtcdb
 .Sh NAME
 .Nm wtcdbexport
-.Nd exports items stored in a Windows Explorer thumbnail cache database file
+.Nd exports items stored in a Windows Explorer thumbnail cache database (WTCDB) file
 .Sh SYNOPSIS
 .Nm wtcdbexport
 .Op Fl l Ar logfile
@@ -12,14 +12,14 @@
 .Va Ar source
 .Sh DESCRIPTION
 .Nm wtcdbexport
-is a utility to export items stored in a Windows Explorer thumbnail cache database file
+is a utility to export items stored in a Windows Explorer thumbnail cache database (WTCDB) file
 .Pp
 .Nm wtcdbexport
 is part of the
 .Nm libwtcdb
 package.
 .Nm libwtcdb
-is a library to support the Windows Explorer thumbnail cache database format
+is a library to access the Windows Explorer thumbnail cache database (WTCDB) format
 .Pp
 .Ar source
 is the source file.
@@ -59,7 +59,7 @@ Errors, verbose and debug output are printed to stderr when verbose output \-v i
 Verbose and debug output are only printed when enabled at compilation.
 .Sh BUGS
 Please report bugs of any kind to <joachim.metz@gmail.com> or on the project website:
-https://code.google.com/p/libwtcdb/
+https://github.com/libyal/libwtcdb/
 .Sh AUTHOR
 These man pages were written by Joachim Metz.
 .Sh COPYRIGHT

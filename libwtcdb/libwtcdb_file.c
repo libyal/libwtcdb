@@ -9,12 +9,12 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -243,7 +243,7 @@ int libwtcdb_file_signal_abort(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid internal file - missing IO handle.",
+		 "%s: invalid file - missing IO handle.",
 		 function );
 
 		return( -1 );
@@ -525,7 +525,7 @@ on_error:
 	return( -1 );
 }
 
-#endif
+#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
 /* Opens a file using a Basic File IO (bfio) handle
  * Returns 1 if successful or -1 on error
@@ -540,6 +540,7 @@ int libwtcdb_file_open_file_io_handle(
 	static char *function                   = "libwtcdb_file_open_file_io_handle";
 	int bfio_access_flags                   = 0;
 	int file_io_handle_is_open              = 0;
+	int file_io_handle_opened_in_library    = 0;
 
 	if( file == NULL )
 	{
@@ -560,7 +561,7 @@ int libwtcdb_file_open_file_io_handle(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid internal file - file IO handle already set.",
+		 "%s: invalid file - file IO handle already set.",
 		 function );
 
 		return( -1 );
@@ -603,10 +604,8 @@ int libwtcdb_file_open_file_io_handle(
 	{
 		bfio_access_flags = LIBBFIO_ACCESS_FLAG_READ;
 	}
-	internal_file->file_io_handle = file_io_handle;
-
 	file_io_handle_is_open = libbfio_handle_is_open(
-	                          internal_file->file_io_handle,
+	                          file_io_handle,
 	                          error );
 
 	if( file_io_handle_is_open == -1 )
@@ -615,15 +614,15 @@ int libwtcdb_file_open_file_io_handle(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open file.",
+		 "%s: unable to determine if file IO handle is open.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	else if( file_io_handle_is_open == 0 )
 	{
 		if( libbfio_handle_open(
-		     internal_file->file_io_handle,
+		     file_io_handle,
 		     bfio_access_flags,
 		     error ) != 1 )
 		{
@@ -634,11 +633,13 @@ int libwtcdb_file_open_file_io_handle(
 			 "%s: unable to open file IO handle.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
+		file_io_handle_opened_in_library = 1;
 	}
 	if( libwtcdb_file_open_read(
 	     internal_file,
+	     file_io_handle,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -648,9 +649,21 @@ int libwtcdb_file_open_file_io_handle(
 		 "%s: unable to read from file handle.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
+	internal_file->file_io_handle                   = file_io_handle;
+	internal_file->file_io_handle_opened_in_library = file_io_handle_opened_in_library;
+
 	return( 1 );
+
+on_error:
+	if( file_io_handle_opened_in_library != 0 )
+	{
+		libbfio_handle_close(
+		 file_io_handle,
+		 error );
+	}
+	return( -1 );
 }
 
 /* Closes a file
@@ -688,10 +701,10 @@ int libwtcdb_file_close(
 
 		return( -1 );
 	}
-	if( internal_file->file_io_handle_created_in_library != 0 )
-	{
 #if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
+	if( libcnotify_verbose != 0 )
+	{
+		if( internal_file->file_io_handle_created_in_library != 0 )
 		{
 			if( libwtcdb_debug_print_read_offsets(
 			     internal_file->file_io_handle,
@@ -707,7 +720,10 @@ int libwtcdb_file_close(
 				result = -1;
 			}
 		}
+	}
 #endif
+	if( internal_file->file_io_handle_opened_in_library != 0 )
+	{
 		if( libbfio_handle_close(
 		     internal_file->file_io_handle,
 		     error ) != 0 )
@@ -721,6 +737,10 @@ int libwtcdb_file_close(
 
 			result = -1;
 		}
+		internal_file->file_io_handle_opened_in_library = 0;
+	}
+	if( internal_file->file_io_handle_created_in_library != 0 )
+	{
 		if( libbfio_handle_free(
 		     &( internal_file->file_io_handle ),
 		     error ) != 1 )
@@ -734,10 +754,23 @@ int libwtcdb_file_close(
 
 			result = -1;
 		}
+		internal_file->file_io_handle_created_in_library = 0;
 	}
-	internal_file->file_io_handle                    = NULL;
-	internal_file->file_io_handle_created_in_library = 0;
+	internal_file->file_io_handle = NULL;
 
+	if( libwtcdb_io_handle_clear(
+	     internal_file->io_handle,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to clear IO handle.",
+		 function );
+
+		result = -1;
+	}
 	if( libcdata_array_empty(
 	     internal_file->items,
 	     (int (*)(intptr_t **, libcerror_error_t **)) &libfvalue_table_free,
@@ -760,6 +793,7 @@ int libwtcdb_file_close(
  */
 int libwtcdb_file_open_read(
      libwtcdb_internal_file_t *internal_file,
+     libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
 	static char *function          = "libwtcdb_file_open_read";
@@ -774,7 +808,7 @@ int libwtcdb_file_open_read(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid internal file.",
+		 "%s: invalid file.",
 		 function );
 
 		return( -1 );
@@ -785,7 +819,7 @@ int libwtcdb_file_open_read(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid internal file - missing IO handle.",
+		 "%s: invalid file - missing IO handle.",
 		 function );
 
 		return( -1 );
@@ -803,7 +837,7 @@ int libwtcdb_file_open_read(
 #endif
 	if( libwtcdb_io_handle_read_file_header(
 	     internal_file->io_handle,
-	     internal_file->file_io_handle,
+	     file_io_handle,
 	     &first_item_offset,
 	     &available_item_offset,
 	     &number_of_items,
@@ -827,7 +861,7 @@ int libwtcdb_file_open_read(
 #endif
 	result = libwtcdb_io_handle_read_items(
 	          internal_file->io_handle,
-	          internal_file->file_io_handle,
+	          file_io_handle,
 	          first_item_offset,
 	          available_item_offset,
 	          number_of_items,
@@ -880,7 +914,7 @@ int libwtcdb_file_get_type(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid internal file - missing IO handle.",
+		 "%s: invalid file - missing IO handle.",
 		 function );
 
 		return( -1 );
@@ -974,7 +1008,7 @@ int libwtcdb_file_get_item(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid internal file - missing items array.",
+		 "%s: invalid file - missing items array.",
 		 function );
 
 		return( -1 );

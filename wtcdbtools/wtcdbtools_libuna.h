@@ -1,5 +1,5 @@
 /*
- * The libfvalue header wrapper
+ * The libuna header wrapper
  *
  * Copyright (C) 2010-2014, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,31 +19,39 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBWTCDB_LIBFVALUE_H )
-#define _LIBWTCDB_LIBFVALUE_H
+#if !defined( _WTCDBTOOLS_LIBUNA_H )
+#define _WTCDBTOOLS_LIBUNA_H
 
 #include <common.h>
 
-/* Define HAVE_LOCAL_LIBFVALUE for local use of libfvalue
+/* Define HAVE_LOCAL_LIBUNA for local use of libuna
  */
-#if defined( HAVE_LOCAL_LIBFVALUE )
+#if defined( HAVE_LOCAL_LIBUNA )
 
-#include <libfvalue_codepage.h>
-#include <libfvalue_definitions.h>
-#include <libfvalue_table.h>
-#include <libfvalue_types.h>
-#include <libfvalue_value.h>
+#include <libuna_base16_stream.h>
+#include <libuna_base32_stream.h>
+#include <libuna_base64_stream.h>
+#include <libuna_byte_stream.h>
+#include <libuna_unicode_character.h>
+#include <libuna_url_stream.h>
+#include <libuna_utf8_stream.h>
+#include <libuna_utf8_string.h>
+#include <libuna_utf16_stream.h>
+#include <libuna_utf16_string.h>
+#include <libuna_utf32_stream.h>
+#include <libuna_utf32_string.h>
+#include <libuna_types.h>
 
 #else
 
-/* If libtool DLL support is enabled set LIBFVALUE_DLL_IMPORT
- * before including libfvalue.h
+/* If libtool DLL support is enabled set LIBUNA_DLL_IMPORT
+ * before including libuna.h
  */
 #if defined( _WIN32 ) && defined( DLL_IMPORT )
-#define LIBFVALUE_DLL_IMPORT
+#define LIBUNA_DLL_IMPORT
 #endif
 
-#include <libfvalue.h>
+#include <libuna.h>
 
 #endif
 

@@ -33,8 +33,15 @@
 
 /* The following type definitions hide internal data structures
  */
+#if defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI )
+typedef struct libwtcdb_file {}		libwtcdb_file_t;
+typedef struct libwtcdb_item {}		libwtcdb_item_t;
+
+#else
 typedef intptr_t libwtcdb_file_t;
 typedef intptr_t libwtcdb_item_t;
+
+#endif
 
 #endif
 

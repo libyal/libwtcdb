@@ -1,5 +1,5 @@
 /*
- * Library to access the Windows Explorer thumbnail cache database format
+ * Library to access the Windows Explorer thumbnail cache database (WTCDB) format
  *
  * Copyright (c) 2010-2014, Joachim Metz <joachim.metz@gmail.com>
  *

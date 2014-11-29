@@ -108,6 +108,7 @@ stamp-h1
 /wtcdbtools/wtcdbinfo
 /pywtcdb/setup.py
 /tests/input
+/tests/tmp
 /tests/wtcdb_test_open_close
 
 # Local library dependencies specific files

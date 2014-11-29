@@ -27,6 +27,7 @@ wtcdbexport_SOURCES = \
 	log_handle.c log_handle.h \
 	wtcdbexport.c \
 	wtcdboutput.c wtcdboutput.h \
+	wtcdbtools_libbfio.h \
 	wtcdbtools_libcerror.h \
 	wtcdbtools_libcfile.h \
 	wtcdbtools_libclocale.h \
@@ -34,6 +35,8 @@ wtcdbexport_SOURCES = \
 	wtcdbtools_libcpath.h \
 	wtcdbtools_libcsystem.h \
 	wtcdbtools_libfdatetime.h \
+	wtcdbtools_libfvalue.h \
+	wtcdbtools_libuna.h \
 	wtcdbtools_libwtcdb.h
 
 wtcdbexport_LDADD = \
@@ -74,8 +77,8 @@ distclean: clean
 	/bin/rm -f Makefile
 
 splint:
-	@echo "Running splint on wtcdbexport ..." 
-	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(wtcdbexport_SOURCES) 
-	@echo "Running splint on wtcdbinfo ..." 
-	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(wtcdbinfo_SOURCES) 
+	@echo "Running splint on wtcdbexport ..."
+	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(wtcdbexport_SOURCES)
+	@echo "Running splint on wtcdbinfo ..."
+	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(wtcdbinfo_SOURCES)
 

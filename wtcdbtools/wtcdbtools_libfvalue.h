@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBWTCDB_LIBFVALUE_H )
-#define _LIBWTCDB_LIBFVALUE_H
+#if !defined( _WTCDBTOOLS_LIBFVALUE_H )
+#define _WTCDBTOOLS_LIBFVALUE_H
 
 #include <common.h>
 

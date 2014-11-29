@@ -9,12 +9,12 @@
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -54,7 +54,7 @@ LIBWTCDB_EXTERN \
 int libwtcdb_get_access_flags_read(
      void );
 
-/* Determines if a file is a Windows Explorer thumbnail cache database file
+/* Determines if a file contains a WTCDB file signature
  * Returns 1 if true, 0 if not or -1 on error
  */
 LIBWTCDB_EXTERN \
@@ -63,24 +63,28 @@ int libwtcdb_check_file_signature(
      libwtcdb_error_t **error );
 
 #if defined( LIBWTCDB_HAVE_WIDE_CHARACTER_TYPE )
-/* Determines if a file is a Windows Explorer thumbnail cache database file
+
+/* Determines if a file contains a WTCDB file signature
  * Returns 1 if true, 0 if not or -1 on error
  */
 LIBWTCDB_EXTERN \
 int libwtcdb_check_file_signature_wide(
      const wchar_t *filename,
      libwtcdb_error_t **error );
-#endif
+
+#endif /* defined( LIBWTCDB_HAVE_WIDE_CHARACTER_TYPE ) */
 
 #if defined( LIBWTCDB_HAVE_BFIO )
-/* Determines if a file is a Windows Explorer thumbnail cache database file using a Basic File IO (bfio) handle
+
+/* Determines if a file contains a WTCDB file signature using a Basic File IO (bfio) handle
  * Returns 1 if true, 0 if not or -1 on error
  */
 LIBWTCDB_EXTERN \
 int libwtcdb_check_file_signature_file_io_handle(
      libbfio_handle_t *file_io_handle,
      libwtcdb_error_t **error );
-#endif
+
+#endif /* defined( LIBWTCDB_HAVE_BFIO ) */
 
 /* -------------------------------------------------------------------------
  * Notify functions
@@ -200,6 +204,7 @@ int libwtcdb_file_open(
      libwtcdb_error_t **error );
 
 #if defined( LIBWTCDB_HAVE_WIDE_CHARACTER_TYPE )
+
 /* Opens a file
  * Returns 1 if successful or -1 on error
  */
@@ -209,9 +214,11 @@ int libwtcdb_file_open_wide(
      const wchar_t *filename,
      int access_flags,
      libwtcdb_error_t **error );
-#endif
+
+#endif /* defined( LIBWTCDB_HAVE_WIDE_CHARACTER_TYPE ) */
 
 #if defined( LIBWTCDB_HAVE_BFIO )
+
 /* Opens a file using a Basic File IO (bfio) handle
  * Returns 1 if successful or -1 on error
  */
@@ -221,7 +228,8 @@ int libwtcdb_file_open_file_io_handle(
      libbfio_handle_t *file_io_handle,
      int access_flags,
      libwtcdb_error_t **error );
-#endif
+
+#endif /* defined( LIBWTCDB_HAVE_BFIO ) */
 
 /* Closes a file
  * Returns 0 if successful or -1 on error
