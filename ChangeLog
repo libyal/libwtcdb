@@ -12,6 +12,9 @@ TODO:
 
 * wtcdbexport export items in directories using the entry hash as filename
 
+20141226
+* code clean up
+
 20141129
 * code clean up
 * updated msvscpp files
