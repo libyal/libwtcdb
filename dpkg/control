@@ -1,13 +1,12 @@
 Source: libwtcdb
-Section: unknown
+Section: libs
 Priority: extra
 Maintainer: Joachim Metz <joachim.metz@gmail.com>
 Build-Depends: debhelper (>= 7), autotools-dev
-Standards-Version: 3.8.3
+Standards-Version: 3.9.5
 Homepage: https://github.com/libyal/libwtcdb/
 
 Package: libwtcdb
-Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Suggests: libwtcdb-dbg
@@ -17,21 +16,21 @@ Description: Library to access the Windows Explorer thumbnail cache database (WT
 Package: libwtcdb-dbg
 Architecture: any
 Section: debug
-Depends: libwtcdb (= ${Source-Version}), ${misc:Depends}
+Depends: libwtcdb (= ${binary:Version}), ${misc:Depends}
 Description: Debugging symbols for libwtcdb
  Debugging symbols for libwtcdb.
 
 Package: libwtcdb-dev
 Section: libdevel
 Architecture: any
-Depends: libwtcdb (= ${Source-Version})
+Depends: libwtcdb (= ${binary:Version}), ${misc:Depends}
 Description: Header files and libraries for developing applications for libwtcdb
  Header files and libraries for developing applications for libwtcdb.
 
 Package: libwtcdb-tools
 Section: utils
 Architecture: any
-Depends: libwtcdb (= ${Source-Version}), ${shlibs:Depends}
+Depends: libwtcdb (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Description: Several tools for reading Windows Explorer thumbnail cache database (WTCDB) files
  Several tools for reading Windows Explorer thumbnail cache database (WTCDB) files.
 

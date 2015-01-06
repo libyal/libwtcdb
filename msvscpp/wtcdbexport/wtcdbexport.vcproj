@@ -234,6 +234,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\wtcdbtools\wtcdbtools_libcstring.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\wtcdbtools\wtcdbtools_libcsystem.h"
 				>
 			</File>

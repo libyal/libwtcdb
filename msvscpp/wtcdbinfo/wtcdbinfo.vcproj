@@ -194,7 +194,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\wtcdbtools\wtcdbtools_libbfio.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\wtcdbtools\wtcdbtools_libcerror.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wtcdbtools\wtcdbtools_libcfile.h"
 				>
 			</File>
 			<File
@@ -206,11 +214,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\wtcdbtools\wtcdbtools_libcpath.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wtcdbtools\wtcdbtools_libcstring.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\wtcdbtools\wtcdbtools_libcsystem.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\wtcdbtools\wtcdbtools_libfdatetime.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wtcdbtools\wtcdbtools_libfvalue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wtcdbtools\wtcdbtools_libuna.h"
 				>
 			</File>
 			<File
