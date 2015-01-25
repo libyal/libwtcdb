@@ -46,6 +46,7 @@ wtcdbexport_LDADD = \
 	@LIBCPATH_LIBADD@ \
 	@LIBUNA_LIBADD@ \
 	../libwtcdb/libwtcdb.la \
+	@LIBCSPLIT_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCERROR_LIBADD@ \

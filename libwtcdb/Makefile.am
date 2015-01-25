@@ -39,6 +39,7 @@ libwtcdb_la_SOURCES = \
 	libwtcdb_notify.c libwtcdb_notify.h \
 	libwtcdb_support.c libwtcdb_support.h \
 	libwtcdb_types.h \
+	libwtcdb_unused.h \
 	wtcdb_cache_entry.h \
 	wtcdb_file_header.h \
 	wtcdb_index_entry.h

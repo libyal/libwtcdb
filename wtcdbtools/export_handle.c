@@ -466,10 +466,10 @@ int export_handle_set_target_path(
 	                      target_path );
 
 #if defined( WINAPI )
-	result = libcsystem_file_create_windows_extended_path(
+	result = libcpath_path_get_full_path_wide(
 	          target_path,
                   target_path_length,
-                  &extended_length_target_path,
+                  (wchar_t **) &extended_length_target_path,
                   &extended_length_target_path_size,
                   error );
 
@@ -492,8 +492,8 @@ int export_handle_set_target_path(
 #endif
 	if( target_path_length > 0 )
 	{
-		export_handle->target_path = (libcstring_system_character_t *) memory_allocate(
-		                                                                sizeof( libcstring_system_character_t ) * ( target_path_length + 1 ) );
+		export_handle->target_path = libcstring_system_string_allocate(
+		                              target_path_length + 1 );
 
 		if( export_handle->target_path == NULL )
 		{

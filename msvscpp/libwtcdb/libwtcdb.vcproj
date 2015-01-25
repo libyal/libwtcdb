@@ -300,6 +300,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libwtcdb\libwtcdb_unused.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libwtcdb\wtcdb_cache_entry.h"
 				>
 			</File>
