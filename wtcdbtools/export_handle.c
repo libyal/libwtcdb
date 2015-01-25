@@ -466,7 +466,7 @@ int export_handle_set_target_path(
 	                      target_path );
 
 #if defined( WINAPI )
-	result = libsystem_file_create_windows_extended_path(
+	result = libcsystem_file_create_windows_extended_path(
 	          target_path,
                   target_path_length,
                   &extended_length_target_path,
@@ -729,9 +729,9 @@ int export_handle_export_file(
 			 item_index + 1,
 			 number_of_items );
 
-			if( libsystem_notify_verbose != 0 )
+			if( libcsystem_notify_verbose != 0 )
 			{
-				libsystem_notify_printf(
+				libcsystem_notify_printf(
 				 "%s: unable to export item: %d.\n",
 				 function,
 				 item_index + 1 );
@@ -739,7 +739,7 @@ int export_handle_export_file(
 			if( ( error != NULL )
 			 && ( *error != NULL ) )
 			{
-				libsystem_notify_print_error_backtrace(
+				libcsystem_notify_print_error_backtrace(
 				 *error );
 			}
 			libcerror_error_free(
