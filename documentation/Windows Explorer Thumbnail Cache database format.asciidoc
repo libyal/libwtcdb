@@ -109,6 +109,7 @@ The cache entry is variable of size and consist of:
 
 [cols="1,1,1,5",options="header"]
 |===
+| Offset | Size | Value | Description
 | 0 | 4 | "CMMM" | The signature (magic identifier)
 | 4 | 4 | | Cache entry size +
 This includes the signature and size value.
@@ -156,7 +157,99 @@ The index file consists of:
 * an array of index entries
 
 === File header
-*TODO: migrate remainder of documentation*
+The file header is 24 bytes of size and consist of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 4 | "IMMM" | The signature (magic identifier)
+| 4 | 4 | | Version +
+20 => Windows Vista +
+21 => Windows 7
+| 8 | 4 | | [yellow-background]*Unknown*
+| 12 | 4 | | The number of entries used
+| 16 | 4 | | Number of entries +
+Contains the total number of entries in the file, both used and unused
+| 20 | 4 | | [yellow-background]*Unknown (empty value)*
+|===
+
+=== Index entry
+The index entry is either 32 or 40 bytes of size and consist of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 8 | | [yellow-background]*Entry hash* +
+[yellow-background]*Hash algorithm?*
+4+| _If database version == 20_ +
+_This value was removed in Windows 7_
+| 8 | 8 | | Last modification date and time +
+Contains a FILETIME
+4+| _Common_
+| 16 | 4 | | Flags
+| 20 | 4 | | Cache entry offset in corresponding thumbcache_32.db file
+| 24 | 4 | | Cache entry offset in corresponding thumbcache_96.db file
+| 28 | 4 | | Cache entry offset in corresponding thumbcache_256.db file
+| 32 | 4 | | Cache entry offset in corresponding thumbcache_1024.db file
+| 36 | 4 | | Cache entry offset in corresponding thumbcache_sr.db file
+|===
+
+The cache entry contains 0 for empty index entries and -1 (0xffffffff) for unused values.
+
+=== Flags
+[yellow-background]*Flags in win7 in file type indication instead of file extension?*
+
+[cols="1,1,5",options="header"]
+|===
+| Value | Identifier | Description
+| 0x00000001 | | [yellow-background]*Set if the cache entry has no data*
+4+| [yellow-background]*Introduced in Windows 7 (version 21)?*
+| 0x00000002 | | 
+| | | 
+| 0x00000200 | | 
+| | | 
+| 0x00000800 | | 
+| | | 
+| 0x00001000 | | 
+| 0x00002000 | | 
+| 0x00004000 | | 
+| 0x00008000 | | 
+| | | 
+| 0x00020000 | | 
+| | | 
+| 0x01000000 | | 
+| 0x02000000 | | 
+| | | 
+| 0x08000000 | | 
+| | | 
+| 0x80000000 | | 
+|===
+
+==== Notes
+....
+0x08008002
+* db 32 data (if available) (bmp signature: BM6)
+* db 96 data (bmp signature: BM6)
+* db 256 data (png signature)
+
+0x80000002
+* db 256 no data
+
+0x03003001
+* data 96 (bmp signature: BM6)
+
+0x08006202
+* db 256 data (png signature)
+
+0x08005002
+* db 256 data (jpeg/jfif signature)
+
+0x08004802
+* db 256 data (jpeg/jfif signature)
+
+0x08006002
+* db 256 data (jpeg/jfif signature)
+....
 
 == Entry hashes
 [yellow-background]*Not unique for cache file or does the cache file contain 
