@@ -52,7 +52,6 @@ in the section entitled "GNU Free Documentation License".
 
 :numbered:
 == Overview
-
 The thumbcache.db (Windows Explorer thumbnail cache database) is used by 
 Microsoft Windows Explorer to store thumbnails of picture files.
 
@@ -104,6 +103,106 @@ The file header is 24 bytes of size and consist of:
 | 20 | 4 | | Number of cache entries +
 [yellow-background]*Value is not always accurate, could it be the number of allocated items instead?*
 |===
+
+=== Cache entry
+The cache entry is variable of size and consist of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| 0 | 4 | "CMMM" | The signature (magic identifier)
+| 4 | 4 | | Cache entry size +
+This includes the signature and size value.
+| 8 | 8 | | [yellow-background]*Entry hash* +
+[yellow-background]*Hash algorithm?*
+4+| _If database version == 20_ +
+_This value was removed in Windows 7_
+| 16 | 8 | | File extension +
+UTF-16 string with end-of-string character +
+Can be an empty string
+4+| _Common_
+| 24 | 4 | | Identifier string size
+| 28 | 4 | | Padding size
+| 32 | 4 | | Data size
+| 36 | 4 | | [yellow-background]*Unknown (empty value)*
+| 40 | 8 | | Data checksum +
+Contains a CRC-64
+| 48 | 8 | | Header checksum +
+Contains a CRC-64 +
+The checkum is calculated for the first 48 or 40 bytes of the cache entry with an initial value of -1 (0xffffffffffffffff)
+| 56 | identifier string size | | Identifier string +
+UTF-16 string without an end-of-string character +
+4+| _If padding size > 0_
+| ... | padding size | | Padding +
+[yellow-background]*Should consist of zero bytes*
+4+| _Common_
+| ... | data size | | Data
+|===
+
+The size of the first available cache entry can entail the remainder of the 
+file. This entry should not have an identifier size, padding size, or data 
+size. The remainder of this entry should consist of zero bytes.
+
+The identifier string can contain a string representation of a 64-bit 
+hexadecimal ThumbnailCacheId value without leading zeros.
+
+The CRC-64 uses an unknown polynomial, however the look-up table is stored in 
+thumbcache.dll. The calculation does not use the initial and final XOR with -1 
+(0xffffffffffffffff) like the Weak CRC-32 in the Personal Folder Format.
+
+== Index file
+The index file consists of:
+
+* file header
+* an array of index entries
+
+=== File header
+*TODO: migrate remainder of documentation*
+
+== Entry hashes
+[yellow-background]*Not unique for cache file or does the cache file contain 
+remnant data*
+
+in win7 cache entry hash sometimes equal to identifier string?
+
+....
+signature                      : CMMM 
+size                           : 80 
+entry hash                     : 0x482d656ee647f25e 
+identifier string size         : 32 
+padding size                   : 0 
+data size                      : 0 
+unknown1                       : 0x00000000 
+data checksum                  : 0x00000000 
+header checksum                : 0xa8ea5f607c65aad6 
+
+identifier string              : 482d656ee647f25e 
+....
+
+for index entry flags 0x80000002, 0x08008002, 0x08006202, 0x03003001
+
+....
+signature                      : CMMM 
+size                           : 128 
+entry hash                     : 0x924bc51f9b84ee8 
+identifier string size         : 80 
+padding size                   : 0 
+data size                      : 0 
+unknown1                       : 0x00000000 
+data checksum                  : 0x00000000 
+header checksum                : 0x4d8b419f9128fe1d 
+
+identifier string              : ::{645FF040-5081-101B-9F08-00AA002F954E} 
+
+From MSDN:
+{645FF040-5081-101B-9F08-00AA002F954E} 
+
+HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\NonEnum 
+Description 
+
+Stores configuration data for the policy setting Remove Recycle Bin icon from desktop. 
+....
+
+for index entry flags 0x80000002
 
 :numbered!:
 [appendix]
