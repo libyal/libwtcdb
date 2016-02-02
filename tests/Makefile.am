@@ -16,11 +16,15 @@ AM_CPPFLAGS = \
 	@LIBWTCDB_DLL_IMPORT@
 
 TESTS = \
-	test_open_close.sh
+	test_open_close.sh \
+	test_wtcdbinfo.sh \
+	test_wtcdbexport.sh
 
 check_SCRIPTS = \
 	test_open_close.sh \
-	test_runner.sh
+	test_runner.sh \
+	test_wtcdbexport.sh \
+	test_wtcdbinfo.sh
 
 EXTRA_DIST = \
 	$(check_SCRIPTS)
