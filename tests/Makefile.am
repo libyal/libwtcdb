@@ -3,17 +3,45 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/common \
 	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
+	@LIBCDATA_CPPFLAGS@ \
+	@LIBCLOCALE_CPPFLAGS@ \
+	@LIBCNOTIFY_CPPFLAGS@ \
+	@LIBCSPLIT_CPPFLAGS@ \
+	@LIBUNA_CPPFLAGS@ \
+	@LIBCFILE_CPPFLAGS@ \
+	@LIBCPATH_CPPFLAGS@ \
+	@LIBBFIO_CPPFLAGS@ \
+	@LIBCSYSTEM_CPPFLAGS@ \
+	@PTHREAD_CPPFLAGS@ \
 	@LIBWTCDB_DLL_IMPORT@
 
-TESTS =
+TESTS = \
+	test_open_close.sh
 
 check_SCRIPTS = \
+	test_open_close.sh \
 	test_runner.sh
 
 EXTRA_DIST = \
 	$(check_SCRIPTS)
 
-check_PROGRAMS =
+check_PROGRAMS =  \
+	wtcdb_test_open_close
+
+wtcdb_test_open_close_SOURCES = \
+	wtcdb_test_libcerror.h \
+	wtcdb_test_libcstring.h \
+	wtcdb_test_libcsystem.h \
+	wtcdb_test_libwtcdb.h \
+	wtcdb_test_open_close.c
+
+wtcdb_test_open_close_LDADD = \
+	@LIBCSYSTEM_LIBADD@ \
+	../libwtcdb/libwtcdb.la \
+	@LIBCTHREADS_LIBADD@ \
+	@LIBCERROR_LIBADD@ \
+	@LIBCSTRING_LIBADD@ \
+	@PTHREAD_LIBADD@
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
