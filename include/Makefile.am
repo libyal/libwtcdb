@@ -1,12 +1,12 @@
 include_HEADERS = \
-        libwtcdb.h
+	libwtcdb.h
 
 pkginclude_HEADERS = \
-        libwtcdb/definitions.h \
-        libwtcdb/error.h \
-        libwtcdb/extern.h \
-        libwtcdb/features.h \
-        libwtcdb/types.h
+	libwtcdb/definitions.h \
+	libwtcdb/error.h \
+	libwtcdb/extern.h \
+	libwtcdb/features.h \
+	libwtcdb/types.h
 
 EXTRA_DIST = \
 	libwtcdb.h.in \
