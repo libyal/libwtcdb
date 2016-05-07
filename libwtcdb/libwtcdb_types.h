@@ -41,9 +41,9 @@ typedef struct libwtcdb_item {}		libwtcdb_item_t;
 typedef intptr_t libwtcdb_file_t;
 typedef intptr_t libwtcdb_item_t;
 
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI ) */
 
-#endif
+#endif /* defined( HAVE_LOCAL_LIBWTCDB ) */
 
-#endif
+#endif /* !defined( _LIBWTCDB_INTERNAL_TYPES_H ) */
 

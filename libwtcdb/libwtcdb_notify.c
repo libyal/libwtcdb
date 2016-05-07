@@ -116,5 +116,5 @@ int libwtcdb_notify_stream_close(
 	return( 0 );
 }
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBWTCDB ) */
 

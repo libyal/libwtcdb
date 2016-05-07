@@ -16,12 +16,12 @@ AM_CPPFLAGS = \
 	@LIBWTCDB_DLL_IMPORT@
 
 TESTS = \
-	test_open_close.sh \
+	test_api_functions.sh \
 	test_wtcdbinfo.sh \
 	test_wtcdbexport.sh
 
 check_SCRIPTS = \
-	test_open_close.sh \
+	test_api_functions.sh \
 	test_runner.sh \
 	test_wtcdbexport.sh \
 	test_wtcdbinfo.sh
@@ -30,7 +30,18 @@ EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
+	wtcdb_test_get_version \
 	wtcdb_test_open_close
+
+wtcdb_test_get_version_SOURCES = \
+	wtcdb_test_get_version.c \
+	wtcdb_test_libcstring.h \
+	wtcdb_test_libwtcdb.h \
+	wtcdb_test_unused.h
+
+wtcdb_test_get_version_LDADD = \
+	../libwtcdb/libwtcdb.la \
+	@LIBCSTRING_LIBADD@
 
 wtcdb_test_open_close_SOURCES = \
 	wtcdb_test_libcerror.h \

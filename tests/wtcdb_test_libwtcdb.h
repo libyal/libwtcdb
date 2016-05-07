@@ -24,14 +24,14 @@
 
 #include <common.h>
 
-/* If Cygwin libtool DLL support is enabled set LIBWTCDB_DLL_IMPORT
- * before including libwtcdb.h
+/* If Cygwin libtool DLL support is enabled and do not want to create static
+ * executables set LIBWTCDB_DLL_IMPORT before including libwtcdb.h
  */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
+#if defined( _WIN32 ) && defined( DLL_EXPORT ) && !defined( HAVE_STATIC_EXECUTABLES )
 #define LIBWTCDB_DLL_IMPORT
 #endif
 
 #include <libwtcdb.h>
 
-#endif
+#endif /* !defined( _WTCDB_TEST_LIBWTCDB_H ) */
 

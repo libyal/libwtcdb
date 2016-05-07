@@ -53,11 +53,11 @@ LIBWTCDB_EXTERN \
 int libwtcdb_notify_stream_close(
      libcerror_error_t **error );
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBWTCDB ) */
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBWTCDB_NOTIFY_H ) */
 
