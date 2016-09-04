@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="wtcdb_test_get_version"
-	ProjectGUID="{30A879DC-664D-437B-9C6C-A0A91A202B93}"
-	RootNamespace="wtcdb_test_get_version"
+	Name="wtcdb_test_error"
+	ProjectGUID="{A6D3A867-F4F8-41E8-AB81-548CA4121DC7}"
+	RootNamespace="wtcdb_test_error"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,7 +176,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\wtcdb_test_get_version.c"
+				RelativePath="..\..\tests\wtcdb_test_error.c"
 				>
 			</File>
 		</Filter>

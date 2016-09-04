@@ -30,13 +30,26 @@ EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
+	wtcdb_test_error \
 	wtcdb_test_get_version \
 	wtcdb_test_open_close
+
+wtcdb_test_error_SOURCES = \
+	wtcdb_test_error.c \
+	wtcdb_test_libcstring.h \
+	wtcdb_test_libwtcdb.h \
+	wtcdb_test_macros.h \
+	wtcdb_test_unused.h
+
+wtcdb_test_error_LDADD = \
+	../libwtcdb/libwtcdb.la \
+	@LIBCSTRING_LIBADD@
 
 wtcdb_test_get_version_SOURCES = \
 	wtcdb_test_get_version.c \
 	wtcdb_test_libcstring.h \
 	wtcdb_test_libwtcdb.h \
+	wtcdb_test_macros.h \
 	wtcdb_test_unused.h
 
 wtcdb_test_get_version_LDADD = \

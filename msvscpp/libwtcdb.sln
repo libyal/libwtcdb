@@ -1,6 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual C++ Express 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wtcdb_test_error", "wtcdb_test_error\wtcdb_test_error.vcproj", "{A6D3A867-F4F8-41E8-AB81-548CA4121DC7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A7406395-A3D5-41C4-9BF9-F40165EABB35} = {A7406395-A3D5-41C4-9BF9-F40165EABB35}
+		{20FFC4C9-F44C-45F6-A827-4819B4DF3C9F} = {20FFC4C9-F44C-45F6-A827-4819B4DF3C9F}
+	EndProjectSection
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wtcdb_test_get_version", "wtcdb_test_get_version\wtcdb_test_get_version.vcproj", "{30A879DC-664D-437B-9C6C-A0A91A202B93}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A7406395-A3D5-41C4-9BF9-F40165EABB35} = {A7406395-A3D5-41C4-9BF9-F40165EABB35}
@@ -164,6 +170,10 @@ Global
 		VSDebug|Win32 = VSDebug|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A6D3A867-F4F8-41E8-AB81-548CA4121DC7}.Release|Win32.ActiveCfg = Release|Win32
+		{A6D3A867-F4F8-41E8-AB81-548CA4121DC7}.Release|Win32.Build.0 = Release|Win32
+		{A6D3A867-F4F8-41E8-AB81-548CA4121DC7}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
+		{A6D3A867-F4F8-41E8-AB81-548CA4121DC7}.VSDebug|Win32.Build.0 = VSDebug|Win32
 		{30A879DC-664D-437B-9C6C-A0A91A202B93}.Release|Win32.ActiveCfg = Release|Win32
 		{30A879DC-664D-437B-9C6C-A0A91A202B93}.Release|Win32.Build.0 = Release|Win32
 		{30A879DC-664D-437B-9C6C-A0A91A202B93}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
