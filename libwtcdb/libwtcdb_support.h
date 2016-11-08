@@ -33,6 +33,8 @@
 extern "C" {
 #endif
 
+#if !defined( HAVE_LOCAL_LIBWTCDB )
+
 LIBWTCDB_EXTERN \
 const char *libwtcdb_get_version(
              void );
@@ -44,6 +46,18 @@ int libwtcdb_get_access_flags_read(
 LIBWTCDB_EXTERN \
 int libwtcdb_check_file_signature(
      const char *filename,
+     libcerror_error_t **error );
+
+LIBWTCDB_EXTERN \
+int libwtcdb_get_codepage(
+     int *codepage,
+     libcerror_error_t **error );
+
+#endif /* !defined( HAVE_LOCAL_LIBWTCDB ) */
+
+LIBWTCDB_EXTERN \
+int libwtcdb_set_codepage(
+     int codepage,
      libcerror_error_t **error );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
@@ -64,5 +78,5 @@ int libwtcdb_check_file_signature_file_io_handle(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBWTCDB_SUPPORT_H ) */
 

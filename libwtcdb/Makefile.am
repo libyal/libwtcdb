@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -32,7 +31,6 @@ libwtcdb_la_SOURCES = \
 	libwtcdb_libcerror.h \
 	libwtcdb_libclocale.h \
 	libwtcdb_libcnotify.h \
-	libwtcdb_libcstring.h \
 	libwtcdb_libfdatetime.h \
 	libwtcdb_libfvalue.h \
 	libwtcdb_libuna.h \
@@ -45,7 +43,6 @@ libwtcdb_la_SOURCES = \
 	wtcdb_index_entry.h
 
 libwtcdb_la_LIBADD = \
-	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \

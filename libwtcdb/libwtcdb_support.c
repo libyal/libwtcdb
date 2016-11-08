@@ -21,14 +21,17 @@
 
 #include <common.h>
 #include <memory.h>
+#include <narrow_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "libwtcdb_definitions.h"
 #include "libwtcdb_io_handle.h"
 #include "libwtcdb_libbfio.h"
 #include "libwtcdb_libcerror.h"
-#include "libwtcdb_libcstring.h"
 #include "libwtcdb_support.h"
+
+#if !defined( HAVE_LOCAL_LIBWTCDB )
 
 /* Returns the library version
  */
@@ -45,6 +48,60 @@ int libwtcdb_get_access_flags_read(
 {
 	return( (int) LIBWTCDB_ACCESS_FLAG_READ );
 }
+
+/* Retrieves the narrow system string codepage
+ * A value of 0 represents no codepage, UTF-8 encoding is used instead
+ * Returns 1 if successful or -1 on error
+ */
+int libwtcdb_get_codepage(
+     int *codepage,
+     libcerror_error_t **error )
+{
+	static char *function = "libwtcdb_get_codepage";
+
+	if( libclocale_codepage_get(
+	     codepage,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve codepage.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Sets the narrow system string codepage
+ * A value of 0 represents no codepage, UTF-8 encoding is used instead
+ * Returns 1 if successful or -1 on error
+ */
+int libwtcdb_set_codepage(
+     int codepage,
+     libcerror_error_t **error )
+{
+	static char *function = "libwtcdb_set_codepage";
+
+	if( libclocale_codepage_set(
+	     codepage,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set codepage.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+#endif /* !defined( HAVE_LOCAL_LIBWTCDB ) */
 
 /* Determines if a file contains a WTCDB file signature
  * Returns 1 if true, 0 if not or -1 on error
@@ -69,7 +126,7 @@ int libwtcdb_check_file_signature(
 
 		return( -1 );
 	}
-	filename_length = libcstring_narrow_string_length(
+	filename_length = narrow_string_length(
 	                   filename );
 
 	if( filename_length == 0 )
@@ -176,7 +233,7 @@ int libwtcdb_check_file_signature_wide(
 
 		return( -1 );
 	}
-	filename_length = libcstring_wide_string_length(
+	filename_length = wide_string_length(
 	                   filename );
 
 	if( filename_length == 0 )

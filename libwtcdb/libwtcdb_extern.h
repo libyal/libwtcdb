@@ -24,6 +24,10 @@
 
 #include <common.h>
 
+/* Define HAVE_LOCAL_LIBWTCDB for local use of libwtcdb
+ */
+#if !defined( HAVE_LOCAL_LIBWTCDB )
+
 /* If libtool DLL support is enabled set LIBWTCDB_DLL_EXPORT
  * before including libwtcdb/extern.h
  */
@@ -33,5 +37,10 @@
 
 #include <libwtcdb/extern.h>
 
+#else
+#define LIBWTCDB_EXTERN	extern
+
 #endif
+
+#endif /* !defined( _LIBWTCDB_INTERNAL_EXTERN_H ) */
 

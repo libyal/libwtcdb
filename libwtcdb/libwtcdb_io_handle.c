@@ -22,7 +22,10 @@
 #include <common.h>
 #include <byte_stream.h>
 #include <memory.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "libwtcdb_crc.h"
 #include "libwtcdb_debug.h"
@@ -528,7 +531,7 @@ int libwtcdb_io_handle_read_items(
 	int item_entry_index                        = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	libcstring_system_character_t filetime_string[ 32 ];
+	system_character_t filetime_string[ 32 ];
 
 	libfdatetime_filetime_t *filetime           = NULL;
 	libcstring_system_character_t *value_string = NULL;
@@ -986,7 +989,7 @@ int libwtcdb_io_handle_read_items(
 #if defined( HAVE_DEBUG_OUTPUT )
 				if( libcnotify_verbose != 0 )
 				{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 					result = libuna_utf16_string_size_from_utf16_stream(
 						  item_value->identifier,
 						  item_value->identifier_size,
@@ -1012,7 +1015,7 @@ int libwtcdb_io_handle_read_items(
 
 						goto on_error;
 					}
-					value_string = libcstring_system_string_allocate(
+					value_string = system_string_allocate(
 					                value_string_size );
 
 					if( value_string == NULL )
@@ -1026,7 +1029,7 @@ int libwtcdb_io_handle_read_items(
 
 						goto on_error;
 					}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 					result = libuna_utf16_string_copy_from_utf16_stream(
 						  (libuna_utf16_character_t *) value_string,
 						  value_string_size,
@@ -1058,7 +1061,7 @@ int libwtcdb_io_handle_read_items(
 						goto on_error;
 					}
 					libcnotify_printf(
-					 "%s: cache entry: %04" PRIu32 " identifier string\t\t: %" PRIs_LIBCSTRING_SYSTEM "\n",
+					 "%s: cache entry: %04" PRIu32 " identifier string\t\t: %" PRIs_SYSTEM "\n",
 					 function,
 					 item_iterator,
 					 value_string );
@@ -1217,7 +1220,7 @@ fprintf( stderr, "SIZE MISMATCH: %" PRIu32 " %" PRIu32 "n",
 
 					return( -1 );
 				}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 				result = libfdatetime_filetime_copy_to_utf16_string(
 					  filetime,
 					  (uint16_t *) filetime_string,
@@ -1261,7 +1264,7 @@ fprintf( stderr, "SIZE MISMATCH: %" PRIu32 " %" PRIu32 "n",
 					return( -1 );
 				}
 				libcnotify_printf(
-				 "%s: modification time\t: %" PRIs_LIBCSTRING_SYSTEM " UTC\n\n",
+				 "%s: modification time\t: %" PRIs_SYSTEM " UTC\n\n",
 				 filetime_string );
 
 				if( io_handle->version == 20 )

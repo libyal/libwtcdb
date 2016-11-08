@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -33,7 +32,6 @@ wtcdbexport_SOURCES = \
 	wtcdbtools_libclocale.h \
 	wtcdbtools_libcnotify.h \
 	wtcdbtools_libcpath.h \
-	wtcdbtools_libcstring.h \
 	wtcdbtools_libcsystem.h \
 	wtcdbtools_libfdatetime.h \
 	wtcdbtools_libfvalue.h \
@@ -50,7 +48,6 @@ wtcdbexport_LDADD = \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
 	@LIBINTL@
 
 wtcdbinfo_SOURCES = \
@@ -62,7 +59,6 @@ wtcdbinfo_SOURCES = \
 	wtcdbtools_libclocale.h \
 	wtcdbtools_libcnotify.h \
 	wtcdbtools_libcpath.h \
-	wtcdbtools_libcstring.h \
 	wtcdbtools_libcsystem.h \
 	wtcdbtools_libfdatetime.h \
 	wtcdbtools_libfvalue.h \
@@ -75,7 +71,6 @@ wtcdbinfo_LDADD = \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
 	@LIBINTL@
 
 MAINTAINERCLEANFILES = \

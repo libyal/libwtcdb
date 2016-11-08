@@ -22,6 +22,7 @@
 #include <common.h>
 #include <file_stream.h>
 #include <memory.h>
+#include <system_string.h>
 #include <types.h>
 
 #if defined( HAVE_UNISTD_H )
@@ -36,7 +37,6 @@
 #include "wtcdbtools_libcerror.h"
 #include "wtcdbtools_libclocale.h"
 #include "wtcdbtools_libcnotify.h"
-#include "wtcdbtools_libcstring.h"
 #include "wtcdbtools_libcsystem.h"
 #include "wtcdbtools_libwtcdb.h"
 
@@ -161,18 +161,18 @@ int wtcdbinfo_file_info_fprint(
 
 /* The main program
  */
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 int wmain( int argc, wchar_t * const argv[] )
 #else
 int main( int argc, char * const argv[] )
 #endif
 {
-	libcerror_error_t *error              = NULL;
-	libwtcdb_file_t *wtcdb_file           = NULL;
-	libcstring_system_character_t *source = NULL;
-	char *program                         = "wtcdbinfo";
-	libcstring_system_integer_t option    = 0;
-	int verbose                           = 0;
+	libcerror_error_t *error    = NULL;
+	libwtcdb_file_t *wtcdb_file = NULL;
+	system_character_t *source  = NULL;
+	char *program               = "wtcdbinfo";
+	system_integer_t option     = 0;
+	int verbose                 = 0;
 
 	libcnotify_stream_set(
 	 stderr,
@@ -207,15 +207,15 @@ int main( int argc, char * const argv[] )
 	while( ( option = libcsystem_getopt(
 	                   argc,
 	                   argv,
-	                   _LIBCSTRING_SYSTEM_STRING( "hvV" ) ) ) != (libcstring_system_integer_t) -1 )
+	                   _SYSTEM_STRING( "hvV" ) ) ) != (system_integer_t) -1 )
 	{
 		switch( option )
 		{
-			case (libcstring_system_integer_t) '?':
+			case (system_integer_t) '?':
 			default:
 				fprintf(
 				 stderr,
-				 "Invalid argument: %" PRIs_LIBCSTRING_SYSTEM "\n",
+				 "Invalid argument: %" PRIs_SYSTEM "\n",
 				 argv[ optind - 1 ] );
 
 				usage_fprint(
@@ -223,18 +223,18 @@ int main( int argc, char * const argv[] )
 
 				return( EXIT_FAILURE );
 
-			case (libcstring_system_integer_t) 'h':
+			case (system_integer_t) 'h':
 				usage_fprint(
 				 stdout );
 
 				return( EXIT_SUCCESS );
 
-			case (libcstring_system_integer_t) 'v':
+			case (system_integer_t) 'v':
 				verbose = 1;
 
 				break;
 
-			case (libcstring_system_integer_t) 'V':
+			case (system_integer_t) 'V':
 				wtcdboutput_copyright_fprint(
 				 stdout );
 
@@ -272,7 +272,7 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libwtcdb_file_open_wide(
 	     wtcdb_file,
 	     source,
@@ -288,7 +288,7 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Error opening file: %" PRIs_LIBCSTRING_SYSTEM ".\n",
+		 "Error opening file: %" PRIs_SYSTEM ".\n",
 		 source );
 
 		goto on_error;
@@ -310,7 +310,7 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Error closing file: %" PRIs_LIBCSTRING_SYSTEM ".\n",
+		 "Error closing file: %" PRIs_SYSTEM ".\n",
 		 argv[ optind ] );
 
 		goto on_error;

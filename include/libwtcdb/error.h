@@ -39,7 +39,7 @@ enum LIBWTCDB_ERROR_DOMAINS
 	LIBWTCDB_ERROR_DOMAIN_INPUT			= (int) 'i',
 	LIBWTCDB_ERROR_DOMAIN_MEMORY			= (int) 'm',
 	LIBWTCDB_ERROR_DOMAIN_OUTPUT			= (int) 'o',
-	LIBWTCDB_ERROR_DOMAIN_RUNTIME			= (int) 'r',
+	LIBWTCDB_ERROR_DOMAIN_RUNTIME			= (int) 'r'
 };
 
 /* The argument error codes
@@ -208,6 +208,17 @@ enum LIBWTCDB_MEMORY_ERROR
 	LIBWTCDB_MEMORY_ERROR_SET_FAILED		= 3
 };
 
+/* The output error codes
+ */
+enum LIBWTCDB_OUTPUT_ERROR
+{
+	LIBWTCDB_OUTPUT_ERROR_GENERIC			= 0,
+
+	/* There is insuficient space to write the output
+	 */
+	LIBWTCDB_OUTPUT_ERROR_INSUFFICIENT_SPACE	= 1
+};
+
 /* The runtime error codes
  * to signify errors regarding runtime processing
  */
@@ -276,16 +287,5 @@ enum LIBWTCDB_RUNTIME_ERROR
 	LIBWTCDB_RUNTIME_ERROR_ABORT_REQUESTED		= 15
 };
 
-/* The output error codes
- */
-enum LIBWTCDB_OUTPUT_ERROR
-{
-	LIBWTCDB_OUTPUT_ERROR_GENERIC			= 0,
-
-	/* There is insuficient space to write the output
-	 */
-	LIBWTCDB_OUTPUT_ERROR_INSUFFICIENT_SPACE	= 1
-};
-
-#endif
+#endif /* !defined( _LIBWTCDB_ERROR_H ) */
 

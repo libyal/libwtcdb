@@ -20,6 +20,8 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
+#include <types.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
@@ -108,7 +110,7 @@ int wtcdb_test_error_backtrace_sprint(
 
 /* The main program
  */
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 int wmain(
      int argc WTCDB_TEST_ATTRIBUTE_UNUSED,
      wchar_t * const argv[] WTCDB_TEST_ATTRIBUTE_UNUSED )
@@ -123,23 +125,23 @@ int main(
 
 	WTCDB_TEST_RUN(
 	 "libwtcdb_error_free",
-	 wtcdb_test_error_free() )
+	 wtcdb_test_error_free );
 
 	WTCDB_TEST_RUN(
 	 "libwtcdb_error_fprint",
-	 wtcdb_test_error_fprint() )
+	 wtcdb_test_error_fprint );
 
 	WTCDB_TEST_RUN(
 	 "libwtcdb_error_sprint",
-	 wtcdb_test_error_sprint() )
+	 wtcdb_test_error_sprint );
 
 	WTCDB_TEST_RUN(
 	 "libwtcdb_error_backtrace_fprint",
-	 wtcdb_test_error_backtrace_fprint() )
+	 wtcdb_test_error_backtrace_fprint );
 
 	WTCDB_TEST_RUN(
 	 "libwtcdb_error_backtrace_sprint",
-	 wtcdb_test_error_backtrace_sprint() )
+	 wtcdb_test_error_backtrace_sprint );
 
 	return( EXIT_SUCCESS );
 

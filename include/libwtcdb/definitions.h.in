@@ -58,5 +58,5 @@ enum LIBWTCDB_FILE_TYPES
 	LIBWTCDB_FILE_TYPE_INDEX			= (uint8_t) 'i'
 };
 
-#endif
+#endif /* !defined( _LIBWTCDB_DEFINITIONS_H ) */
 

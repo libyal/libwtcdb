@@ -27,7 +27,6 @@
 
 #include "log_handle.h"
 #include "wtcdbtools_libcerror.h"
-#include "wtcdbtools_libcstring.h"
 #include "wtcdbtools_libcsystem.h"
 #include "wtcdbtools_libwtcdb.h"
 
@@ -45,7 +44,7 @@ struct export_handle
 
 	/* The target path
 	 */
-	libcstring_system_character_t *target_path;
+	system_character_t *target_path;
 
 	/* The target path size
 	 */
@@ -53,7 +52,7 @@ struct export_handle
 
 	/* The items export path
 	 */
-	libcstring_system_character_t *items_export_path;
+	system_character_t *items_export_path;
 
 	/* The items export path size
 	 */
@@ -82,16 +81,16 @@ int export_handle_signal_abort(
 
 int export_handle_set_target_path(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *target_path,
+     const system_character_t *target_path,
      libcerror_error_t **error );
 
 int export_handle_set_export_path(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *base_path,
+     const system_character_t *base_path,
      size_t base_path_length,
-     const libcstring_system_character_t *suffix,
+     const system_character_t *suffix,
      size_t suffix_length,
-     libcstring_system_character_t **export_path,
+     system_character_t **export_path,
      size_t *export_path_size,
      libcerror_error_t **error );
 
@@ -101,7 +100,7 @@ int export_handle_create_items_export_path(
 
 int export_handle_open(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error );
 
 int export_handle_close(

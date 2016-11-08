@@ -118,5 +118,5 @@ enum LIBWTCDB_CODEPAGES
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBWTCDB_CODEPAGE_H ) */
 

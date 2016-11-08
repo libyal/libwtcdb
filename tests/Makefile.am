@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -17,11 +16,13 @@ AM_CPPFLAGS = \
 
 TESTS = \
 	test_api_functions.sh \
+	test_api_types.sh \
 	test_wtcdbinfo.sh \
 	test_wtcdbexport.sh
 
 check_SCRIPTS = \
 	test_api_functions.sh \
+	test_api_types.sh \
 	test_runner.sh \
 	test_wtcdbexport.sh \
 	test_wtcdbinfo.sh
@@ -31,45 +32,76 @@ EXTRA_DIST = \
 
 check_PROGRAMS = \
 	wtcdb_test_error \
-	wtcdb_test_get_version \
+	wtcdb_test_file \
+	wtcdb_test_item \
+	wtcdb_test_support \
 	wtcdb_test_open_close
 
 wtcdb_test_error_SOURCES = \
 	wtcdb_test_error.c \
-	wtcdb_test_libcstring.h \
 	wtcdb_test_libwtcdb.h \
 	wtcdb_test_macros.h \
 	wtcdb_test_unused.h
 
 wtcdb_test_error_LDADD = \
-	../libwtcdb/libwtcdb.la \
-	@LIBCSTRING_LIBADD@
+	../libwtcdb/libwtcdb.la
 
-wtcdb_test_get_version_SOURCES = \
-	wtcdb_test_get_version.c \
-	wtcdb_test_libcstring.h \
-	wtcdb_test_libwtcdb.h \
-	wtcdb_test_macros.h \
-	wtcdb_test_unused.h
-
-wtcdb_test_get_version_LDADD = \
-	../libwtcdb/libwtcdb.la \
-	@LIBCSTRING_LIBADD@
-
-wtcdb_test_open_close_SOURCES = \
+wtcdb_test_file_SOURCES = \
+	wtcdb_test_file.c \
 	wtcdb_test_libcerror.h \
-	wtcdb_test_libcstring.h \
+	wtcdb_test_libclocale.h \
 	wtcdb_test_libcsystem.h \
 	wtcdb_test_libwtcdb.h \
-	wtcdb_test_open_close.c
+	wtcdb_test_libuna.h \
+	wtcdb_test_memory.c wtcdb_test_memory.h \
+	wtcdb_test_unused.h
+
+wtcdb_test_file_LDADD = \
+	@LIBCSYSTEM_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
+	../libwtcdb/libwtcdb.la \
+	@LIBCERROR_LIBADD@
+
+wtcdb_test_item_SOURCES = \
+	wtcdb_test_item.c \
+	wtcdb_test_libcerror.h \
+	wtcdb_test_libwtcdb.h \
+	wtcdb_test_macros.h \
+	wtcdb_test_memory.c wtcdb_test_memory.h \
+	wtcdb_test_unused.h
+
+wtcdb_test_item_LDADD = \
+	../libwtcdb/libwtcdb.la \
+	@LIBCERROR_LIBADD@
 
 wtcdb_test_open_close_LDADD = \
 	@LIBCSYSTEM_LIBADD@ \
 	../libwtcdb/libwtcdb.la \
 	@LIBCTHREADS_LIBADD@ \
-	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
+	@LIBCERROR_LIBADD@
 	@PTHREAD_LIBADD@
+
+wtcdb_test_support_SOURCES = \
+	wtcdb_test_libcerror.h \
+	wtcdb_test_libclocale.h \
+	wtcdb_test_libcsystem.h \
+	wtcdb_test_libwtcdb.h \
+	wtcdb_test_libuna.h \
+	wtcdb_test_macros.h \
+	wtcdb_test_support.c \
+	wtcdb_test_unused.h
+
+wtcdb_test_support_LDADD = \
+	@LIBCSYSTEM_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
+	../libwtcdb/libwtcdb.la \
+	@LIBCERROR_LIBADD@
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

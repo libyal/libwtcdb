@@ -21,14 +21,16 @@
 
 #include <common.h>
 #include <memory.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "export_handle.h"
 #include "log_handle.h"
 #include "wtcdbtools_libcerror.h"
 #include "wtcdbtools_libcfile.h"
 #include "wtcdbtools_libcpath.h"
-#include "wtcdbtools_libcstring.h"
 #include "wtcdbtools_libcsystem.h"
 #include "wtcdbtools_libwtcdb.h"
 
@@ -192,11 +194,11 @@ int export_handle_signal_abort(
  */
 int export_handle_set_export_path(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *base_path,
+     const system_character_t *base_path,
      size_t base_path_length,
-     const libcstring_system_character_t *suffix,
+     const system_character_t *suffix,
      size_t suffix_length,
-     libcstring_system_character_t **export_path,
+     system_character_t **export_path,
      size_t *export_path_size,
      libcerror_error_t **error )
 {
@@ -289,7 +291,7 @@ int export_handle_set_export_path(
 	}
 	*export_path_size = base_path_length + suffix_length + 1;
 
-	*export_path = libcstring_system_string_allocate(
+	*export_path = system_string_allocate(
 	                *export_path_size );
 
 	if( *export_path == NULL )
@@ -303,7 +305,7 @@ int export_handle_set_export_path(
 
 		goto on_error;
 	}
-	if( libcstring_system_string_copy(
+	if( system_string_copy(
 	     *export_path,
 	     base_path,
 	     base_path_length ) == NULL )
@@ -317,7 +319,7 @@ int export_handle_set_export_path(
 
 		goto on_error;
 	}
-	if( libcstring_system_string_copy(
+	if( system_string_copy(
 	     &( ( *export_path )[ base_path_length ] ),
 	     suffix,
 	     suffix_length ) == NULL )
@@ -372,7 +374,7 @@ int export_handle_create_items_export_path(
 	     export_handle,
 	     export_handle->target_path,
 	     export_handle->target_path_size - 1,
-	     _LIBCSTRING_SYSTEM_STRING( ".export" ),
+	     _SYSTEM_STRING( ".export" ),
 	     7,
 	     &( export_handle->items_export_path ),
 	     &( export_handle->items_export_path_size ),
@@ -387,7 +389,7 @@ int export_handle_create_items_export_path(
 
 		return( -1 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libcfile_file_exists_wide(
 		  export_handle->items_export_path,
 		  error );
@@ -402,7 +404,7 @@ int export_handle_create_items_export_path(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_GENERIC,
-		 "%s: unable to determine if %" PRIs_LIBCSTRING_SYSTEM " exists.",
+		 "%s: unable to determine if %" PRIs_SYSTEM " exists.",
 		 function,
 		 export_handle->items_export_path );
 
@@ -420,16 +422,16 @@ int export_handle_create_items_export_path(
  */
 int export_handle_set_target_path(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *target_path,
+     const system_character_t *target_path,
      libcerror_error_t **error )
 {
-	static char *function                                      = "export_handle_set_target_path";
-	size_t target_path_length                                  = 0;
+	static char *function                           = "export_handle_set_target_path";
+	size_t target_path_length                       = 0;
 
 #if defined( WINAPI )
-	libcstring_system_character_t *extended_length_target_path = NULL;
-        size_t extended_length_target_path_size                    = 0;
-	int result                                                 = 0;
+	system_character_t *extended_length_target_path = NULL;
+        size_t extended_length_target_path_size         = 0;
+	int result                                      = 0;
 #endif
 
 	if( export_handle == NULL )
@@ -462,7 +464,7 @@ int export_handle_set_target_path(
 		export_handle->target_path      = NULL;
 		export_handle->target_path_size = 0;
 	}
-	target_path_length = libcstring_system_string_length(
+	target_path_length = system_string_length(
 	                      target_path );
 
 #if defined( WINAPI )
@@ -492,7 +494,7 @@ int export_handle_set_target_path(
 #endif
 	if( target_path_length > 0 )
 	{
-		export_handle->target_path = libcstring_system_string_allocate(
+		export_handle->target_path = system_string_allocate(
 		                              target_path_length + 1 );
 
 		if( export_handle->target_path == NULL )
@@ -510,7 +512,7 @@ int export_handle_set_target_path(
 #endif
 			return( -1 );
 		}
-		if( libcstring_system_string_copy(
+		if( system_string_copy(
 		     export_handle->target_path,
 		     target_path,
 		     target_path_length ) == NULL )
@@ -549,7 +551,7 @@ int export_handle_set_target_path(
  */
 int export_handle_open(
      export_handle_t *export_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error )
 {
 	static char *function = "export_handle_open";
@@ -565,7 +567,7 @@ int export_handle_open(
 
 		return( -1 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libwtcdb_file_open_wide(
 	     export_handle->input_file,
 	     filename,
@@ -669,7 +671,7 @@ int export_handle_export_file(
 	{
 		return( 0 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libcpath_path_make_directory_wide(
 	     export_handle->items_export_path,
 	     error ) != 1 )
@@ -683,7 +685,7 @@ int export_handle_export_file(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_WRITE_FAILED,
-		 "%s: unable to make directory: %" PRIs_LIBCSTRING_SYSTEM ".",
+		 "%s: unable to make directory: %" PRIs_SYSTEM ".",
 		 function,
 		 export_handle->items_export_path );
 
@@ -691,7 +693,7 @@ int export_handle_export_file(
 	}
 	log_handle_printf(
 	 log_handle,
-	 "Created directory: %" PRIs_LIBCSTRING_SYSTEM ".\n",
+	 "Created directory: %" PRIs_SYSTEM ".\n",
 	 export_handle->items_export_path );
 
 	for( item_index = 0;

@@ -1,5 +1,5 @@
 /*
- * Library get version test program
+ * Library item type testing program
  *
  * Copyright (C) 2010-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -20,46 +20,60 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
+#include <types.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
 #endif
 
-#include "wtcdb_test_libcstring.h"
+#include "wtcdb_test_libcerror.h"
 #include "wtcdb_test_libwtcdb.h"
 #include "wtcdb_test_macros.h"
+#include "wtcdb_test_memory.h"
 #include "wtcdb_test_unused.h"
 
-/* Tests retrieving the library version
+/* Tests the libwtcdb_item_free function
  * Returns 1 if successful or 0 if not
  */
-int wtcdb_test_get_version(
+int wtcdb_test_item_free(
      void )
 {
-	const char *version_string = NULL;
-	int result                 = 0;
+	libcerror_error_t *error = NULL;
+	int result               = 0;
 
-	version_string = libwtcdb_get_version();
-
-	result = libcstring_narrow_string_compare(
-	          version_string,
-	          LIBWTCDB_VERSION_STRING,
-	          9 );
+	/* Test error cases
+	 */
+	result = libwtcdb_item_free(
+	          NULL,
+	          &error );
 
 	WTCDB_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 0 );
+	 -1 );
+
+        WTCDB_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
 
 	return( 1 );
 
 on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
 	return( 0 );
 }
 
 /* The main program
  */
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 int wmain(
      int argc WTCDB_TEST_ATTRIBUTE_UNUSED,
      wchar_t * const argv[] WTCDB_TEST_ATTRIBUTE_UNUSED )
@@ -73,8 +87,8 @@ int main(
 	WTCDB_TEST_UNREFERENCED_PARAMETER( argv )
 
 	WTCDB_TEST_RUN(
-	 "libwtcdb_get_version",
-	 wtcdb_test_get_version() )
+	 "libwtcdb_item_free",
+	 wtcdb_test_item_free );
 
 	return( EXIT_SUCCESS );
 
