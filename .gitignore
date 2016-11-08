@@ -128,7 +128,6 @@ stamp-h[1-9]
 /tests/wtcdb_test_error
 /tests/wtcdb_test_file
 /tests/wtcdb_test_item
-/tests/wtcdb_test_open_close
 /tests/wtcdb_test_support
 
 # Local library dependencies specific files

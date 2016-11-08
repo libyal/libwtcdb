@@ -34,8 +34,7 @@ check_PROGRAMS = \
 	wtcdb_test_error \
 	wtcdb_test_file \
 	wtcdb_test_item \
-	wtcdb_test_support \
-	wtcdb_test_open_close
+	wtcdb_test_support
 
 wtcdb_test_error_SOURCES = \
 	wtcdb_test_error.c \
@@ -76,13 +75,6 @@ wtcdb_test_item_SOURCES = \
 wtcdb_test_item_LDADD = \
 	../libwtcdb/libwtcdb.la \
 	@LIBCERROR_LIBADD@
-
-wtcdb_test_open_close_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
-	../libwtcdb/libwtcdb.la \
-	@LIBCTHREADS_LIBADD@ \
-	@LIBCERROR_LIBADD@
-	@PTHREAD_LIBADD@
 
 wtcdb_test_support_SOURCES = \
 	wtcdb_test_libcerror.h \
