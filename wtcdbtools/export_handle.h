@@ -1,7 +1,7 @@
 /*
  * Export handle
  *
- * Copyright (C) 2010-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2010-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -27,7 +27,6 @@
 
 #include "log_handle.h"
 #include "wtcdbtools_libcerror.h"
-#include "wtcdbtools_libcsystem.h"
 #include "wtcdbtools_libwtcdb.h"
 
 #if defined( __cplusplus )
@@ -116,5 +115,5 @@ int export_handle_export_file(
 }
 #endif
 
-#endif
+#endif /* !defined( _EXPORT_HANDLE_H ) */
 

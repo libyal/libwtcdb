@@ -1,7 +1,7 @@
 /*
- * Library item type testing program
+ * Library item type test program
  *
- * Copyright (C) 2010-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2010-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -32,6 +32,8 @@
 #include "wtcdb_test_macros.h"
 #include "wtcdb_test_memory.h"
 #include "wtcdb_test_unused.h"
+
+#include "../libwtcdb/libwtcdb_item.h"
 
 /* Tests the libwtcdb_item_free function
  * Returns 1 if successful or 0 if not
@@ -71,6 +73,10 @@ on_error:
 	return( 0 );
 }
 
+#if defined( __GNUC__ )
+
+#endif /* defined( __GNUC__ ) */
+
 /* The main program
  */
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
@@ -85,6 +91,12 @@ int main(
 {
 	WTCDB_TEST_UNREFERENCED_PARAMETER( argc )
 	WTCDB_TEST_UNREFERENCED_PARAMETER( argv )
+
+#if defined( __GNUC__ )
+
+	/* TODO: add tests for libwtcdb_item_initialize */
+
+#endif /* defined( __GNUC__ ) */
 
 	WTCDB_TEST_RUN(
 	 "libwtcdb_item_free",

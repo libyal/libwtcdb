@@ -2,6 +2,7 @@ include_HEADERS = \
 	libwtcdb.h
 
 pkginclude_HEADERS = \
+	libwtcdb/codepage.h \
 	libwtcdb/definitions.h \
 	libwtcdb/error.h \
 	libwtcdb/extern.h \

@@ -1,7 +1,7 @@
 /*
  * CRC-64 functions
  *
- * Copyright (C) 2010-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2010-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -42,5 +42,5 @@ int libwtcdb_crc64_weak_calculate(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBWTCDB_CRC_H ) */
 

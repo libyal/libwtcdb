@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libwtcdb],
- [20161108],
+ [20170201],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -93,17 +93,8 @@ AX_LIBFVALUE_CHECK_ENABLE
 dnl Check for library function support
 AX_LIBWTCDB_CHECK_LOCAL
 
-dnl Check for enabling libcsystem for cross-platform C generic system functions
-AX_LIBCSYSTEM_CHECK_ENABLE
-
-dnl Check if wtcdbtools should be build as static executables
-AX_COMMON_CHECK_ENABLE_STATIC_EXECUTABLES
-
-dnl Check if libwtcdb should be build with verbose output
-AX_COMMON_CHECK_ENABLE_VERBOSE_OUTPUT
-
-dnl Check if libwtcdb should be build with debug output
-AX_COMMON_CHECK_ENABLE_DEBUG_OUTPUT
+dnl Check for wtcdbtools function support
+AX_WTCDBTOOLS_CHECK_LOCAL
 
 dnl Headers included in various places
 AC_CHECK_HEADERS([stdarg.h varargs.h])
@@ -155,13 +146,6 @@ AS_IF(
   [BuildRequires:])
  ])
 
-AS_IF(
- [test "x$ac_cv_libcsystem" = xyes],
- [AC_SUBST(
-  [libwtcdb_spec_tools_build_requires],
-  [BuildRequires:])
- ])
-
 dnl Set the date for the dpkg files
 AC_SUBST(
  [DPKG_DATE],
@@ -194,7 +178,6 @@ AC_CONFIG_FILES([libbfio/Makefile])
 AC_CONFIG_FILES([libfdatetime/Makefile])
 AC_CONFIG_FILES([libfvalue/Makefile])
 AC_CONFIG_FILES([libwtcdb/Makefile])
-AC_CONFIG_FILES([libcsystem/Makefile])
 AC_CONFIG_FILES([wtcdbtools/Makefile])
 AC_CONFIG_FILES([po/Makefile.in])
 AC_CONFIG_FILES([po/Makevars])
@@ -234,7 +217,6 @@ Building:
    libbfio support:                            $ac_cv_libbfio
    libfdatetime support:                       $ac_cv_libfdatetime
    libfvalue support:                          $ac_cv_libfvalue
-   libcsystem support:                         $ac_cv_libcsystem
 
 Features:
    Multi-threading support:                    $ac_cv_libcthreads_multi_threading

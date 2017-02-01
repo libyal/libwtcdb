@@ -1,4 +1,4 @@
-.Dd May  7, 2016
+.Dd February  1, 2017
 .Dt libwtcdb 3
 .Os libwtcdb
 .Sh NAME
@@ -14,6 +14,10 @@ Support functions
 .Fn libwtcdb_get_version "void"
 .Ft int
 .Fn libwtcdb_get_access_flags_read "void"
+.Ft int
+.Fn libwtcdb_get_codepage "int *codepage, libwtcdb_error_t **error"
+.Ft int
+.Fn libwtcdb_set_codepage "int codepage, libwtcdb_error_t **error"
 .Ft int
 .Fn libwtcdb_check_file_signature "const char *filename, libwtcdb_error_t **error"
 .Pp
@@ -105,7 +109,7 @@ Please report bugs of any kind on the project issue tracker: https://github.com/
 .Sh AUTHOR
 These man pages are generated from "libwtcdb.h".
 .Sh COPYRIGHT
-Copyright (C) 2010-2016, Joachim Metz <joachim.metz@gmail.com>.
+Copyright (C) 2010-2017, Joachim Metz <joachim.metz@gmail.com>.
 
 This is free software; see the source for copying conditions.
 There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.

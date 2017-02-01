@@ -1,7 +1,7 @@
 /*
  * The internal extern definition
  *
- * Copyright (C) 2010-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2010-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -38,9 +38,9 @@
 #include <libwtcdb/extern.h>
 
 #else
-#define LIBWTCDB_EXTERN	extern
+#define LIBWTCDB_EXTERN	/* extern */
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBWTCDB ) */
 
 #endif /* !defined( _LIBWTCDB_INTERNAL_EXTERN_H ) */
 

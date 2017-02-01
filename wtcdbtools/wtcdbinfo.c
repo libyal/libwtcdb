@@ -1,7 +1,7 @@
 /*
  * Shows information obtained from a Windows Explorer thumbnail cache database file
  *
- * Copyright (C) 2010-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2010-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -33,12 +33,14 @@
 #include <stdlib.h>
 #endif
 
-#include "wtcdboutput.h"
+#include "wtcdbtools_getopt.h"
 #include "wtcdbtools_libcerror.h"
 #include "wtcdbtools_libclocale.h"
 #include "wtcdbtools_libcnotify.h"
-#include "wtcdbtools_libcsystem.h"
 #include "wtcdbtools_libwtcdb.h"
+#include "wtcdbtools_output.h"
+#include "wtcdbtools_signal.h"
+#include "wtcdbtools_unused.h"
 
 /* Prints the executable usage information
  */
@@ -190,13 +192,13 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	if( libcsystem_initialize(
+	if( wtcdbtools_output_initialize(
 	     _IONBF,
 	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to initialize system values.\n" );
+		 "Unable to initialize output settings.\n" );
 
 		goto on_error;
 	}
@@ -204,7 +206,7 @@ int main( int argc, char * const argv[] )
 	 stdout,
 	 program );
 
-	while( ( option = libcsystem_getopt(
+	while( ( option = wtcdbtools_getopt(
 	                   argc,
 	                   argv,
 	                   _SYSTEM_STRING( "hvV" ) ) ) != (system_integer_t) -1 )

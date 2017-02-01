@@ -1,7 +1,7 @@
 /*
  * Definitions for libwtcdb
  *
- * Copyright (C) 2010-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2010-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -24,11 +24,11 @@
 
 #include <libwtcdb/types.h>
 
-#define LIBWTCDB_VERSION				@VERSION@
+#define LIBWTCDB_VERSION		@VERSION@
 
 /* The version string
  */
-#define LIBWTCDB_VERSION_STRING				"@VERSION@"
+#define LIBWTCDB_VERSION_STRING		"@VERSION@"
 
 /* The access flags definitions
  * bit 1        set to 1 for read access
@@ -37,25 +37,25 @@
  */
 enum LIBWTCDB_ACCESS_FLAGS
 {
-	LIBWTCDB_ACCESS_FLAG_READ			= 0x01,
+	LIBWTCDB_ACCESS_FLAG_READ	= 0x01,
 /* Reserved: not supported yet */
-	LIBWTCDB_ACCESS_FLAG_WRITE			= 0x02
+	LIBWTCDB_ACCESS_FLAG_WRITE	= 0x02
 };
 
 /* The file access macros
  */
-#define LIBWTCDB_OPEN_READ				( LIBWTCDB_ACCESS_FLAG_READ )
+#define LIBWTCDB_OPEN_READ		( LIBWTCDB_ACCESS_FLAG_READ )
 /* Reserved: not supported yet */
-#define LIBWTCDB_OPEN_WRITE				( LIBWTCDB_ACCESS_FLAG_WRITE )
+#define LIBWTCDB_OPEN_WRITE		( LIBWTCDB_ACCESS_FLAG_WRITE )
 /* Reserved: not supported yet */
-#define LIBWTCDB_OPEN_READ_WRITE			( LIBWTCDB_ACCESS_FLAG_READ | LIBWTCDB_ACCESS_FLAG_WRITE )
+#define LIBWTCDB_OPEN_READ_WRITE	( LIBWTCDB_ACCESS_FLAG_READ | LIBWTCDB_ACCESS_FLAG_WRITE )
 
 /* The file types
  */
 enum LIBWTCDB_FILE_TYPES
 {
-	LIBWTCDB_FILE_TYPE_CACHE			= (uint8_t) 'c',
-	LIBWTCDB_FILE_TYPE_INDEX			= (uint8_t) 'i'
+	LIBWTCDB_FILE_TYPE_CACHE	= (uint8_t) 'c',
+	LIBWTCDB_FILE_TYPE_INDEX	= (uint8_t) 'i'
 };
 
 #endif /* !defined( _LIBWTCDB_DEFINITIONS_H ) */

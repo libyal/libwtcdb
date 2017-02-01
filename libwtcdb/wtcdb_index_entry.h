@@ -1,7 +1,7 @@
 /*
  * The index entry definition of a Windows Explorer thumbnail index database file
  *
- * Copyright (C) 2010-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2010-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -119,5 +119,5 @@ struct wtcdb_index_entry_win7
 }
 #endif
 
-#endif
+#endif /* !defined( _WTCDB_INDEX_ENTRY_H ) */
 

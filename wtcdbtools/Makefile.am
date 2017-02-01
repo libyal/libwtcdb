@@ -12,7 +12,6 @@ AM_CPPFLAGS = \
 	@LIBBFIO_CPPFLAGS@ \
 	@LIBFDATETIME_CPPFLAGS@ \
 	@LIBFVALUE_CPPFLAGS@ \
-	@LIBCSYSTEM_CPPFLAGS@ \
 	@LIBWTCDB_DLL_IMPORT@
 
 AM_LDFLAGS = @STATIC_LDFLAGS@
@@ -25,51 +24,55 @@ wtcdbexport_SOURCES = \
 	export_handle.c export_handle.h \
 	log_handle.c log_handle.h \
 	wtcdbexport.c \
-	wtcdboutput.c wtcdboutput.h \
+	wtcdbtools_getopt.c wtcdbtools_getopt.h \
+	wtcdbtools_i18n.h \
 	wtcdbtools_libbfio.h \
 	wtcdbtools_libcerror.h \
 	wtcdbtools_libcfile.h \
 	wtcdbtools_libclocale.h \
 	wtcdbtools_libcnotify.h \
 	wtcdbtools_libcpath.h \
-	wtcdbtools_libcsystem.h \
 	wtcdbtools_libfdatetime.h \
 	wtcdbtools_libfvalue.h \
 	wtcdbtools_libuna.h \
-	wtcdbtools_libwtcdb.h
+	wtcdbtools_libwtcdb.h \
+	wtcdbtools_output.c wtcdbtools_output.h \
+	wtcdbtools_signal.c wtcdbtools_signal.h \
+	wtcdbtools_unused.h
 
 wtcdbexport_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
 	@LIBCFILE_LIBADD@ \
 	@LIBCPATH_LIBADD@ \
 	@LIBUNA_LIBADD@ \
-	../libwtcdb/libwtcdb.la \
 	@LIBCSPLIT_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
+	../libwtcdb/libwtcdb.la \
 	@LIBCERROR_LIBADD@ \
 	@LIBINTL@
 
 wtcdbinfo_SOURCES = \
 	wtcdbinfo.c \
-	wtcdboutput.c wtcdboutput.h \
+	wtcdbtools_getopt.c wtcdbtools_getopt.h \
+	wtcdbtools_i18n.h \
 	wtcdbtools_libbfio.h \
 	wtcdbtools_libcerror.h \
 	wtcdbtools_libcfile.h \
 	wtcdbtools_libclocale.h \
 	wtcdbtools_libcnotify.h \
 	wtcdbtools_libcpath.h \
-	wtcdbtools_libcsystem.h \
 	wtcdbtools_libfdatetime.h \
 	wtcdbtools_libfvalue.h \
 	wtcdbtools_libuna.h \
-	wtcdbtools_libwtcdb.h
+	wtcdbtools_libwtcdb.h \
+	wtcdbtools_output.c wtcdbtools_output.h \
+	wtcdbtools_signal.c wtcdbtools_signal.h \
+	wtcdbtools_unused.h
 
 wtcdbinfo_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
-	../libwtcdb/libwtcdb.la \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
+	../libwtcdb/libwtcdb.la \
 	@LIBCERROR_LIBADD@ \
 	@LIBINTL@
 

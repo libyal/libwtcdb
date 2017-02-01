@@ -7,7 +7,6 @@ MSVSCPP_FILES = \
 	libcnotify/libcnotify.vcproj \
 	libcpath/libcpath.vcproj \
 	libcsplit/libcsplit.vcproj \
-	libcsystem/libcsystem.vcproj \
 	libcthreads/libcthreads.vcproj \
 	libfdatetime/libfdatetime.vcproj \
 	libfvalue/libfvalue.vcproj \
@@ -15,7 +14,10 @@ MSVSCPP_FILES = \
 	libwtcdb/libwtcdb.vcproj \
 	wtcdb_test_error/wtcdb_test_error.vcproj \
 	wtcdb_test_file/wtcdb_test_file.vcproj \
+	wtcdb_test_io_handle/wtcdb_test_io_handle.vcproj \
 	wtcdb_test_item/wtcdb_test_item.vcproj \
+	wtcdb_test_item_value/wtcdb_test_item_value.vcproj \
+	wtcdb_test_notify/wtcdb_test_notify.vcproj \
 	wtcdb_test_support/wtcdb_test_support.vcproj \
 	wtcdbexport/wtcdbexport.vcproj \
 	wtcdbinfo/wtcdbinfo.vcproj \

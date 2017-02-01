@@ -1,7 +1,7 @@
 /*
  * Export handle
  *
- * Copyright (C) 2010-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2010-2017, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -31,7 +31,6 @@
 #include "wtcdbtools_libcerror.h"
 #include "wtcdbtools_libcfile.h"
 #include "wtcdbtools_libcpath.h"
-#include "wtcdbtools_libcsystem.h"
 #include "wtcdbtools_libwtcdb.h"
 
 #define EXPORT_HANDLE_NOTIFY_STREAM	stdout

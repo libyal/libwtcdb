@@ -10,22 +10,16 @@ AM_CPPFLAGS = \
 	@LIBCFILE_CPPFLAGS@ \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
-	@LIBCSYSTEM_CPPFLAGS@ \
-	@PTHREAD_CPPFLAGS@ \
+	@LIBFDATETIME_CPPFLAGS@ \
+	@LIBFVALUE_CPPFLAGS@ \
 	@LIBWTCDB_DLL_IMPORT@
 
 TESTS = \
-	test_api_functions.sh \
-	test_api_types.sh \
-	test_wtcdbinfo.sh \
-	test_wtcdbexport.sh
+	test_library.sh
 
 check_SCRIPTS = \
-	test_api_functions.sh \
-	test_api_types.sh \
-	test_runner.sh \
-	test_wtcdbexport.sh \
-	test_wtcdbinfo.sh
+	test_library.sh \
+	test_runner.sh
 
 EXTRA_DIST = \
 	$(check_SCRIPTS)
@@ -33,7 +27,10 @@ EXTRA_DIST = \
 check_PROGRAMS = \
 	wtcdb_test_error \
 	wtcdb_test_file \
+	wtcdb_test_io_handle \
 	wtcdb_test_item \
+	wtcdb_test_item_value \
+	wtcdb_test_notify \
 	wtcdb_test_support
 
 wtcdb_test_error_SOURCES = \
@@ -47,20 +44,34 @@ wtcdb_test_error_LDADD = \
 
 wtcdb_test_file_SOURCES = \
 	wtcdb_test_file.c \
+	wtcdb_test_getopt.c wtcdb_test_getopt.h \
 	wtcdb_test_libcerror.h \
 	wtcdb_test_libclocale.h \
-	wtcdb_test_libcsystem.h \
-	wtcdb_test_libwtcdb.h \
+	wtcdb_test_libcnotify.h \
 	wtcdb_test_libuna.h \
-	wtcdb_test_memory.c wtcdb_test_memory.h \
-	wtcdb_test_unused.h
+	wtcdb_test_libwtcdb.h \
+	wtcdb_test_macros.h \
+	wtcdb_test_memory.c wtcdb_test_memory.h
 
 wtcdb_test_file_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
 	@LIBUNA_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
+	../libwtcdb/libwtcdb.la \
+	@LIBCTHREADS_LIBADD@ \
+	@LIBCERROR_LIBADD@ \
+	@PTHREAD_LIBADD@
+
+wtcdb_test_io_handle_SOURCES = \
+	wtcdb_test_io_handle.c \
+	wtcdb_test_libcerror.h \
+	wtcdb_test_libwtcdb.h \
+	wtcdb_test_macros.h \
+	wtcdb_test_memory.c wtcdb_test_memory.h \
+	wtcdb_test_unused.h
+
+wtcdb_test_io_handle_LDADD = \
 	../libwtcdb/libwtcdb.la \
 	@LIBCERROR_LIBADD@
 
@@ -76,18 +87,42 @@ wtcdb_test_item_LDADD = \
 	../libwtcdb/libwtcdb.la \
 	@LIBCERROR_LIBADD@
 
-wtcdb_test_support_SOURCES = \
+wtcdb_test_item_value_SOURCES = \
+	wtcdb_test_item_value.c \
 	wtcdb_test_libcerror.h \
-	wtcdb_test_libclocale.h \
-	wtcdb_test_libcsystem.h \
 	wtcdb_test_libwtcdb.h \
-	wtcdb_test_libuna.h \
 	wtcdb_test_macros.h \
-	wtcdb_test_support.c \
+	wtcdb_test_memory.c wtcdb_test_memory.h \
 	wtcdb_test_unused.h
 
+wtcdb_test_item_value_LDADD = \
+	../libwtcdb/libwtcdb.la \
+	@LIBCERROR_LIBADD@
+
+wtcdb_test_notify_SOURCES = \
+	wtcdb_test_libwtcdb.h \
+	wtcdb_test_macros.h \
+	wtcdb_test_notify.c \
+	wtcdb_test_unused.h
+
+wtcdb_test_notify_LDADD = \
+	../libwtcdb/libwtcdb.la
+
+wtcdb_test_support_SOURCES = \
+	wtcdb_test_getopt.c wtcdb_test_getopt.h \
+	wtcdb_test_libbfio.h \
+	wtcdb_test_libcerror.h \
+	wtcdb_test_libclocale.h \
+	wtcdb_test_libcnotify.h \
+	wtcdb_test_libuna.h \
+	wtcdb_test_libwtcdb.h \
+	wtcdb_test_macros.h \
+	wtcdb_test_support.c
+
 wtcdb_test_support_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
 	@LIBUNA_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
