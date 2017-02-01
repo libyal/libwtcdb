@@ -514,32 +514,32 @@ int libwtcdb_io_handle_read_items(
      libcdata_array_t *items_array,
      libcerror_error_t **error )
 {
-	libwtcdb_item_value_t *item_value           = NULL;
-	uint8_t *item_entry_data                    = NULL;
-	const char *type_string                     = NULL;
-	static char *function                       = "libwtcdb_io_handle_read_items";
-	size_t item_entry_data_size                 = 0;
-	ssize_t read_count                          = 0;
-	uint64_t calculated_crc                     = 0;
-	uint64_t stored_data_crc                    = 0;
-	uint64_t stored_header_crc                  = 0;
-	uint32_t data_size                          = 0;
-	uint32_t item_iterator                      = 0;
-	uint32_t padding_size                       = 0;
-	uint32_t cache_entry_offset                 = 0;
-	uint32_t cache_entry_size                   = 0;
-	int item_entry_index                        = 0;
+	libwtcdb_item_value_t *item_value = NULL;
+	uint8_t *item_entry_data          = NULL;
+	static char *function             = "libwtcdb_io_handle_read_items";
+	const char *type_string           = NULL;
+	size_t item_entry_data_size       = 0;
+	ssize_t read_count                = 0;
+	uint64_t calculated_crc           = 0;
+	uint64_t stored_data_crc          = 0;
+	uint64_t stored_header_crc        = 0;
+	uint32_t cache_entry_offset       = 0;
+	uint32_t cache_entry_size         = 0;
+	uint32_t data_size                = 0;
+	uint32_t item_iterator            = 0;
+	uint32_t padding_size             = 0;
+	int item_entry_index              = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	system_character_t filetime_string[ 32 ];
 
-	libfdatetime_filetime_t *filetime           = NULL;
-	libcstring_system_character_t *value_string = NULL;
-	uint8_t *padding_data                       = NULL;
-	size_t value_string_size                    = 0;
-	uint64_t value_64bit                        = 0;
-	uint32_t value_32bit                        = 0;
-	int result                                  = 0;
+	libfdatetime_filetime_t *filetime = NULL;
+	system_character_t *value_string  = NULL;
+	uint8_t *padding_data             = NULL;
+	size_t value_string_size          = 0;
+	uint64_t value_64bit              = 0;
+	uint32_t value_32bit              = 0;
+	int result                        = 0;
 #endif
 
 	if( io_handle == NULL )
