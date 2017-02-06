@@ -90,10 +90,12 @@ int libwtcdb_item_value_initialize(
 	return( 1 );
 
 on_error:
-	if( item_value != NULL )
+	if( *item_value != NULL )
 	{
 		memory_free(
-		 item_value );
+		 *item_value );
+
+		*item_value = NULL;
 	}
 	return( -1 );
 }
