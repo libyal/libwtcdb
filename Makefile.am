@@ -28,11 +28,10 @@ DPKG_FILES = \
 	dpkg/compat \
 	dpkg/control \
 	dpkg/copyright \
-	dpkg/copyright.in \
 	dpkg/rules \
-	dpkg/libwtcdb-dev.docs \
-	dpkg/libwtcdb.docs \
-	dpkg/libwtcdb-tools.docs \
+	dpkg/libwtcdb-dev.install \
+	dpkg/libwtcdb.install \
+	dpkg/libwtcdb-tools.install \
 	dpkg/source/format
 
 GETTEXT_FILES = \
