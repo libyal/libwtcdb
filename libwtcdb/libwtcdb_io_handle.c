@@ -1070,12 +1070,6 @@ int libwtcdb_io_handle_read_items(
 					 value_string );
 				}
 #endif
-				/* TODO remove when value is appended */
-				libwtcdb_item_value_free(
-				 &item_value,
-				 NULL );
-
-				item_value = NULL;
 			}
 			if( padding_size > 0 )
 			{
@@ -1122,9 +1116,6 @@ int libwtcdb_io_handle_read_items(
 						 "%s: unable to read padding data.",
 						 function );
 
-						memory_free(
-						 padding_data );
-
 						goto on_error;
 					}
 					libcnotify_printf(
@@ -1139,8 +1130,10 @@ int libwtcdb_io_handle_read_items(
 
 					memory_free(
 					 padding_data );
+
+					padding_data = NULL;
 				}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
 				cache_entry_offset += padding_size;
 			}
 			if( data_size > 0 )
@@ -1198,7 +1191,7 @@ fprintf( stderr, "SIZE MISMATCH: %" PRIu32 " %" PRIu32 "n",
 					 "%s: unable to create filetime.",
 					 function );
 
-					return( -1 );
+					goto on_error;
 				}
 				if( libfdatetime_filetime_copy_from_byte_stream(
 				     filetime,
@@ -1214,11 +1207,7 @@ fprintf( stderr, "SIZE MISMATCH: %" PRIu32 " %" PRIu32 "n",
 					 "%s: unable to copy byte stream to filetime.",
 					 function );
 
-					libfdatetime_filetime_free(
-					 &filetime,
-					 NULL );
-
-					return( -1 );
+					goto on_error;
 				}
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 				result = libfdatetime_filetime_copy_to_utf16_string(
@@ -1244,11 +1233,7 @@ fprintf( stderr, "SIZE MISMATCH: %" PRIu32 " %" PRIu32 "n",
 					 "%s: unable to copy filetime to string.",
 					 function );
 
-					libfdatetime_filetime_free(
-					 &filetime,
-					 NULL );
-
-					return( -1 );
+					goto on_error;
 				}
 				if( libfdatetime_filetime_free(
 				     &filetime,
@@ -1261,7 +1246,7 @@ fprintf( stderr, "SIZE MISMATCH: %" PRIu32 " %" PRIu32 "n",
 					 "%s: unable to free filetime.",
 					 function );
 
-					return( -1 );
+					goto on_error;
 				}
 				libcnotify_printf(
 				 "%s: modification time\t: %" PRIs_SYSTEM " UTC\n\n",
@@ -1385,6 +1370,10 @@ fprintf( stderr, "SIZE MISMATCH: %" PRIu32 " %" PRIu32 "n",
 			 "\n" );
 		}
 #endif
+/* TODO remove when value is appended */
+		libwtcdb_item_value_free(
+		 &item_value,
+		 NULL );
 /* TODO
 		if( libcdata_array_append_entry(
 		     items_array,
@@ -1404,12 +1393,32 @@ fprintf( stderr, "SIZE MISMATCH: %" PRIu32 " %" PRIu32 "n",
 		values_table = NULL;
 */
 	}
+/* TODO remove when value is appended */
+	if( item_value != NULL )
+	{
+		libwtcdb_item_value_free(
+		 &item_value,
+		 NULL );
+	}
 	memory_free(
 	 item_entry_data );
 
 	return( 1 );
 
 on_error:
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( filetime != NULL )
+	{
+		libfdatetime_filetime_free(
+		 &filetime,
+		 NULL );
+	}
+	if( padding_data != NULL )
+	{
+		memory_free(
+		 padding_data );
+	}
+#endif
 	if( item_value != NULL )
 	{
 		libwtcdb_item_value_free(

@@ -25,6 +25,7 @@
 #include <common.h>
 #include <types.h>
 
+#include "libwtcdb_item_value.h"
 #include "libwtcdb_libbfio.h"
 #include "libwtcdb_libcdata.h"
 #include "libwtcdb_libcerror.h"
@@ -81,6 +82,14 @@ int libwtcdb_io_handle_read_items(
      uint32_t available_cache_entry_offset,
      uint32_t number_of_items,
      libcdata_array_t *items_array,
+     libcerror_error_t **error );
+
+int libwtcdb_io_handle_read_cache_entry_data(
+     libwtcdb_io_handle_t *io_handle,
+     libwtcdb_item_value_t *item_value,
+     uint32_t item_iterator,
+     const uint8_t *data,
+     size_t data_size,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )
