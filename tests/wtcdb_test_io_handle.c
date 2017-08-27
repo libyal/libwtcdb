@@ -35,7 +35,7 @@
 
 #include "../libwtcdb/libwtcdb_io_handle.h"
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBWTCDB_DLL_IMPORT )
 
 /* Tests the libwtcdb_io_handle_initialize function
  * Returns 1 if successful or 0 if not
@@ -270,7 +270,7 @@ on_error:
 	return( 0 );
 }
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBWTCDB_DLL_IMPORT ) */
 
 /* The main program
  */
@@ -287,7 +287,7 @@ int main(
 	WTCDB_TEST_UNREFERENCED_PARAMETER( argc )
 	WTCDB_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBWTCDB_DLL_IMPORT )
 
 	WTCDB_TEST_RUN(
 	 "libwtcdb_io_handle_initialize",
@@ -303,7 +303,7 @@ int main(
 
 	/* TODO: add tests for libwtcdb_io_handle_read_items */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBWTCDB_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 

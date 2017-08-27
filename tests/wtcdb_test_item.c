@@ -73,9 +73,9 @@ on_error:
 	return( 0 );
 }
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBWTCDB_DLL_IMPORT )
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBWTCDB_DLL_IMPORT ) */
 
 /* The main program
  */
@@ -92,11 +92,11 @@ int main(
 	WTCDB_TEST_UNREFERENCED_PARAMETER( argc )
 	WTCDB_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBWTCDB_DLL_IMPORT )
 
 	/* TODO: add tests for libwtcdb_item_initialize */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBWTCDB_DLL_IMPORT ) */
 
 	WTCDB_TEST_RUN(
 	 "libwtcdb_item_free",

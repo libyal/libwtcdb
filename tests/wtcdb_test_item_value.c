@@ -35,7 +35,7 @@
 
 #include "../libwtcdb/libwtcdb_item_value.h"
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBWTCDB_DLL_IMPORT )
 
 /* Tests the libwtcdb_item_value_initialize function
  * Returns 1 if successful or 0 if not
@@ -270,7 +270,7 @@ on_error:
 	return( 0 );
 }
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBWTCDB_DLL_IMPORT ) */
 
 /* The main program
  */
@@ -287,7 +287,7 @@ int main(
 	WTCDB_TEST_UNREFERENCED_PARAMETER( argc )
 	WTCDB_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBWTCDB_DLL_IMPORT )
 
 	WTCDB_TEST_RUN(
 	 "libwtcdb_item_value_initialize",
@@ -297,7 +297,7 @@ int main(
 	 "libwtcdb_item_value_free",
 	 wtcdb_test_item_value_free );
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBWTCDB_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 
