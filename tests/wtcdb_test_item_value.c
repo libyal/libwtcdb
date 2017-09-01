@@ -64,13 +64,13 @@ int wtcdb_test_item_value_initialize(
 	 result,
 	 1 );
 
-        WTCDB_TEST_ASSERT_IS_NOT_NULL(
-         "item_value",
-         item_value );
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "item_value",
+	 item_value );
 
-        WTCDB_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libwtcdb_item_value_free(
 	          &item_value,
@@ -81,13 +81,13 @@ int wtcdb_test_item_value_initialize(
 	 result,
 	 1 );
 
-        WTCDB_TEST_ASSERT_IS_NULL(
-         "item_value",
-         item_value );
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "item_value",
+	 item_value );
 
-        WTCDB_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -100,9 +100,9 @@ int wtcdb_test_item_value_initialize(
 	 result,
 	 -1 );
 
-        WTCDB_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -118,9 +118,9 @@ int wtcdb_test_item_value_initialize(
 	 result,
 	 -1 );
 
-        WTCDB_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -252,9 +252,9 @@ int wtcdb_test_item_value_free(
 	 result,
 	 -1 );
 
-        WTCDB_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );

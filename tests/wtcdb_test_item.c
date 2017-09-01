@@ -55,9 +55,9 @@ int wtcdb_test_item_free(
 	 result,
 	 -1 );
 
-        WTCDB_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );

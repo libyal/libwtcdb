@@ -15,11 +15,15 @@ AM_CPPFLAGS = \
 	@LIBWTCDB_DLL_IMPORT@
 
 TESTS = \
-	test_library.sh
+	test_library.sh \
+	test_wtcdbinfo.sh \
+	test_wtcdbexport.sh
 
 check_SCRIPTS = \
 	test_library.sh \
-	test_runner.sh
+	test_runner.sh \
+	test_wtcdbexport.sh \
+	test_wtcdbinfo.sh
 
 EXTRA_DIST = \
 	$(check_SCRIPTS)
@@ -124,6 +128,7 @@ wtcdb_test_support_LDADD = \
 	@LIBCPATH_LIBADD@ \
 	@LIBCFILE_LIBADD@ \
 	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
