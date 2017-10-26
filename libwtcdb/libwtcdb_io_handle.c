@@ -531,9 +531,6 @@ int libwtcdb_io_handle_read_items(
 	int item_entry_index              = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	system_character_t filetime_string[ 32 ];
-
-	libfdatetime_filetime_t *filetime = NULL;
 	system_character_t *value_string  = NULL;
 	uint8_t *padding_data             = NULL;
 	size_t value_string_size          = 0;
@@ -1180,78 +1177,24 @@ fprintf( stderr, "SIZE MISMATCH: %" PRIu32 " %" PRIu32 "n",
 				 item_iterator,
 				 value_64bit );
 
-				if( libfdatetime_filetime_initialize(
-				     &filetime,
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-					 "%s: unable to create filetime.",
-					 function );
-
-					goto on_error;
-				}
-				if( libfdatetime_filetime_copy_from_byte_stream(
-				     filetime,
+				if( liblnk_debug_print_filetime_value(
+				     function,
+				     "%s: modification time\t",
 				     ( (wtcdb_index_entry_vista_t *) item_entry_data )->modification_time,
 				     8,
 				     LIBFDATETIME_ENDIAN_LITTLE,
+				     LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
 				     error ) != 1 )
 				{
 					libcerror_error_set(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-					 "%s: unable to copy byte stream to filetime.",
+					 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+					 "%s: unable to print FILETIME value.",
 					 function );
 
 					goto on_error;
 				}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-				result = libfdatetime_filetime_copy_to_utf16_string(
-					  filetime,
-					  (uint16_t *) filetime_string,
-					  32,
-					  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
-					  error );
-#else
-				result = libfdatetime_filetime_copy_to_utf8_string(
-					  filetime,
-					  (uint8_t *) filetime_string,
-					  32,
-					  LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
-					  error );
-#endif
-				if( result != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
-					 "%s: unable to copy filetime to string.",
-					 function );
-
-					goto on_error;
-				}
-				if( libfdatetime_filetime_free(
-				     &filetime,
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-					 "%s: unable to free filetime.",
-					 function );
-
-					goto on_error;
-				}
-				libcnotify_printf(
-				 "%s: modification time\t: %" PRIs_SYSTEM " UTC\n\n",
-				 filetime_string );
-
 				if( io_handle->version == 20 )
 				{
 					byte_stream_copy_to_uint32_little_endian(
@@ -1407,12 +1350,6 @@ fprintf( stderr, "SIZE MISMATCH: %" PRIu32 " %" PRIu32 "n",
 
 on_error:
 #if defined( HAVE_DEBUG_OUTPUT )
-	if( filetime != NULL )
-	{
-		libfdatetime_filetime_free(
-		 &filetime,
-		 NULL );
-	}
 	if( padding_data != NULL )
 	{
 		memory_free(

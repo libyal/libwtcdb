@@ -164,7 +164,7 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	wtcdboutput_version_fprint(
+	wtcdbtools_output_version_fprint(
 	 stdout,
 	 program );
 
@@ -209,7 +209,7 @@ int main( int argc, char * const argv[] )
 				break;
 
 			case (system_integer_t) 'V':
-				wtcdboutput_copyright_fprint(
+				wtcdbtools_output_copyright_fprint(
 				 stdout );
 
 				return( EXIT_SUCCESS );

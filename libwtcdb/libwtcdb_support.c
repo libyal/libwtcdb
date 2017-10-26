@@ -29,6 +29,7 @@
 #include "libwtcdb_io_handle.h"
 #include "libwtcdb_libbfio.h"
 #include "libwtcdb_libcerror.h"
+#include "libwtcdb_libclocale.h"
 #include "libwtcdb_support.h"
 
 #if !defined( HAVE_LOCAL_LIBWTCDB )

@@ -1,5 +1,5 @@
 /*
- * Debug functions
+ * Common input functions for the wtcdbtools
  *
  * Copyright (C) 2010-2017, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,39 +19,26 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBWTCDB_DEBUG_H )
-#define _LIBWTCDB_DEBUG_H
+#if !defined( _WTCDBINPUT_H )
+#define _WTCDBINPUT_H
 
 #include <common.h>
 #include <types.h>
 
-#include "libwtcdb_libbfio.h"
-#include "libwtcdb_libcerror.h"
+#include "wtcdbtools_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-#if defined( HAVE_DEBUG_OUTPUT )
-
-int libwtcdb_debug_print_filetime_value(
-     const char *function_name,
-     const char *value_name,
-     const uint8_t *byte_stream,
-     size_t byte_stream_size,
-     int byte_order,
-     uint32_t string_format_flags,
+int wtcdbinput_determine_ascii_codepage(
+     const system_character_t *string,
+     int *ascii_codepage,
      libcerror_error_t **error );
-
-int libwtcdb_debug_print_read_offsets(
-     libbfio_handle_t *file_io_handle,
-     libcerror_error_t **error );
-
-#endif /* defined( HAVE_DEBUG_OUTPUT ) */
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _LIBWTCDB_DEBUG_H ) */
+#endif /* !defined( _WTCDBINPUT_H ) */
 

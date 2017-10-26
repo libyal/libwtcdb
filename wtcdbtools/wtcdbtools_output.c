@@ -92,7 +92,7 @@ int wtcdbtools_output_initialize(
 
 /* Prints the copyright information
  */
-void wtcdboutput_copyright_fprint(
+void wtcdbtools_output_copyright_fprint(
       FILE *stream )
 {
 	if( stream == NULL )
@@ -124,7 +124,7 @@ void wtcdboutput_copyright_fprint(
 
 /* Prints the version information
  */
-void wtcdboutput_version_fprint(
+void wtcdbtools_output_version_fprint(
       FILE *stream,
       const char *program )
 {
@@ -145,7 +145,7 @@ void wtcdboutput_version_fprint(
 
 /* Prints the detailed version information
  */
-void wtcdboutput_version_detailed_fprint(
+void wtcdbtools_output_version_detailed_fprint(
       FILE *stream,
       const char *program )
 {

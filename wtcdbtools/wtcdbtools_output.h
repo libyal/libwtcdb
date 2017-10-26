@@ -36,14 +36,14 @@ int wtcdbtools_output_initialize(
      int stdio_mode,
      libcerror_error_t **error );
 
-void wtcdboutput_copyright_fprint(
+void wtcdbtools_output_copyright_fprint(
       FILE *stream );
 
-void wtcdboutput_version_fprint(
+void wtcdbtools_output_version_fprint(
       FILE *stream,
       const char *program );
 
-void wtcdboutput_version_detailed_fprint(
+void wtcdbtools_output_version_detailed_fprint(
       FILE *stream,
       const char *program );
 

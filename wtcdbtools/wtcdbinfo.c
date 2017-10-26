@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #endif
 
+#include "info_handle.h"
 #include "wtcdbtools_getopt.h"
 #include "wtcdbtools_libcerror.h"
 #include "wtcdbtools_libclocale.h"
@@ -41,6 +42,9 @@
 #include "wtcdbtools_output.h"
 #include "wtcdbtools_signal.h"
 #include "wtcdbtools_unused.h"
+
+info_handle_t *wtcdbinfo_info_handle = NULL;
+int wtcdbinfo_abort                  = 0;
 
 /* Prints the executable usage information
  */
@@ -63,102 +67,48 @@ void usage_fprint(
 	fprintf( stream, "\t-V:     print version\n" );
 }
 
-/* Prints file information
- * Returns 1 if successful or -1 on error
+/* Signal handler for wtcdbinfo
  */
-int wtcdbinfo_file_info_fprint(
-     FILE *stream,
-     libwtcdb_file_t *file,
-     libcerror_error_t **error )
+void wtcdbinfo_signal_handler(
+      wtcdbtools_signal_t signal WTCDBTOOLS_ATTRIBUTE_UNUSED )
 {
-	static char *function = "wtcdbinfo_file_info_fprint";
-	uint8_t file_type     = 0;
-	int number_of_items   = 0;
+	libcerror_error_t *error = NULL;
+	static char *function   = "wtcdbinfo_signal_handler";
 
-	if( stream == NULL )
+	WTCDBTOOLS_UNREFERENCED_PARAMETER( signal )
+
+	wtcdbinfo_abort = 1;
+
+	if( wtcdbinfo_info_handle != NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid stream.",
+		if( info_handle_signal_abort(
+		     wtcdbinfo_info_handle,
+		     &error ) != 1 )
+		{
+			libcnotify_printf(
+			 "%s: unable to signal info handle to abort.\n",
+			 function );
+
+			libcnotify_print_error_backtrace(
+			 error );
+			libcerror_error_free(
+			 &error );
+		}
+	}
+	/* Force stdin to close otherwise any function reading it will remain blocked
+	 */
+#if defined( WINAPI ) && !defined( __CYGWIN__ )
+	if( _close(
+	     0 ) != 0 )
+#else
+	if( close(
+	     0 ) != 0 )
+#endif
+	{
+		libcnotify_printf(
+		 "%s: unable to close stdin.\n",
 		 function );
-
-		return( -1 );
 	}
-	if( file == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid file.",
-		 function );
-
-		return( -1 );
-	}
-	if( libwtcdb_file_get_type(
-	     file,
-	     &file_type,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve file type.",
-		 function );
-
-		return( -1 );
-	}
-	if( libwtcdb_file_get_number_of_items(
-	     file,
-	     &number_of_items,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve number of items.",
-		 function );
-
-		return( -1 );
-	}
-	fprintf(
-	 stream,
-	 "Windows Explorer thumbnail cache database information:\n" );
-
-	fprintf(
-	 stream,
-	 "\tFile type:\t\t" );
-
-	if( file_type == LIBWTCDB_FILE_TYPE_CACHE )
-	{
-		fprintf(
-		 stream,
-		 "Cache file" );
-	}
-	else if( file_type == LIBWTCDB_FILE_TYPE_INDEX )
-	{
-		fprintf(
-		 stream,
-		 "Index file" );
-	}
-	fprintf(
-	 stream,
-	 "\n" );
-
-	fprintf(
-	 stream,
-	 "\tNumber of items:\t%d\n",
-	 number_of_items );
-
-	fprintf(
-	 stream,
-	 "\n" );
-
-	return( 1 );
 }
 
 /* The main program
@@ -169,12 +119,11 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
-	libcerror_error_t *error    = NULL;
-	libwtcdb_file_t *wtcdb_file = NULL;
-	system_character_t *source  = NULL;
-	char *program               = "wtcdbinfo";
-	system_integer_t option     = 0;
-	int verbose                 = 0;
+	libcerror_error_t *error   = NULL;
+	system_character_t *source = NULL;
+	char *program              = "wtcdbinfo";
+	system_integer_t option    = 0;
+	int verbose                = 0;
 
 	libcnotify_stream_set(
 	 stderr,
@@ -202,7 +151,7 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	wtcdboutput_version_fprint(
+	wtcdbtools_output_version_fprint(
 	 stdout,
 	 program );
 
@@ -237,7 +186,7 @@ int main( int argc, char * const argv[] )
 				break;
 
 			case (system_integer_t) 'V':
-				wtcdboutput_copyright_fprint(
+				wtcdbtools_output_copyright_fprint(
 				 stdout );
 
 				return( EXIT_SUCCESS );
@@ -264,40 +213,30 @@ int main( int argc, char * const argv[] )
 	libwtcdb_notify_set_verbose(
 	 verbose );
 
-	if( libwtcdb_file_initialize(
-	     &wtcdb_file,
+	if( info_handle_initialize(
+	     &wtcdbinfo_info_handle,
 	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to initialize libwtcdb file.\n" );
+		 "Unable to initialize info handle.\n" );
 
 		goto on_error;
 	}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	if( libwtcdb_file_open_wide(
-	     wtcdb_file,
+	if( info_handle_open_input(
+	     wtcdbinfo_info_handle,
 	     source,
-	     LIBWTCDB_OPEN_READ,
 	     &error ) != 1 )
-#else
-	if( libwtcdb_file_open(
-	     wtcdb_file,
-	     source,
-	     LIBWTCDB_OPEN_READ,
-	     &error ) != 1 )
-#endif
 	{
 		fprintf(
 		 stderr,
-		 "Error opening file: %" PRIs_SYSTEM ".\n",
+		 "Unable to open: %" PRIs_SYSTEM ".\n",
 		 source );
 
 		goto on_error;
 	}
-	if( wtcdbinfo_file_info_fprint(
-	     stdout,
-	     wtcdb_file,
+	if( info_handle_file_fprint(
+	     wtcdbinfo_info_handle,
 	     &error ) != 1 )
 	{
 		fprintf(
@@ -306,24 +245,23 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	if( libwtcdb_file_close(
-	     wtcdb_file,
+	if( info_handle_close_input(
+	     wtcdbinfo_info_handle,
 	     &error ) != 0 )
 	{
 		fprintf(
 		 stderr,
-		 "Error closing file: %" PRIs_SYSTEM ".\n",
-		 argv[ optind ] );
+		 "Unable to close info handle.\n" );
 
 		goto on_error;
 	}
-	if( libwtcdb_file_free(
-	     &wtcdb_file,
+	if( info_handle_free(
+	     &wtcdbinfo_info_handle,
 	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to free libwtcdb file.\n" );
+		 "Unable to free info handle.\n" );
 
 		goto on_error;
 	}
@@ -337,13 +275,10 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-	if( wtcdb_file != NULL )
+	if( wtcdbinfo_info_handle != NULL )
 	{
-		libwtcdb_file_close(
-		 wtcdb_file,
-		 NULL );
-		libwtcdb_file_free(
-		 &wtcdb_file,
+		info_handle_free(
+		 &wtcdbinfo_info_handle,
 		 NULL );
 	}
 	return( EXIT_FAILURE );

@@ -53,11 +53,16 @@ int libwtcdb_get_codepage(
      int *codepage,
      libcerror_error_t **error );
 
-#endif /* !defined( HAVE_LOCAL_LIBWTCDB ) */
-
 LIBWTCDB_EXTERN \
 int libwtcdb_set_codepage(
      int codepage,
+     libcerror_error_t **error );
+
+#endif /* !defined( HAVE_LOCAL_LIBWTCDB ) */
+
+LIBWTCDB_EXTERN \
+int libwtcdb_check_file_signature(
+     const char *filename,
      libcerror_error_t **error );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )

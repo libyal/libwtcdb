@@ -1,5 +1,5 @@
 /*
- * Debug functions
+ * Functions for testing
  *
  * Copyright (C) 2010-2017, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,39 +19,37 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBWTCDB_DEBUG_H )
-#define _LIBWTCDB_DEBUG_H
+#if !defined( _WTCDB_TEST_FUNCTIONS_H )
+#define _WTCDB_TEST_FUNCTIONS_H
 
 #include <common.h>
 #include <types.h>
 
-#include "libwtcdb_libbfio.h"
-#include "libwtcdb_libcerror.h"
+#include "wtcdb_test_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-#if defined( HAVE_DEBUG_OUTPUT )
-
-int libwtcdb_debug_print_filetime_value(
-     const char *function_name,
-     const char *value_name,
-     const uint8_t *byte_stream,
-     size_t byte_stream_size,
-     int byte_order,
-     uint32_t string_format_flags,
+int wtcdb_test_get_narrow_source(
+     const system_character_t *source,
+     char *narrow_string,
+     size_t narrow_string_size,
      libcerror_error_t **error );
 
-int libwtcdb_debug_print_read_offsets(
-     libbfio_handle_t *file_io_handle,
+#if defined( HAVE_WIDE_CHARACTER_TYPE )
+
+int wtcdb_test_get_wide_source(
+     const system_character_t *source,
+     wchar_t *wide_string,
+     size_t wide_string_size,
      libcerror_error_t **error );
 
-#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _LIBWTCDB_DEBUG_H ) */
+#endif /* !defined( _WTCDB_TEST_FUNCTIONS_H ) */
 

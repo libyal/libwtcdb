@@ -52,7 +52,9 @@ wtcdbexport_LDADD = \
 	@LIBINTL@
 
 wtcdbinfo_SOURCES = \
+	info_handle.c info_handle.h \
 	wtcdbinfo.c \
+	wtcdbinput.c wtcdbinput.h \
 	wtcdbtools_getopt.c wtcdbtools_getopt.h \
 	wtcdbtools_i18n.h \
 	wtcdbtools_libbfio.h \
@@ -70,6 +72,7 @@ wtcdbinfo_SOURCES = \
 	wtcdbtools_unused.h
 
 wtcdbinfo_LDADD = \
+	@LIBFDATETIME_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	../libwtcdb/libwtcdb.la \

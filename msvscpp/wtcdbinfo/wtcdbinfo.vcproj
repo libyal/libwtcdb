@@ -176,7 +176,15 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\wtcdbtools\info_handle.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\wtcdbtools\wtcdbinfo.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wtcdbtools\wtcdbinput.c"
 				>
 			</File>
 			<File
@@ -197,6 +205,14 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\..\wtcdbtools\info_handle.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wtcdbtools\wtcdbinput.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\wtcdbtools\wtcdbtools_getopt.h"
 				>

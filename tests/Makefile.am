@@ -16,8 +16,8 @@ AM_CPPFLAGS = \
 
 TESTS = \
 	test_library.sh \
-	test_wtcdbinfo.sh \
-	test_wtcdbexport.sh
+	test_wtcdbexport.sh \
+	test_wtcdbinfo.sh
 
 check_SCRIPTS = \
 	test_library.sh \
@@ -48,17 +48,24 @@ wtcdb_test_error_LDADD = \
 
 wtcdb_test_file_SOURCES = \
 	wtcdb_test_file.c \
+	wtcdb_test_functions.c wtcdb_test_functions.h \
 	wtcdb_test_getopt.c wtcdb_test_getopt.h \
+	wtcdb_test_libbfio.h \
 	wtcdb_test_libcerror.h \
 	wtcdb_test_libclocale.h \
 	wtcdb_test_libcnotify.h \
 	wtcdb_test_libuna.h \
 	wtcdb_test_libwtcdb.h \
 	wtcdb_test_macros.h \
-	wtcdb_test_memory.c wtcdb_test_memory.h
+	wtcdb_test_memory.c wtcdb_test_memory.h \
+	wtcdb_test_unused.h
 
 wtcdb_test_file_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
 	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
@@ -113,6 +120,7 @@ wtcdb_test_notify_LDADD = \
 	../libwtcdb/libwtcdb.la
 
 wtcdb_test_support_SOURCES = \
+	wtcdb_test_functions.c wtcdb_test_functions.h \
 	wtcdb_test_getopt.c wtcdb_test_getopt.h \
 	wtcdb_test_libbfio.h \
 	wtcdb_test_libcerror.h \
@@ -121,7 +129,8 @@ wtcdb_test_support_SOURCES = \
 	wtcdb_test_libuna.h \
 	wtcdb_test_libwtcdb.h \
 	wtcdb_test_macros.h \
-	wtcdb_test_support.c
+	wtcdb_test_support.c \
+	wtcdb_test_unused.h
 
 wtcdb_test_support_LDADD = \
 	@LIBBFIO_LIBADD@ \
