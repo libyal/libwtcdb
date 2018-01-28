@@ -1,7 +1,7 @@
 /*
  * Common output functions for the wtcdbtools
  *
- * Copyright (C) 2010-2017, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2010-2018, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -103,7 +103,7 @@ void wtcdbtools_output_copyright_fprint(
 	 */
 	fprintf(
 	 stream,
-	 _( "Copyright (C) 2010-2017, %s.\n" ),
+	 _( "Copyright (C) 2010-2018, %s.\n" ),
 	 _( "Joachim Metz" ) );
 
 	fprintf(
