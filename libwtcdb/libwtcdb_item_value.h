@@ -54,6 +54,12 @@ int libwtcdb_item_value_free(
      libwtcdb_item_value_t **item_value,
      libcerror_error_t **error );
 
+int libwtcdb_item_value_read_data(
+     libwtcdb_item_value_t *item_value,
+     const uint8_t *data,
+     size_t data_size,
+     libcerror_error_t **error );
+
 #if defined( __cplusplus )
 }
 #endif

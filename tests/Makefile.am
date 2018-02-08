@@ -29,6 +29,7 @@ EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
+	wtcdb_test_cache_entry \
 	wtcdb_test_crc \
 	wtcdb_test_error \
 	wtcdb_test_file \
@@ -38,6 +39,18 @@ check_PROGRAMS = \
 	wtcdb_test_item_value \
 	wtcdb_test_notify \
 	wtcdb_test_support
+
+wtcdb_test_cache_entry_SOURCES = \
+	wtcdb_test_cache_entry.c \
+	wtcdb_test_libcerror.h \
+	wtcdb_test_libwtcdb.h \
+	wtcdb_test_macros.h \
+	wtcdb_test_memory.c wtcdb_test_memory.h \
+	wtcdb_test_unused.h
+
+wtcdb_test_cache_entry_LDADD = \
+	../libwtcdb/libwtcdb.la \
+	@LIBCERROR_LIBADD@
 
 wtcdb_test_crc_SOURCES = \
 	wtcdb_test_crc.c \

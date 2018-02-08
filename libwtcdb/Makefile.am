@@ -17,6 +17,7 @@ lib_LTLIBRARIES = libwtcdb.la
 
 libwtcdb_la_SOURCES = \
 	libwtcdb.c \
+	libwtcdb_cache_entry.c libwtcdb_cache_entry.h \
 	libwtcdb_crc.c libwtcdb_crc.h \
 	libwtcdb_debug.c libwtcdb_debug.h \
 	libwtcdb_definitions.h \

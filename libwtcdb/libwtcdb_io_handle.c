@@ -216,9 +216,7 @@ int libwtcdb_io_handle_read_items(
 	int item_entry_index              = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	system_character_t *value_string  = NULL;
 	uint8_t *padding_data             = NULL;
-	size_t value_string_size          = 0;
 	uint64_t value_64bit              = 0;
 	uint32_t value_32bit              = 0;
 	int result                        = 0;
@@ -368,6 +366,19 @@ int libwtcdb_io_handle_read_items(
 		}
 		cache_entry_offset = item_entry_data_size;
 
+		if( libwtcdb_item_value_initialize(
+		     &item_value,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create item value.",
+			 function );
+
+			goto on_error;
+		}
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
 		{
@@ -382,19 +393,6 @@ int libwtcdb_io_handle_read_items(
 			 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 		}
 #endif
-		if( libwtcdb_item_value_initialize(
-		     &item_value,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create item value.",
-			 function );
-
-			goto on_error;
-		}
 		if( io_handle->file_type == LIBWTCDB_FILE_TYPE_CACHE )
 		{
 			if( memory_compare(
@@ -671,85 +669,23 @@ int libwtcdb_io_handle_read_items(
 #if defined( HAVE_DEBUG_OUTPUT )
 				if( libcnotify_verbose != 0 )
 				{
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-					result = libuna_utf16_string_size_from_utf16_stream(
-						  item_value->identifier,
-						  item_value->identifier_size,
-						  LIBUNA_ENDIAN_LITTLE,
-						  &value_string_size,
-						  error );
-#else
-					result = libuna_utf8_string_size_from_utf16_stream(
-						  item_value->identifier,
-						  item_value->identifier_size,
-						  LIBUNA_ENDIAN_LITTLE,
-						  &value_string_size,
-						  error );
-#endif
-					if( result != 1 )
+					if( libwtcdb_debug_print_utf16_string_value(
+					     function,
+					     "identifier string\t\t\t",
+					     item_value->identifier,
+					     item_value->identifier_size,
+					     LIBUNA_ENDIAN_LITTLE,
+					     error ) != 1 )
 					{
 						libcerror_error_set(
 						 error,
 						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-						 "%s: unable to determine size of volume label string.",
+						 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+						 "%s: unable to print UTF-16 string value.",
 						 function );
 
 						goto on_error;
 					}
-					value_string = system_string_allocate(
-					                value_string_size );
-
-					if( value_string == NULL )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_MEMORY,
-						 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-						 "%s: unable to create volume label string.",
-						 function );
-
-						goto on_error;
-					}
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-					result = libuna_utf16_string_copy_from_utf16_stream(
-						  (libuna_utf16_character_t *) value_string,
-						  value_string_size,
-						  item_value->identifier,
-						  item_value->identifier_size,
-						  LIBUNA_ENDIAN_LITTLE,
-						  error );
-#else
-					result = libuna_utf8_string_copy_from_utf16_stream(
-						  (libuna_utf8_character_t *) value_string,
-						  value_string_size,
-						  item_value->identifier,
-						  item_value->identifier_size,
-						  LIBUNA_ENDIAN_LITTLE,
-						  error );
-#endif
-					if( result != 1 )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-						 "%s: unable to set volume label string.",
-						 function );
-
-						memory_free(
-						 value_string );
-
-						goto on_error;
-					}
-					libcnotify_printf(
-					 "%s: cache entry: %04" PRIu32 " identifier string\t\t: %" PRIs_SYSTEM "\n",
-					 function,
-					 item_iterator,
-					 value_string );
-
-					memory_free(
-					 value_string );
 				}
 #endif
 			}
@@ -864,7 +800,7 @@ fprintf( stderr, "SIZE MISMATCH: %" PRIu32 " %" PRIu32 "n",
 
 				if( libwtcdb_debug_print_filetime_value(
 				     function,
-				     "%s: modification time\t",
+				     "modification time\t\t\t\t",
 				     ( (wtcdb_index_entry_vista_t *) item_entry_data )->modification_time,
 				     8,
 				     LIBFDATETIME_ENDIAN_LITTLE,

@@ -1,5 +1,5 @@
 /*
- * Debug functions
+ * Cache entry functions
  *
  * Copyright (C) 2010-2018, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,47 +19,52 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBWTCDB_DEBUG_H )
-#define _LIBWTCDB_DEBUG_H
+#if !defined( _LIBWTCDB_CACHE_ENTRY_H )
+#define _LIBWTCDB_CACHE_ENTRY_H
 
 #include <common.h>
 #include <types.h>
 
-#include "libwtcdb_libbfio.h"
+#include "libwtcdb_extern.h"
+#include "libwtcdb_io_handle.h"
 #include "libwtcdb_libcerror.h"
+#include "libwtcdb_types.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-#if defined( HAVE_DEBUG_OUTPUT )
+typedef struct libwtcdb_cache_entry libwtcdb_cache_entry_t;
 
-int libwtcdb_debug_print_filetime_value(
-     const char *function_name,
-     const char *value_name,
-     const uint8_t *byte_stream,
-     size_t byte_stream_size,
-     int byte_order,
-     uint32_t string_format_flags,
+struct libwtcdb_cache_entry
+{
+	/* The identifier
+	 */
+	uint8_t *identifier;
+
+	/* The identifier size
+	 */
+	size_t identifier_size;
+};
+
+int libwtcdb_cache_entry_initialize(
+     libwtcdb_cache_entry_t **cache_entry,
      libcerror_error_t **error );
 
-int libwtcdb_debug_print_utf16_string_value(
-     const char *function_name,
-     const char *value_name,
-     const uint8_t *byte_stream,
-     size_t byte_stream_size,
-     int byte_order,
+int libwtcdb_cache_entry_free(
+     libwtcdb_cache_entry_t **cache_entry,
      libcerror_error_t **error );
 
-int libwtcdb_debug_print_read_offsets(
-     libbfio_handle_t *file_io_handle,
+int libwtcdb_cache_entry_read_data(
+     libwtcdb_cache_entry_t *cache_entry,
+     libwtcdb_io_handle_t *io_handle,
+     const uint8_t *data,
+     size_t data_size,
      libcerror_error_t **error );
-
-#endif /* defined( HAVE_DEBUG_OUTPUT ) */
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _LIBWTCDB_DEBUG_H ) */
+#endif /* !defined( _LIBWTCDB_CACHE_ENTRY_H ) */
 
