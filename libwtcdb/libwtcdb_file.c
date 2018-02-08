@@ -30,6 +30,7 @@
 #include "libwtcdb_io_handle.h"
 #include "libwtcdb_item.h"
 #include "libwtcdb_file.h"
+#include "libwtcdb_file_header.h"
 #include "libwtcdb_libbfio.h"
 #include "libwtcdb_libcdata.h"
 #include "libwtcdb_libcerror.h"
@@ -812,11 +813,18 @@ int libwtcdb_file_open_read(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
-	static char *function          = "libwtcdb_file_open_read";
-	uint32_t first_item_offset     = 0;
-	uint32_t available_item_offset = 0;
-	uint32_t number_of_items       = 0;
-	int result                     = 1;
+	libwtcdb_file_header_t *file_header = NULL;
+	static char *function               = "libwtcdb_file_open_read";
+	uint32_t first_item_offset          = 0;
+	uint32_t available_item_offset      = 0;
+	uint32_t number_of_items            = 0;
+	int result                          = 1;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+	uint8_t *trailing_data              = NULL;
+	size_t trailing_data_size           = 0;
+	ssize_t read_count                  = 0;
+#endif
 
 	if( internal_file == NULL )
 	{
@@ -851,12 +859,22 @@ int libwtcdb_file_open_read(
 		 "Reading file header:\n" );
 	}
 #endif
-	if( libwtcdb_io_handle_read_file_header(
-	     internal_file->io_handle,
+	if( libwtcdb_file_header_initialize(
+	     &file_header,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create file header.",
+		 function );
+
+		goto on_error;
+	}
+	if( libwtcdb_file_header_read_file_io_handle(
+	     file_header,
 	     file_io_handle,
-	     &first_item_offset,
-	     &available_item_offset,
-	     &number_of_items,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -866,8 +884,81 @@ int libwtcdb_file_open_read(
 		 "%s: unable to read file header.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
+	first_item_offset     = file_header->first_entry_offset;
+	available_item_offset = file_header->available_cache_entry_offset;
+	number_of_items       = file_header->number_of_entries;
+
+	internal_file->io_handle->file_type = file_header->file_type;
+	internal_file->io_handle->version   = file_header->format_version;
+
+	if( libwtcdb_file_header_free(
+	     &file_header,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free file header.",
+		 function );
+
+		goto on_error;
+	}
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		if( first_item_offset > 24 )
+		{
+			trailing_data_size = (size_t) ( first_item_offset - 24 );
+
+			trailing_data = (uint8_t *) memory_allocate(
+			                             sizeof( uint8_t ) * trailing_data_size );
+
+			if( trailing_data == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+				 "%s: unable to create trailing data.",
+				 function );
+
+				goto on_error;
+			}
+			read_count = libbfio_handle_read_buffer(
+				      file_io_handle,
+				      trailing_data,
+				      trailing_data_size,
+				      error );
+
+			if( read_count != (ssize_t) trailing_data_size )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_READ_FAILED,
+				 "%s: unable to read trailing data.",
+				 function );
+
+				goto on_error;
+			}
+			libcnotify_printf(
+			 "%s: trailing data:\n",
+			 function );
+			libcnotify_print_data(
+			 trailing_data,
+			 trailing_data_size,
+			 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
+
+			memory_free(
+			 trailing_data );
+
+			trailing_data = NULL;
+		}
+	}
+#endif
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -898,6 +989,22 @@ int libwtcdb_file_open_read(
 		internal_file->io_handle->abort = 0;
 	}
 	return( result );
+
+on_error:
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( trailing_data != NULL )
+	{
+		memory_free(
+		 trailing_data );
+	}
+#endif
+	if( file_header != NULL )
+	{
+		libwtcdb_file_header_free(
+		 &file_header,
+		 NULL );
+	}
+	return( -1 );
 }
 
 /* Retrieves the file type

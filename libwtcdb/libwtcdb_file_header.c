@@ -262,7 +262,7 @@ int libwtcdb_file_header_read_data(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: signature\t\t\t\t\t: %c%c%c%c\n",
+		 "%s: signature\t\t\t\t: %c%c%c%c\n",
 		 function,
 		 data[ 0 ],
 		 data[ 1 ],
@@ -280,12 +280,12 @@ int libwtcdb_file_header_read_data(
 			 ( (wtcdb_cache_file_header_t *) data )->cache_type,
 			 value_32bit );
 			libcnotify_printf(
-			 "%s: cache type\t\t\t\t\t: %" PRIu32 "\n",
+			 "%s: cache type\t\t\t\t: %" PRIu32 "\n",
 			 function,
 			 value_32bit );
 
 			libcnotify_printf(
-			 "%s: first cache entry offset\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: first cache entry offset\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 file_header->first_entry_offset );
 
@@ -305,7 +305,7 @@ int libwtcdb_file_header_read_data(
 			 ( (wtcdb_index_file_header_t *) data )->unknown1,
 			 value_32bit );
 			libcnotify_printf(
-			 "%s: unknown1\t\t\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: unknown1\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 
@@ -326,7 +326,7 @@ int libwtcdb_file_header_read_data(
 			 ( (wtcdb_index_file_header_t *) data )->unknown2,
 			 value_32bit );
 			libcnotify_printf(
-			 "%s: unknown2\t\t\t\t\t: 0x%08" PRIx32 "\n",
+			 "%s: unknown2\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 		}
@@ -334,6 +334,19 @@ int libwtcdb_file_header_read_data(
 		 "\n" );
 	}
 #endif
+	if( ( file_header->first_entry_offset != 0 )
+	 && ( file_header->first_entry_offset < 24 ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported first entry offset: %" PRIu32 ".",
+		 function,
+		 file_header->first_entry_offset );
+
+		return( -1 );
+	}
 	if( ( file_header->format_version != 20 )
 	 && ( file_header->format_version != 21 ) )
 	{
