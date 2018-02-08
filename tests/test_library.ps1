@@ -6,7 +6,7 @@ $ExitSuccess = 0
 $ExitFailure = 1
 $ExitIgnore = 77
 
-$LibraryTests = "error io_handle item item_value notify"
+$LibraryTests = "error file_header io_handle item item_value notify"
 $LibraryTestsWithInput = "file support"
 
 Function GetTestToolDirectory

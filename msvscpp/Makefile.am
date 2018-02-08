@@ -14,6 +14,7 @@ MSVSCPP_FILES = \
 	libwtcdb/libwtcdb.vcproj \
 	wtcdb_test_error/wtcdb_test_error.vcproj \
 	wtcdb_test_file/wtcdb_test_file.vcproj \
+	wtcdb_test_file_header/wtcdb_test_file_header.vcproj \
 	wtcdb_test_io_handle/wtcdb_test_io_handle.vcproj \
 	wtcdb_test_item/wtcdb_test_item.vcproj \
 	wtcdb_test_item_value/wtcdb_test_item_value.vcproj \

@@ -1177,7 +1177,7 @@ fprintf( stderr, "SIZE MISMATCH: %" PRIu32 " %" PRIu32 "n",
 				 item_iterator,
 				 value_64bit );
 
-				if( liblnk_debug_print_filetime_value(
+				if( libwtcdb_debug_print_filetime_value(
 				     function,
 				     "%s: modification time\t",
 				     ( (wtcdb_index_entry_vista_t *) item_entry_data )->modification_time,

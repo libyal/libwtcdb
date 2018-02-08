@@ -39,10 +39,10 @@ struct wtcdb_cache_file_header
 	 */
 	uint8_t signature[ 4 ];
 
-	/* Version
+	/* Format version
 	 * Consists of 4 bytes
 	 */
-	uint8_t version[ 4 ];
+	uint8_t format_version[ 4 ];
 
 	/* Cache type
 	 * Consists of 4 bytes
@@ -75,10 +75,10 @@ struct wtcdb_index_file_header
 	 */
 	uint8_t signature[ 4 ];
 
-	/* Version
+	/* Format version
 	 * Consists of 4 bytes
 	 */
-	uint8_t version[ 4 ];
+	uint8_t format_version[ 4 ];
 
 	/* Unknown
 	 * Consists of 4 bytes

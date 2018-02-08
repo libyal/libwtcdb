@@ -127,6 +127,7 @@ stamp-h[1-9]
 /tests/tmp*
 /tests/wtcdb_test_error
 /tests/wtcdb_test_file
+/tests/wtcdb_test_file_header
 /tests/wtcdb_test_io_handle
 /tests/wtcdb_test_item
 /tests/wtcdb_test_item_value
