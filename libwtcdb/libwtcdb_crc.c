@@ -98,7 +98,7 @@ const uint64_t libwtcdb_crc64_table[ 256 ] = {
  */
 int libwtcdb_crc64_weak_calculate(
      uint64_t *crc64,
-     uint8_t *buffer,
+     const uint8_t *buffer,
      size_t size,
      uint64_t initial_value,
      libcerror_error_t **error )

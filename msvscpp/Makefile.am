@@ -12,6 +12,7 @@ MSVSCPP_FILES = \
 	libfvalue/libfvalue.vcproj \
 	libuna/libuna.vcproj \
 	libwtcdb/libwtcdb.vcproj \
+	wtcdb_test_crc/wtcdb_test_crc.vcproj \
 	wtcdb_test_error/wtcdb_test_error.vcproj \
 	wtcdb_test_file/wtcdb_test_file.vcproj \
 	wtcdb_test_file_header/wtcdb_test_file_header.vcproj \
