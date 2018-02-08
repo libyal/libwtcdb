@@ -198,6 +198,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libwtcdb\libwtcdb_index_entry.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libwtcdb\libwtcdb_io_handle.c"
 				>
 			</File>
@@ -253,6 +257,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libwtcdb\libwtcdb_file_header.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libwtcdb\libwtcdb_index_entry.h"
 				>
 			</File>
 			<File

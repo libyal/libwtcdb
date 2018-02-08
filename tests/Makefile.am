@@ -34,6 +34,7 @@ check_PROGRAMS = \
 	wtcdb_test_error \
 	wtcdb_test_file \
 	wtcdb_test_file_header \
+	wtcdb_test_index_entry \
 	wtcdb_test_io_handle \
 	wtcdb_test_item \
 	wtcdb_test_item_value \
@@ -109,6 +110,18 @@ wtcdb_test_file_header_SOURCES = \
 	wtcdb_test_unused.h
 
 wtcdb_test_file_header_LDADD = \
+	../libwtcdb/libwtcdb.la \
+	@LIBCERROR_LIBADD@
+
+wtcdb_test_index_entry_SOURCES = \
+	wtcdb_test_index_entry.c \
+	wtcdb_test_libcerror.h \
+	wtcdb_test_libwtcdb.h \
+	wtcdb_test_macros.h \
+	wtcdb_test_memory.c wtcdb_test_memory.h \
+	wtcdb_test_unused.h
+
+wtcdb_test_index_entry_LDADD = \
 	../libwtcdb/libwtcdb.la \
 	@LIBCERROR_LIBADD@
 
