@@ -25,11 +25,7 @@
 #include <common.h>
 #include <types.h>
 
-#include "libwtcdb_item_value.h"
-#include "libwtcdb_libbfio.h"
-#include "libwtcdb_libcdata.h"
 #include "libwtcdb_libcerror.h"
-#include "libwtcdb_libfvalue.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -46,9 +42,9 @@ struct libwtcdb_io_handle
 	 */
 	uint8_t file_type;
 
-	/* The version
+	/* The format version
 	 */
-	uint32_t version;
+	uint32_t format_version;
 
 	/* Value to indicate if abort was signalled
 	 */
@@ -65,23 +61,6 @@ int libwtcdb_io_handle_free(
 
 int libwtcdb_io_handle_clear(
      libwtcdb_io_handle_t *io_handle,
-     libcerror_error_t **error );
-
-int libwtcdb_io_handle_read_items(
-     libwtcdb_io_handle_t *io_handle,
-     libbfio_handle_t *file_io_handle,
-     uint32_t first_entry_offset,
-     uint32_t available_cache_entry_offset,
-     uint32_t number_of_items,
-     libcdata_array_t *items_array,
-     libcerror_error_t **error );
-
-int libwtcdb_io_handle_read_cache_entry_data(
-     libwtcdb_io_handle_t *io_handle,
-     libwtcdb_item_value_t *item_value,
-     uint32_t item_iterator,
-     const uint8_t *data,
-     size_t data_size,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

@@ -124,7 +124,14 @@ See section: <<cache_types,Cache types>>
 |===
 
 === Cache entry
-The cache entry is variable of size and consist of:
+
+[NOTE]
+The size of the first available cache entry can entail the remainder of the
+file. This entry should not have an identifier size, padding size, or data
+size. The remainder of this entry should consist of zero bytes.
+
+==== Windows Vista cache entry
+The Windows Vista cache entry is variable of size and consist of:
 
 [cols="1,1,1,5",options="header"]
 |===
@@ -134,12 +141,9 @@ The cache entry is variable of size and consist of:
 This includes the signature and size value.
 | 8 | 8 | | [yellow-background]*Entry hash* +
 [yellow-background]*Hash algorithm?*
-4+| _If database version == 20_ +
-_This value was removed in Windows 7_
 | 16 | 8 | | File extension +
 UTF-16 string with end-of-string character +
 Can be an empty string
-4+| _Common_
 | 24 | 4 | | Identifier string size
 | 28 | 4 | | Padding size
 | 32 | 4 | | Data size
@@ -158,9 +162,41 @@ UTF-16 string without an end-of-string character +
 | ... | data size | | Data
 |===
 
-The size of the first available cache entry can entail the remainder of the
-file. This entry should not have an identifier size, padding size, or data
-size. The remainder of this entry should consist of zero bytes.
+The identifier string can contain a string representation of a 64-bit
+hexadecimal ThumbnailCacheId value without leading zeros.
+
+The CRC-64 uses an unknown polynomial, however the look-up table is stored in
+thumbcache.dll. The calculation does not use the initial and final XOR with -1
+(0xffffffffffffffff) like the Weak CRC-32 in the Personal Folder Format.
+
+==== Windows 7 cache entry
+The Windows 7 cache entry is variable of size and consist of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 4 | "CMMM" | The signature (magic identifier)
+| 4 | 4 | | Cache entry size +
+This includes the signature and size value.
+| 8 | 8 | | [yellow-background]*Entry hash* +
+[yellow-background]*Hash algorithm?*
+| 16 | 4 | | Identifier string size
+| 20 | 4 | | Padding size
+| 24 | 4 | | Data size
+| 28 | 4 | | [yellow-background]*Unknown (empty value)*
+| 32 | 8 | | Data checksum +
+Contains a CRC-64
+| 40 | 8 | | Header checksum +
+Contains a CRC-64 +
+The checkum is calculated for the first 48 or 40 bytes of the cache entry with an initial value of -1 (0xffffffffffffffff)
+| 48 | identifier string size | | Identifier string +
+UTF-16 string without an end-of-string character +
+4+| _If padding size > 0_
+| ... | padding size | | Padding +
+[yellow-background]*Should consist of zero bytes*
+4+| _Common_
+| ... | data size | | Data
+|===
 
 The identifier string can contain a string representation of a 64-bit
 hexadecimal ThumbnailCacheId value without leading zeros.
@@ -192,29 +228,54 @@ Contains the total number of entries in the file, both used and unused
 |===
 
 === Index entry
-The index entry is either 32 or 40 bytes of size and consist of:
+
+==== Windows Vista index entry
+The Windows Vista index entry is 40 bytes of size and consist of:
 
 [cols="1,1,1,5",options="header"]
 |===
 | Offset | Size | Value | Description
 | 0 | 8 | | [yellow-background]*Entry hash* +
 [yellow-background]*Hash algorithm?*
-4+| _If database version == 20_ +
-_This value was removed in Windows 7_
 | 8 | 8 | | Last modification date and time +
 Contains a FILETIME
-4+| _Common_
-| 16 | 4 | | Flags
-| 20 | 4 | | Cache entry offset in corresponding thumbcache_32.db file
-| 24 | 4 | | Cache entry offset in corresponding thumbcache_96.db file
-| 28 | 4 | | Cache entry offset in corresponding thumbcache_256.db file
-| 32 | 4 | | Cache entry offset in corresponding thumbcache_1024.db file
-| 36 | 4 | | Cache entry offset in corresponding thumbcache_sr.db file
+| 16 | 4 | | Flags +
+See section: <<index_entry_flags,Index entry flags>>
+| 20 | 4 | | Cache entry offset in corresponding thumbcache_32.db file +
+Contains an offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
+| 24 | 4 | | Cache entry offset in corresponding thumbcache_96.db file +
+Contains an offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
+| 28 | 4 | | Cache entry offset in corresponding thumbcache_256.db file +
+Contains an offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
+| 32 | 4 | | Cache entry offset in corresponding thumbcache_1024.db file +
+Contains an offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
+| 36 | 4 | | Cache entry offset in corresponding thumbcache_sr.db file +
+Contains an offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
 |===
 
-The cache entry contains 0 for empty index entries and -1 (0xffffffff) for unused values.
+==== Windows 7 index entry
+The Windows 7 index entry is 32 bytes of size and consist of:
 
-=== Flags
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 8 | | [yellow-background]*Entry hash* +
+[yellow-background]*Hash algorithm?*
+| 8 | 4 | | Flags +
+See section: <<index_entry_flags,Index entry flags>>
+| 12 | 4 | | Cache entry offset in corresponding thumbcache_32.db file +
+Contains an offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
+| 16 | 4 | | Cache entry offset in corresponding thumbcache_96.db file +
+Contains an offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
+| 20 | 4 | | Cache entry offset in corresponding thumbcache_256.db file +
+Contains an offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
+| 24 | 4 | | Cache entry offset in corresponding thumbcache_1024.db file +
+Contains an offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
+| 28 | 4 | | Cache entry offset in corresponding thumbcache_sr.db file +
+Contains an offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
+|===
+
+=== [[index_entry_flags]]Index entry flags
 [yellow-background]*Flags in win7 in file type indication instead of file extension?*
 
 [cols="1,1,5",options="header"]

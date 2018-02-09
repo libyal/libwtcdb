@@ -328,8 +328,8 @@ int wtcdb_test_cache_entry_read_data(
 
 	/* Test regular cases
 	 */
-	io_handle->file_type = LIBWTCDB_FILE_TYPE_CACHE;
-	io_handle->version   = 20;
+	io_handle->file_type      = LIBWTCDB_FILE_TYPE_CACHE;
+	io_handle->format_version = 20;
 
 	result = libwtcdb_cache_entry_read_data(
 	          cache_entry,

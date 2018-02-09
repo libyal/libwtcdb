@@ -1,4 +1,5 @@
 TODO:
+* cache entry split read header, identifier and data
 * libwtcdb
   - merge libwtcdb_item and libwtcdb_item_values?
 * wtcdbinfo
@@ -12,66 +13,8 @@ TODO:
 
 * wtcdbexport export items in directories using the entry hash as filename
 
-20160107
-* 2016 update
-
-20150716
-* worked on check signature
-
-20150707
-* worked on check signature
-
-20150106
-* 2015 update
-
-20141226
-* code clean up
-
-20141129
-* code clean up
-* updated msvscpp files
-
-20141026
-* changes for deployment
-
-20141019
-* 2014 update
-* changes for deployment
-* removed README.mingw
-
-20130609
-* 2013 update
-* changes for project move
-* update dependencies
-
-20101225
-* worked on item support
-* added libfdatetime
-
-20101224
-* updated configure, added gettext support
-* updated array type
-* updated common, libcstring, liberror, libnotify, libsystem, libuna, libbfio,
-  libfvalue
-* worked on wtcdbexport
-
-20101111
-* updated libfvalue
-* added libwtcdb.rc
-* updated include/error.h
-* updated liberror, libsystem, libbfio
-
-20101028
-* updated configure.ac
-* updated include/types.h
-* updated array type
-* updated liberror, libsystem, libfvalue
-* worked on index file format support
-
-20101024
-* worked on cache file format support
-
 20101023
+* see `git log' for more recent change log
 * created initial version based on libnk2 for the library structure and common code
 * worked on cache file format support
 

@@ -25,10 +25,9 @@
 #include <common.h>
 #include <types.h>
 
-#include "libwtcdb_extern.h"
 #include "libwtcdb_io_handle.h"
+#include "libwtcdb_libbfio.h"
 #include "libwtcdb_libcerror.h"
-#include "libwtcdb_types.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -38,13 +37,9 @@ typedef struct libwtcdb_index_entry libwtcdb_index_entry_t;
 
 struct libwtcdb_index_entry
 {
-	/* The identifier
+	/* The data size
 	 */
-	uint8_t *identifier;
-
-	/* The identifier size
-	 */
-	size_t identifier_size;
+	uint32_t data_size;
 };
 
 int libwtcdb_index_entry_initialize(
@@ -60,6 +55,13 @@ int libwtcdb_index_entry_read_data(
      libwtcdb_io_handle_t *io_handle,
      const uint8_t *data,
      size_t data_size,
+     libcerror_error_t **error );
+
+int libwtcdb_index_entry_read_file_io_handle(
+     libwtcdb_index_entry_t *index_entry,
+     libwtcdb_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
+     off64_t file_offset,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )
