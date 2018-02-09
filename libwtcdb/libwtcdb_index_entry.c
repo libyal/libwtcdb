@@ -151,7 +151,6 @@ int libwtcdb_index_entry_read_data(
 	size_t index_entry_data_size = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	uint64_t value_64bit         = 0;
 	uint32_t value_32bit         = 0;
 #endif
 
@@ -254,16 +253,23 @@ int libwtcdb_index_entry_read_data(
 		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 	}
 #endif
+	byte_stream_copy_to_uint64_little_endian(
+	 ( (wtcdb_index_entry_vista_t *) data )->entry_hash,
+	 index_entry->hash );
+
+	if( io_handle->format_version == 20 )
+	{
+		byte_stream_copy_to_uint64_little_endian(
+		 ( (wtcdb_index_entry_vista_t *) data )->modification_time,
+		 index_entry->modification_time );
+	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
-		byte_stream_copy_to_uint64_little_endian(
-		 ( (wtcdb_index_entry_vista_t *) data )->entry_hash,
-		 value_64bit );
 		libcnotify_printf(
 		 "%s: entry hash\t\t\t\t: 0x%08" PRIx64 "\n",
 		 function,
-		 value_64bit );
+		 index_entry->hash );
 
 		if( io_handle->format_version == 20 )
 		{

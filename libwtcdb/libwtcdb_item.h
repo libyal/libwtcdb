@@ -29,7 +29,6 @@
 #include "libwtcdb_io_handle.h"
 #include "libwtcdb_libbfio.h"
 #include "libwtcdb_libcerror.h"
-#include "libwtcdb_libfvalue.h"
 #include "libwtcdb_types.h"
 
 #if defined( __cplusplus )
@@ -48,16 +47,16 @@ struct libwtcdb_internal_item
 	 */
 	libbfio_handle_t *file_io_handle;
 
-	/* The values table
+	/* The entry
 	 */
-	libfvalue_table_t *values_table;
+	intptr_t *entry;
 };
 
 int libwtcdb_item_initialize(
      libwtcdb_item_t **item,
      libwtcdb_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
-     libfvalue_table_t *values_table,
+     intptr_t *entry,
      libcerror_error_t **error );
 
 LIBWTCDB_EXTERN \

@@ -27,7 +27,6 @@
 #include "wtcdbtools_i18n.h"
 #include "wtcdbtools_libbfio.h"
 #include "wtcdbtools_libfdatetime.h"
-#include "wtcdbtools_libfvalue.h"
 #include "wtcdbtools_libuna.h"
 #include "wtcdbtools_libwtcdb.h"
 #include "wtcdbtools_output.h"
@@ -178,11 +177,6 @@ void wtcdbtools_output_version_detailed_fprint(
 	 stream,
 	 ", libfdatetime %s",
 	 LIBFDATETIME_VERSION_STRING );
-
-	fprintf(
-	 stream,
-	 ", libfvalue %s",
-	 LIBFVALUE_VERSION_STRING );
 
         fprintf(
 	 stream,

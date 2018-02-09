@@ -37,7 +37,6 @@
 #include "libwtcdb_libcdata.h"
 #include "libwtcdb_libcerror.h"
 #include "libwtcdb_libcnotify.h"
-#include "libwtcdb_libfvalue.h"
 
 /* Creates a file
  * Make sure the value file is referencing, is set to NULL
@@ -104,7 +103,7 @@ int libwtcdb_file_initialize(
 		return( -1 );
 	}
 	if( libcdata_array_initialize(
-	     &( internal_file->items ),
+	     &( internal_file->entries ),
 	     0,
 	     error ) != 1 )
 	{
@@ -112,7 +111,7 @@ int libwtcdb_file_initialize(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create items array.",
+		 "%s: unable to create entries array.",
 		 function );
 
 		goto on_error;
@@ -137,10 +136,10 @@ int libwtcdb_file_initialize(
 on_error:
 	if( internal_file != NULL )
 	{
-		if( internal_file->items != NULL )
+		if( internal_file->entries != NULL )
 		{
 			libcdata_array_free(
-			 &( internal_file->items ),
+			 &( internal_file->entries ),
 			 NULL,
 			 NULL );
 		}
@@ -195,15 +194,15 @@ int libwtcdb_file_free(
 		*file = NULL;
 
 		if( libcdata_array_free(
-		     &( internal_file->items ),
-		     (int (*)(intptr_t **, libcerror_error_t **)) &libfvalue_table_free,
+		     &( internal_file->entries ),
+		     (int (*)(intptr_t **, libcerror_error_t **)) internal_file->entry_free_function,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free items array.",
+			 "%s: unable to free entries array.",
 			 function );
 
 			result = -1;
@@ -791,15 +790,15 @@ int libwtcdb_file_close(
 		result = -1;
 	}
 	if( libcdata_array_empty(
-	     internal_file->items,
-	     (int (*)(intptr_t **, libcerror_error_t **)) &libfvalue_table_free,
+	     internal_file->entries,
+	     (int (*)(intptr_t **, libcerror_error_t **)) internal_file->entry_free_function,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to empty items array.",
+		 "%s: unable to empty entries array.",
 		 function );
 
 		result = -1;
@@ -888,6 +887,14 @@ int libwtcdb_file_open_read(
 	internal_file->io_handle->file_type      = file_header->file_type;
 	internal_file->io_handle->format_version = file_header->format_version;
 
+	if( internal_file->io_handle->file_type == LIBWTCDB_FILE_TYPE_CACHE )
+	{
+		internal_file->entry_free_function = (intptr_t *) &libwtcdb_cache_entry_free;
+	}
+	else if( internal_file->io_handle->file_type == LIBWTCDB_FILE_TYPE_INDEX )
+	{
+		internal_file->entry_free_function = (intptr_t *) &libwtcdb_index_entry_free;
+	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -945,10 +952,10 @@ int libwtcdb_file_open_read(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "Reading items:\n" );
+		 "Reading entries:\n" );
 	}
 #endif
-	result = libwtcdb_file_read_items(
+	result = libwtcdb_file_read_entries(
 	          internal_file,
 	          file_io_handle,
 	          file_header->first_entry_offset,
@@ -960,7 +967,7 @@ int libwtcdb_file_open_read(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read items.",
+		 "%s: unable to read entries.",
 		 function );
 	}
 	if( libwtcdb_file_header_free(
@@ -999,10 +1006,10 @@ on_error:
 	return( -1 );
 }
 
-/* Reads the items into the items array
+/* Reads the entries into the entries array
  * Returns 1 if successful or -1 on error
  */
-int libwtcdb_file_read_items(
+int libwtcdb_file_read_entries(
      libwtcdb_internal_file_t *internal_file,
      libbfio_handle_t *file_io_handle,
      uint32_t first_entry_offset,
@@ -1010,11 +1017,11 @@ int libwtcdb_file_read_items(
 {
 	libwtcdb_cache_entry_t *cache_entry = NULL;
 	libwtcdb_index_entry_t *index_entry = NULL;
-	static char *function               = "libwtcdb_file_read_items";
+	static char *function               = "libwtcdb_file_read_entries";
 	off64_t file_offset                 = 0;
 	size64_t file_size                  = 0;
-	uint32_t entry_index                = 0;
-	int item_entry_index                = 0;
+	int entry_index                     = 0;
+	int entry_iterator                  = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	const char *type_string             = NULL;
@@ -1086,10 +1093,10 @@ int libwtcdb_file_read_items(
 		if( libcnotify_verbose != 0 )
 		{
 			libcnotify_printf(
-			 "%s: reading %s entry: %" PRIu32 " at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
+			 "%s: reading %s entry: %d at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
 			 function,
 			 type_string,
-			 entry_index,
+			 entry_iterator,
 			 file_offset,
 			 file_offset );
 		}
@@ -1120,9 +1127,9 @@ int libwtcdb_file_read_items(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_IO,
 				 LIBCERROR_IO_ERROR_READ_FAILED,
-				 "%s: unable to read cache entry: %" PRIu32 ".",
+				 "%s: unable to read cache entry: %d.",
 				 function,
-				 entry_index );
+				 entry_iterator );
 
 				goto on_error;
 			}
@@ -1181,26 +1188,48 @@ fprintf( stderr, "SIZE MISMATCH: %" PRIu32 " %" PRIu32 "n",
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_IO,
 				 LIBCERROR_IO_ERROR_READ_FAILED,
-				 "%s: unable to read cache entry: %" PRIu32 ".",
+				 "%s: unable to read index entry: %d.",
 				 function,
-				 entry_index );
+				 entry_iterator );
 
 				goto on_error;
 			}
 			file_offset += (size_t) index_entry->data_size;
 
-			if( libwtcdb_index_entry_free(
-			     &index_entry,
-			     error ) != 1 )
+			if( index_entry->hash == 0 )
 			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free index entry.",
-				 function );
+				if( libwtcdb_index_entry_free(
+				     &index_entry,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+					 "%s: unable to free index entry.",
+					 function );
 
-				goto on_error;
+					goto on_error;
+				}
+			}
+			else
+			{
+				if( libcdata_array_append_entry(
+				     internal_file->entries,
+				     &entry_index,
+				     (intptr_t *) index_entry,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+					 "%s: unable to append index entry to array.",
+					 function );
+
+					goto on_error;
+				}
+				index_entry = NULL;
 			}
 		}
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -1210,26 +1239,8 @@ fprintf( stderr, "SIZE MISMATCH: %" PRIu32 " %" PRIu32 "n",
 			 "\n" );
 		}
 #endif
-/* TODO
-		if( libcdata_array_append_entry(
-		     internal_file->items,
-		     &item_entry_index,
-		     (intptr_t *) values_table,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-			 "%s: unable to append item values to items array.",
-			 function );
-
-			goto on_error;
-		}
-		values_table = NULL;
-*/
+		entry_iterator++;
 	}
-/* TODO remove when value is appended */
 	return( 1 );
 
 on_error:
@@ -1324,7 +1335,7 @@ int libwtcdb_file_get_number_of_items(
 	internal_file = (libwtcdb_internal_file_t *) file;
 
 	if( libcdata_array_get_number_of_entries(
-	     internal_file->items,
+	     internal_file->entries,
 	     number_of_items,
 	     error ) != 1 )
 	{
@@ -1332,7 +1343,7 @@ int libwtcdb_file_get_number_of_items(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve number of items.",
+		 "%s: unable to retrieve number of entries from array.",
 		 function );
 
 		return( -1 );
@@ -1350,7 +1361,7 @@ int libwtcdb_file_get_item(
      libcerror_error_t **error )
 {
 	libwtcdb_internal_file_t *internal_file = NULL;
-	libfvalue_table_t *values_table         = NULL;
+ 	intptr_t *entry                         = NULL;
 	static char *function                   = "libwtcdb_file_get_item";
 
 	if( file == NULL )
@@ -1366,13 +1377,13 @@ int libwtcdb_file_get_item(
 	}
 	internal_file = (libwtcdb_internal_file_t *) file;
 
-	if( internal_file->items == NULL )
+	if( internal_file->entries == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid file - missing items array.",
+		 "%s: invalid file - missing entries array.",
 		 function );
 
 		return( -1 );
@@ -1389,16 +1400,16 @@ int libwtcdb_file_get_item(
 		return( -1 );
 	}
 	if( libcdata_array_get_entry_by_index(
-	     internal_file->items,
+	     internal_file->entries,
 	     item_index,
-	     (intptr_t **) &values_table,
+	     &entry,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve item values: %d.",
+		 "%s: unable to retrieve entry: %d.",
 		 function,
 		 item_index );
 
@@ -1408,7 +1419,7 @@ int libwtcdb_file_get_item(
 	     item,
 	     internal_file->io_handle,
 	     internal_file->file_io_handle,
-	     values_table,
+	     entry,
 	     error ) != 1 )
 	{
 		libcerror_error_set(

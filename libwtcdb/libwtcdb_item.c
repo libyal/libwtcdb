@@ -29,7 +29,6 @@
 #include "libwtcdb_item_value.h"
 #include "libwtcdb_libbfio.h"
 #include "libwtcdb_libcerror.h"
-#include "libwtcdb_libfvalue.h"
 
 /* Creates an item
  * Make sure the value item is referencing, is set to NULL
@@ -39,7 +38,7 @@ int libwtcdb_item_initialize(
      libwtcdb_item_t **item,
      libwtcdb_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
-     libfvalue_table_t *values_table,
+     intptr_t *entry,
      libcerror_error_t **error )
 {
 	libwtcdb_internal_item_t *internal_item = NULL;
@@ -67,13 +66,13 @@ int libwtcdb_item_initialize(
 
 		return( -1 );
 	}
-	if( values_table == NULL )
+	if( entry == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid values table.",
+		 "%s: invalid entry.",
 		 function );
 
 		return( -1 );
@@ -87,7 +86,7 @@ int libwtcdb_item_initialize(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create internal item.",
+		 "%s: unable to create item.",
 		 function );
 
 		goto on_error;
@@ -101,7 +100,7 @@ int libwtcdb_item_initialize(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_MEMORY,
 		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-		 "%s: unable to clear internal item.",
+		 "%s: unable to clear item.",
 		 function );
 
 		memory_free(
@@ -111,7 +110,7 @@ int libwtcdb_item_initialize(
 	}
 	internal_item->io_handle      = io_handle;
 	internal_item->file_io_handle = file_io_handle;
-	internal_item->values_table   = values_table;
+	internal_item->entry          = entry;
 
 	*item = (libwtcdb_item_t *) internal_item;
 
@@ -152,7 +151,7 @@ int libwtcdb_item_free(
 		internal_item = (libwtcdb_internal_item_t *) *item;
 		*item         = NULL;
 
-		/* The io_handle, file_io_handle and values_table references are freed elsewhere
+		/* The io_handle, file_io_handle and entry references are freed elsewhere
 		 */
 		memory_free(
 		 internal_item );

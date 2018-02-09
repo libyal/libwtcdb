@@ -10,8 +10,7 @@ AM_CPPFLAGS = \
 	@LIBCFILE_CPPFLAGS@ \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
-	@LIBFDATETIME_CPPFLAGS@ \
-	@LIBFVALUE_CPPFLAGS@
+	@LIBFDATETIME_CPPFLAGS@
 
 lib_LTLIBRARIES = libwtcdb.la
 
@@ -35,7 +34,6 @@ libwtcdb_la_SOURCES = \
 	libwtcdb_libclocale.h \
 	libwtcdb_libcnotify.h \
 	libwtcdb_libfdatetime.h \
-	libwtcdb_libfvalue.h \
 	libwtcdb_libuna.h \
 	libwtcdb_notify.c libwtcdb_notify.h \
 	libwtcdb_support.c libwtcdb_support.h \
@@ -55,8 +53,7 @@ libwtcdb_la_LIBADD = \
 	@LIBCFILE_LIBADD@ \
 	@LIBCPATH_LIBADD@ \
 	@LIBBFIO_LIBADD@ \
-	@LIBFDATETIME_LIBADD@ \
-	@LIBFVALUE_LIBADD@
+	@LIBFDATETIME_LIBADD@
 
 libwtcdb_la_LDFLAGS = -no-undefined -version-info 1:0:0
 

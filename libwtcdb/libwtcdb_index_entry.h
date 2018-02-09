@@ -40,6 +40,14 @@ struct libwtcdb_index_entry
 	/* The data size
 	 */
 	uint32_t data_size;
+
+	/* The hash
+	 */
+	uint64_t hash;
+
+	/* The modification date and time
+	 */
+	uint64_t modification_time;
 };
 
 int libwtcdb_index_entry_initialize(

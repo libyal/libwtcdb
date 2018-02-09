@@ -11,7 +11,6 @@ AM_CPPFLAGS = \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
 	@LIBFDATETIME_CPPFLAGS@ \
-	@LIBFVALUE_CPPFLAGS@ \
 	@LIBWTCDB_DLL_IMPORT@
 
 AM_LDFLAGS = @STATIC_LDFLAGS@
@@ -33,7 +32,6 @@ wtcdbexport_SOURCES = \
 	wtcdbtools_libcnotify.h \
 	wtcdbtools_libcpath.h \
 	wtcdbtools_libfdatetime.h \
-	wtcdbtools_libfvalue.h \
 	wtcdbtools_libuna.h \
 	wtcdbtools_libwtcdb.h \
 	wtcdbtools_output.c wtcdbtools_output.h \
@@ -64,7 +62,6 @@ wtcdbinfo_SOURCES = \
 	wtcdbtools_libcnotify.h \
 	wtcdbtools_libcpath.h \
 	wtcdbtools_libfdatetime.h \
-	wtcdbtools_libfvalue.h \
 	wtcdbtools_libuna.h \
 	wtcdbtools_libwtcdb.h \
 	wtcdbtools_output.c wtcdbtools_output.h \

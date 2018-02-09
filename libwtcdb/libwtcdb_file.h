@@ -40,9 +40,13 @@ typedef struct libwtcdb_internal_file libwtcdb_internal_file_t;
 
 struct libwtcdb_internal_file
 {
-	/* The items array
+	/* The entries array
 	 */
-	libcdata_array_t *items;
+	libcdata_array_t *entries;
+
+	/* The entry free function
+	 */
+	intptr_t *entry_free_function;
 
 	/* The IO handle
 	 */
@@ -111,7 +115,7 @@ int libwtcdb_file_open_read(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error );
 
-int libwtcdb_file_read_items(
+int libwtcdb_file_read_entries(
      libwtcdb_internal_file_t *internal_file,
      libbfio_handle_t *file_io_handle,
      uint32_t first_entry_offset,

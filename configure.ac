@@ -87,9 +87,6 @@ AX_LIBBFIO_CHECK_ENABLE
 dnl Check if libfdatetime or required headers and functions are available
 AX_LIBFDATETIME_CHECK_ENABLE
 
-dnl Check if libfvalue or required headers and functions are available
-AX_LIBFVALUE_CHECK_ENABLE
-
 dnl Check if libwtcdb required headers and functions are available
 AX_LIBWTCDB_CHECK_LOCAL
 
@@ -131,7 +128,7 @@ CFLAGS="$CFLAGS -Wall";
 
 dnl Check if requires and build requires should be set in spec file
 AS_IF(
- [test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libcthreads" = xyes || test "x$ac_cv_libcdata" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcnotify" = xyes || test "x$ac_cv_libcsplit" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfdatetime" = xyes || test "x$ac_cv_libfvalue" = xyes],
+ [test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libcthreads" = xyes || test "x$ac_cv_libcdata" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcnotify" = xyes || test "x$ac_cv_libcsplit" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfdatetime" = xyes],
  [AC_SUBST(
   [libwtcdb_spec_requires],
   [Requires:])
@@ -165,7 +162,6 @@ AC_CONFIG_FILES([libcfile/Makefile])
 AC_CONFIG_FILES([libcpath/Makefile])
 AC_CONFIG_FILES([libbfio/Makefile])
 AC_CONFIG_FILES([libfdatetime/Makefile])
-AC_CONFIG_FILES([libfvalue/Makefile])
 AC_CONFIG_FILES([libwtcdb/Makefile])
 AC_CONFIG_FILES([wtcdbtools/Makefile])
 AC_CONFIG_FILES([po/Makefile.in])
@@ -204,7 +200,6 @@ Building:
    libcpath support:                           $ac_cv_libcpath
    libbfio support:                            $ac_cv_libbfio
    libfdatetime support:                       $ac_cv_libfdatetime
-   libfvalue support:                          $ac_cv_libfvalue
 
 Features:
    Multi-threading support:                    $ac_cv_libcthreads_multi_threading

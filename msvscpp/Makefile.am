@@ -9,7 +9,6 @@ MSVSCPP_FILES = \
 	libcsplit/libcsplit.vcproj \
 	libcthreads/libcthreads.vcproj \
 	libfdatetime/libfdatetime.vcproj \
-	libfvalue/libfvalue.vcproj \
 	libuna/libuna.vcproj \
 	libwtcdb/libwtcdb.vcproj \
 	wtcdb_test_cache_entry/wtcdb_test_cache_entry.vcproj \
