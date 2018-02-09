@@ -1,5 +1,4 @@
 TODO:
-* cache entry split read header, identifier and data
 * libwtcdb
   - merge libwtcdb_item and libwtcdb_item_values?
 * wtcdbinfo

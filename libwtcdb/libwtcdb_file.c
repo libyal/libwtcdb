@@ -952,8 +952,6 @@ int libwtcdb_file_open_read(
 	          internal_file,
 	          file_io_handle,
 	          file_header->first_entry_offset,
-	          file_header->available_cache_entry_offset,
-	          file_header->number_of_entries,
 	          error );
 
 	if( result != 1 )
@@ -1008,18 +1006,19 @@ int libwtcdb_file_read_items(
      libwtcdb_internal_file_t *internal_file,
      libbfio_handle_t *file_io_handle,
      uint32_t first_entry_offset,
-     uint32_t available_cache_entry_offset,
-     uint32_t number_of_items,
      libcerror_error_t **error )
 {
 	libwtcdb_cache_entry_t *cache_entry = NULL;
 	libwtcdb_index_entry_t *index_entry = NULL;
 	static char *function               = "libwtcdb_file_read_items";
-	const char *type_string             = NULL;
 	off64_t file_offset                 = 0;
 	size64_t file_size                  = 0;
 	uint32_t entry_index                = 0;
 	int item_entry_index                = 0;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+	const char *type_string             = NULL;
+#endif
 
 	if( internal_file == NULL )
 	{
@@ -1055,6 +1054,7 @@ int libwtcdb_file_read_items(
 
 		return( -1 );
 	}
+#if defined( HAVE_DEBUG_OUTPUT )
 	if( internal_file->io_handle->file_type == LIBWTCDB_FILE_TYPE_CACHE )
 	{
 		type_string = "cache";
@@ -1063,6 +1063,7 @@ int libwtcdb_file_read_items(
 	{
 		type_string = "index";
 	}
+#endif
 	if( libbfio_handle_get_size(
 	     file_io_handle,
 	     &file_size,
@@ -1079,7 +1080,7 @@ int libwtcdb_file_read_items(
 	}
 	file_offset = (off64_t) first_entry_offset;
 
-	while( file_offset < file_size )
+	while( (size64_t) file_offset < file_size )
 	{
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )

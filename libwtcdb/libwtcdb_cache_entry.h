@@ -41,13 +41,21 @@ struct libwtcdb_cache_entry
 	 */
 	uint32_t data_size;
 
+	/* The identifier size
+	 */
+	uint32_t identifier_size;
+
+	/* The padding size
+	 */
+	uint32_t padding_size;
+
+	/* The cached data size
+	 */
+	uint32_t cached_data_size;
+
 	/* The identifier
 	 */
 	uint8_t *identifier;
-
-	/* The identifier size
-	 */
-	size_t identifier_size;
 };
 
 int libwtcdb_cache_entry_initialize(
@@ -58,7 +66,7 @@ int libwtcdb_cache_entry_free(
      libwtcdb_cache_entry_t **cache_entry,
      libcerror_error_t **error );
 
-int libwtcdb_cache_entry_read_data(
+int libwtcdb_cache_entry_header_read_data(
      libwtcdb_cache_entry_t *cache_entry,
      libwtcdb_io_handle_t *io_handle,
      const uint8_t *data,

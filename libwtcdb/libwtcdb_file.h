@@ -115,8 +115,6 @@ int libwtcdb_file_read_items(
      libwtcdb_internal_file_t *internal_file,
      libbfio_handle_t *file_io_handle,
      uint32_t first_entry_offset,
-     uint32_t available_cache_entry_offset,
-     uint32_t number_of_items,
      libcerror_error_t **error );
 
 LIBWTCDB_EXTERN \

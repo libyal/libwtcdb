@@ -279,10 +279,10 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libwtcdb_cache_entry_read_data function
+/* Tests the libwtcdb_cache_entry_header_read_data function
  * Returns 1 if successful or 0 if not
  */
-int wtcdb_test_cache_entry_read_data(
+int wtcdb_test_cache_entry_header_read_data(
      void )
 {
 	libcerror_error_t *error            = NULL;
@@ -331,7 +331,7 @@ int wtcdb_test_cache_entry_read_data(
 	io_handle->file_type      = LIBWTCDB_FILE_TYPE_CACHE;
 	io_handle->format_version = 20;
 
-	result = libwtcdb_cache_entry_read_data(
+	result = libwtcdb_cache_entry_header_read_data(
 	          cache_entry,
 	          io_handle,
 	          wtcdb_test_cache_entry_data1,
@@ -349,7 +349,7 @@ int wtcdb_test_cache_entry_read_data(
 
 	/* Test error cases
 	 */
-	result = libwtcdb_cache_entry_read_data(
+	result = libwtcdb_cache_entry_header_read_data(
 	          NULL,
 	          io_handle,
 	          wtcdb_test_cache_entry_data1,
@@ -368,7 +368,7 @@ int wtcdb_test_cache_entry_read_data(
 	libcerror_error_free(
 	 &error );
 
-	result = libwtcdb_cache_entry_read_data(
+	result = libwtcdb_cache_entry_header_read_data(
 	          cache_entry,
 	          NULL,
 	          wtcdb_test_cache_entry_data1,
@@ -387,7 +387,7 @@ int wtcdb_test_cache_entry_read_data(
 	libcerror_error_free(
 	 &error );
 
-	result = libwtcdb_cache_entry_read_data(
+	result = libwtcdb_cache_entry_header_read_data(
 	          cache_entry,
 	          io_handle,
 	          NULL,
@@ -406,7 +406,7 @@ int wtcdb_test_cache_entry_read_data(
 	libcerror_error_free(
 	 &error );
 
-	result = libwtcdb_cache_entry_read_data(
+	result = libwtcdb_cache_entry_header_read_data(
 	          cache_entry,
 	          io_handle,
 	          wtcdb_test_cache_entry_data1,
@@ -425,7 +425,7 @@ int wtcdb_test_cache_entry_read_data(
 	libcerror_error_free(
 	 &error );
 
-	result = libwtcdb_cache_entry_read_data(
+	result = libwtcdb_cache_entry_header_read_data(
 	          cache_entry,
 	          io_handle,
 	          wtcdb_test_cache_entry_data1,
@@ -531,8 +531,8 @@ int main(
 	 wtcdb_test_cache_entry_free );
 
 	WTCDB_TEST_RUN(
-	 "libwtcdb_cache_entry_read_data",
-	 wtcdb_test_cache_entry_read_data );
+	 "libwtcdb_cache_entry_header_read_data",
+	 wtcdb_test_cache_entry_header_read_data );
 
 #endif /* defined( __GNUC__ ) && !defined( LIBWTCDB_DLL_IMPORT ) */
 

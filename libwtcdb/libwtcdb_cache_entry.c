@@ -143,25 +143,21 @@ int libwtcdb_cache_entry_free(
 	return( 1 );
 }
 
-/* Reads a cache entry
+/* Reads a cache entry header
  * Returns 1 if successful or -1 on error
  */
-int libwtcdb_cache_entry_read_data(
+int libwtcdb_cache_entry_header_read_data(
      libwtcdb_cache_entry_t *cache_entry,
      libwtcdb_io_handle_t *io_handle,
      const uint8_t *data,
      size_t data_size,
      libcerror_error_t **error )
 {
-	static char *function          = "libwtcdb_cache_entry_read_data";
+	static char *function          = "libwtcdb_cache_entry_header_read_data";
 	size_t cache_entry_header_size = 0;
-	size_t data_offset             = 0;
 	uint64_t calculated_crc        = 0;
 	uint64_t stored_data_crc       = 0;
 	uint64_t stored_header_crc     = 0;
-	uint32_t cached_data_size      = 0;
-	uint32_t identifier_size       = 0;
-	uint32_t padding_size          = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	uint64_t value_64bit           = 0;
@@ -259,7 +255,7 @@ int libwtcdb_cache_entry_read_data(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: cache entry data:\n",
+		 "%s: cache entry header data:\n",
 		 function );
 		libcnotify_print_data(
 		 data,
@@ -289,15 +285,15 @@ int libwtcdb_cache_entry_read_data(
 	{
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (wtcdb_cache_entry_vista_t *) data )->identifier_string_size,
-		 identifier_size );
+		 cache_entry->identifier_size );
 
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (wtcdb_cache_entry_vista_t *) data )->padding_size,
-		 padding_size );
+		 cache_entry->padding_size );
 
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (wtcdb_cache_entry_vista_t *) data )->data_size,
-		 cached_data_size );
+		 cache_entry->cached_data_size );
 
 		byte_stream_copy_to_uint64_little_endian(
 		 ( (wtcdb_cache_entry_vista_t *) data )->header_checksum,
@@ -311,15 +307,15 @@ int libwtcdb_cache_entry_read_data(
 	{
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (wtcdb_cache_entry_win7_t *) data )->identifier_string_size,
-		 identifier_size );
+		 cache_entry->identifier_size );
 
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (wtcdb_cache_entry_win7_t *) data )->padding_size,
-		 padding_size );
+		 cache_entry->padding_size );
 
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (wtcdb_cache_entry_win7_t *) data )->data_size,
-		 cached_data_size );
+		 cache_entry->cached_data_size );
 
 		byte_stream_copy_to_uint64_little_endian(
 		 ( (wtcdb_cache_entry_win7_t *) data )->data_checksum,
@@ -333,7 +329,7 @@ int libwtcdb_cache_entry_read_data(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: signature\t\t\t\t: %c%c%c%c\n",
+		 "%s: signature\t\t\t: %c%c%c%c\n",
 		 function,
 		 ( (wtcdb_cache_entry_vista_t *) data )->signature[ 0 ],
 		 ( (wtcdb_cache_entry_vista_t *) data )->signature[ 1 ],
@@ -341,7 +337,7 @@ int libwtcdb_cache_entry_read_data(
 		 ( (wtcdb_cache_entry_vista_t *) data )->signature[ 3 ] );
 
 		libcnotify_printf(
-		 "%s: size\t\t\t\t\t: %" PRIu32 "\n",
+		 "%s: size\t\t\t\t: %" PRIu32 "\n",
 		 function,
 		 cache_entry->data_size );
 
@@ -349,7 +345,7 @@ int libwtcdb_cache_entry_read_data(
 		 ( (wtcdb_cache_entry_vista_t *) data )->entry_hash,
 		 value_64bit );
 		libcnotify_printf(
-		 "%s: entry hash\t\t\t\t: 0x%08" PRIx64 "\n",
+		 "%s: entry hash\t\t\t: 0x%08" PRIx64 "\n",
 		 function,
 		 value_64bit );
 
@@ -357,7 +353,7 @@ int libwtcdb_cache_entry_read_data(
 		{
 /* TODO make a string of this ?*/
 			libcnotify_printf(
-			 "%s: file extension\t\t\t\t: ",
+			 "%s: file extension\t\t\t: ",
 			 function );
 
 			if( ( (wtcdb_cache_entry_vista_t *) data )->file_extension[ 0 ] == 0 )
@@ -393,19 +389,19 @@ int libwtcdb_cache_entry_read_data(
 			 "\n" );
 		}
 		libcnotify_printf(
-		 "%s: identifier string size\t\t\t: %" PRIu32 "\n",
+		 "%s: identifier string size\t\t: %" PRIu32 "\n",
 		 function,
-		 identifier_size );
+		 cache_entry->identifier_size );
 
 		libcnotify_printf(
-		 "%s: padding size\t\t\t\t: %" PRIu32 "\n",
+		 "%s: padding size\t\t\t: %" PRIu32 "\n",
 		 function,
-		 padding_size );
+		 cache_entry->padding_size );
 
 		libcnotify_printf(
-		 "%s: data size\t\t\t\t: %" PRIu32 "\n",
+		 "%s: data size\t\t\t: %" PRIu32 "\n",
 		 function,
-		 cached_data_size );
+		 cache_entry->cached_data_size );
 
 		if( io_handle->format_version == 20 )
 		{
@@ -425,21 +421,20 @@ int libwtcdb_cache_entry_read_data(
 		 value_32bit );
 
 		libcnotify_printf(
-		 "%s: data checksum\t\t\t\t: 0x%08" PRIx64 "\n",
+		 "%s: data checksum\t\t\t: 0x%08" PRIx64 "\n",
 		 function,
 		 stored_data_crc );
 
 		libcnotify_printf(
-		 "%s: header checksum\t\t\t\t: 0x%08" PRIx64 "\n",
+		 "%s: header checksum\t\t\t: 0x%08" PRIx64 "\n",
 		 function,
 		 stored_header_crc );
 
 		libcnotify_printf(
 		 "\n" );
 	}
-#endif
-	if( ( cache_entry->data_size < cache_entry_header_size )
-	 || ( cache_entry->data_size > data_size ) )
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+	if( cache_entry->data_size < cache_entry_header_size )
 	{
 		libcerror_error_set(
 		 error,
@@ -453,7 +448,7 @@ int libwtcdb_cache_entry_read_data(
 	if( libwtcdb_crc64_weak_calculate(
 	     &calculated_crc,
 	     data,
-	     cache_entry->data_size - 8,
+	     cache_entry_header_size - 8,
 	     (uint64_t) -1,
 	     error ) != 1 )
 	{
@@ -479,86 +474,6 @@ int libwtcdb_cache_entry_read_data(
 		}
 #endif
 	}
-	data_offset = cache_entry_header_size;
-
-	if( identifier_size > 0 )
-	{
-		if( ( identifier_size > cache_entry->data_size )
-		 || ( data_offset > ( cache_entry->data_size - identifier_size ) ) )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-			 "%s: invalid identifier size value out of bounds.",
-			 function );
-
-			return( -1 );
-		}
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
-		{
-			libcnotify_printf(
-			 "%s: identifier string data:\n",
-			 function );
-			libcnotify_print_data(
-			 &( data[ data_offset ] ),
-			 identifier_size,
-			 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
-		}
-#endif
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
-		{
-			if( libwtcdb_debug_print_utf16_string_value(
-			     function,
-			     "identifier string\t\t\t",
-			     &( data[ data_offset ] ),
-			     identifier_size,
-			     LIBUNA_ENDIAN_LITTLE,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
-				 "%s: unable to print UTF-16 string value.",
-				 function );
-
-				return( -1 );
-			}
-		}
-#endif /* defined( HAVE_DEBUG_OUTPUT ) */
-		data_offset += identifier_size;
-	}
-	if( padding_size > 0 )
-	{
-		if( ( padding_size > cache_entry->data_size )
-		 || ( data_offset > ( cache_entry->data_size - padding_size ) ) )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-			 "%s: invalid padding size value out of bounds.",
-			 function );
-
-			return( -1 );
-		}
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
-		{
-			libcnotify_printf(
-			 "%s: padding data:\n",
-			 function );
-			libcnotify_print_data(
-			 &( data[ data_offset ] ),
-			 padding_size,
-			 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
-		}
-#endif /* defined( HAVE_DEBUG_OUTPUT ) */
-		data_offset += padding_size;
-	}
 	return( 1 );
 }
 
@@ -572,11 +487,16 @@ int libwtcdb_cache_entry_read_file_io_handle(
      off64_t file_offset,
      libcerror_error_t **error )
 {
-	static char *function          = "libwtcdb_cache_entry_read_file_io_handle";
-	void *reallocation             = NULL;
-	uint8_t *cache_entry_data      = NULL;
-	uint32_t cache_entry_data_size = 0;
-	ssize_t read_count             = 0;
+	uint8_t cache_entry_data[ sizeof( wtcdb_cache_entry_vista_t ) ];
+
+	static char *function            = "libwtcdb_cache_entry_read_file_io_handle";
+	uint32_t cache_entry_header_size = 0;
+	size_t data_offset               = 0;
+	ssize_t read_count               = 0;
+
+#if defined( HAVE_DEBUG_OUTPUT )
+	uint8_t *padding_data            = NULL;
+#endif
 
 	if( cache_entry == NULL )
 	{
@@ -624,11 +544,19 @@ int libwtcdb_cache_entry_read_file_io_handle(
 
 		return( -1 );
 	}
+	if( io_handle->format_version == 20 )
+	{
+		cache_entry_header_size = sizeof( wtcdb_cache_entry_vista_t );
+	}
+	else if( io_handle->format_version == 21 )
+	{
+		cache_entry_header_size = sizeof( wtcdb_cache_entry_win7_t );
+	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: reading cache entry at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
+		 "%s: reading cache entry header at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
 		 function,
 		 file_offset,
 		 file_offset );
@@ -644,146 +572,199 @@ int libwtcdb_cache_entry_read_file_io_handle(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek cache entry offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 "%s: unable to seek cache entry header offset: %" PRIi64 " (0x%08" PRIx64 ").",
 		 function,
 		 file_offset,
 		 file_offset );
 
 		goto on_error;
 	}
-	cache_entry_data = (uint8_t *) memory_allocate(
-	                                sizeof( uint8_t ) * 8 );
-
-	if( cache_entry_data == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create cache entry data.",
-		 function );
-
-		goto on_error;
-	}
 	read_count = libbfio_handle_read_buffer(
 	              file_io_handle,
 	              cache_entry_data,
-	              8,
+	              cache_entry_header_size,
 	              error );
 
-	if( read_count != (ssize_t) 8 )
+	if( read_count != (ssize_t) cache_entry_header_size )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read cache entry data.",
+		 "%s: unable to read cache entry header data.",
 		 function );
 
 		goto on_error;
 	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: cache entry data:\n",
-		 function );
-		libcnotify_print_data(
-		 cache_entry_data,
-		 8,
-		 0 );
-	}
-#endif
-	if( memory_compare(
-	     cache_entry_data,
-	     wtcdb_cache_file_signature,
-	     4 ) != 0 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: invalid signature.",
-		 function );
-
-		goto on_error;
-	}
-	byte_stream_copy_to_uint32_little_endian(
-	 &( cache_entry_data[ 4 ] ),
-	 cache_entry_data_size );
-
-	if( ( cache_entry_data < 8 )
-	 || ( (size_t) cache_entry_data > (size_t) SSIZE_MAX ) )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid cache entry size value out of bounds.",
-		 function );
-
-		goto on_error;
-	}
-	reallocation = memory_reallocate(
-	                cache_entry_data,
-	                sizeof( uint8_t ) * cache_entry_data_size );
-
-	if( reallocation == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to resize cache entry data.",
-		 function );
-
-		goto on_error;
-	}
-	cache_entry_data = (uint8_t *) reallocation;
-
-	read_count = libbfio_handle_read_buffer(
-	              file_io_handle,
-	              &( cache_entry_data[ 8 ] ),
-	              cache_entry_data_size - 8,
-	              error );
-
-	if( read_count != (ssize_t) ( cache_entry_data_size - 8 ) )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read cache entry data.",
-		 function );
-
-		goto on_error;
-	}
-	if( libwtcdb_cache_entry_read_data(
+	if( libwtcdb_cache_entry_header_read_data(
 	     cache_entry,
 	     io_handle,
 	     cache_entry_data,
-	     cache_entry_data_size,
+	     cache_entry_header_size,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read cache entry.",
+		 "%s: unable to read cache entry header.",
 		 function );
 
 		goto on_error;
 	}
-	memory_free(
-	 cache_entry_data );
+	data_offset = cache_entry_header_size;
 
+	if( cache_entry->identifier_size > 0 )
+	{
+		if( ( cache_entry->identifier_size > cache_entry->data_size )
+		 || ( data_offset > ( cache_entry->data_size - cache_entry->identifier_size ) ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid identifier size value out of bounds.",
+			 function );
+
+			return( -1 );
+		}
+		cache_entry->identifier = (uint8_t *) memory_allocate(
+		                                       sizeof( uint8_t ) * cache_entry->identifier_size );
+
+		if( cache_entry->identifier == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create identifier string.",
+			 function );
+
+			goto on_error;
+		}
+		read_count = libbfio_handle_read_buffer(
+		              file_io_handle,
+		              cache_entry->identifier,
+		              cache_entry->identifier_size,
+		              error );
+
+		if( read_count != (ssize_t) cache_entry->identifier_size )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read cache entry identifier string.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "%s: identifier string data:\n",
+			 function );
+			libcnotify_print_data(
+			 cache_entry->identifier,
+			 cache_entry->identifier_size,
+			 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
+		}
+#endif
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			if( libwtcdb_debug_print_utf16_string_value(
+			     function,
+			     "identifier string\t\t",
+			     cache_entry->identifier,
+			     cache_entry->identifier_size,
+			     LIBUNA_ENDIAN_LITTLE,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_PRINT_FAILED,
+				 "%s: unable to print UTF-16 string value.",
+				 function );
+
+				return( -1 );
+			}
+		}
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
+		data_offset += cache_entry->identifier_size;
+	}
+	if( cache_entry->padding_size > 0 )
+	{
+		if( ( cache_entry->padding_size > cache_entry->data_size )
+		 || ( data_offset > ( cache_entry->data_size - cache_entry->padding_size ) ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid padding size value out of bounds.",
+			 function );
+
+			return( -1 );
+		}
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			padding_data = (uint8_t *) memory_allocate(
+			                            sizeof( uint8_t ) * cache_entry->padding_size );
+
+			if( padding_data == NULL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_MEMORY,
+				 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+				 "%s: unable to create padding data.",
+				 function );
+
+				goto on_error;
+			}
+			read_count = libbfio_handle_read_buffer(
+			              file_io_handle,
+			              padding_data,
+			              cache_entry->padding_size,
+			              error );
+
+			if( read_count != (ssize_t) cache_entry->padding_size )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_READ_FAILED,
+				 "%s: unable to read cache entry padding data.",
+				 function );
+
+				goto on_error;
+			}
+			libcnotify_printf(
+			 "%s: padding data:\n",
+			 function );
+			libcnotify_print_data(
+			 padding_data,
+			 cache_entry->padding_size,
+			 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
+		}
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
+		data_offset += cache_entry->padding_size;
+	}
 	return( 1 );
 
 on_error:
-	if( cache_entry_data != NULL )
+	if( cache_entry->identifier != NULL )
 	{
 		memory_free(
-		 cache_entry_data );
+		 cache_entry->identifier );
+
+		cache_entry->identifier = NULL;
 	}
 	return( -1 );
 }

@@ -332,6 +332,36 @@ int wtcdb_test_io_handle_clear(
 	libcerror_error_free(
 	 &error );
 
+#if defined( HAVE_WTCDB_TEST_MEMORY )
+
+	/* Test libwtcdb_io_handle_clear with memset failing
+	 */
+	wtcdb_test_memset_attempts_before_fail = 0;
+
+	result = libwtcdb_io_handle_clear(
+	          io_handle,
+	          &error );
+
+	if( wtcdb_test_memset_attempts_before_fail != -1 )
+	{
+		wtcdb_test_memset_attempts_before_fail = -1;
+	}
+	else
+	{
+		WTCDB_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		WTCDB_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_WTCDB_TEST_MEMORY ) */
+
 	/* Clean up
 	 */
 	result = libwtcdb_io_handle_free(
