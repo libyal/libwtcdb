@@ -156,11 +156,9 @@ int libwtcdb_cache_entry_header_read_data(
 	static char *function          = "libwtcdb_cache_entry_header_read_data";
 	size_t cache_entry_header_size = 0;
 	uint64_t calculated_crc        = 0;
-	uint64_t stored_data_crc       = 0;
 	uint64_t stored_header_crc     = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	uint64_t value_64bit           = 0;
 	uint32_t value_32bit           = 0;
 #endif
 
@@ -281,6 +279,10 @@ int libwtcdb_cache_entry_header_read_data(
 	 ( (wtcdb_cache_entry_vista_t *) data )->size,
 	 cache_entry->data_size );
 
+	byte_stream_copy_to_uint64_little_endian(
+	 ( (wtcdb_cache_entry_vista_t *) data )->entry_hash,
+	 cache_entry->hash );
+
 	if( io_handle->format_version == 20 )
 	{
 		byte_stream_copy_to_uint32_little_endian(
@@ -301,7 +303,7 @@ int libwtcdb_cache_entry_header_read_data(
 
 		byte_stream_copy_to_uint64_little_endian(
 		 ( (wtcdb_cache_entry_vista_t *) data )->data_checksum,
-		 stored_data_crc );
+		 cache_entry->data_crc );
 	}
 	else if( io_handle->format_version == 21 )
 	{
@@ -319,7 +321,7 @@ int libwtcdb_cache_entry_header_read_data(
 
 		byte_stream_copy_to_uint64_little_endian(
 		 ( (wtcdb_cache_entry_win7_t *) data )->data_checksum,
-		 stored_data_crc );
+		 cache_entry->data_crc );
 
 		byte_stream_copy_to_uint64_little_endian(
 		 ( (wtcdb_cache_entry_win7_t *) data )->header_checksum,
@@ -341,13 +343,10 @@ int libwtcdb_cache_entry_header_read_data(
 		 function,
 		 cache_entry->data_size );
 
-		byte_stream_copy_to_uint64_little_endian(
-		 ( (wtcdb_cache_entry_vista_t *) data )->entry_hash,
-		 value_64bit );
 		libcnotify_printf(
 		 "%s: entry hash\t\t\t: 0x%08" PRIx64 "\n",
 		 function,
-		 value_64bit );
+		 cache_entry->hash );
 
 		if( io_handle->format_version == 20 )
 		{
@@ -423,7 +422,7 @@ int libwtcdb_cache_entry_header_read_data(
 		libcnotify_printf(
 		 "%s: data checksum\t\t\t: 0x%08" PRIx64 "\n",
 		 function,
-		 stored_data_crc );
+		 cache_entry->data_crc );
 
 		libcnotify_printf(
 		 "%s: header checksum\t\t\t: 0x%08" PRIx64 "\n",

@@ -1135,32 +1135,41 @@ int libwtcdb_file_read_entries(
 			}
 			file_offset += (size_t) cache_entry->data_size;
 
-			if( libwtcdb_cache_entry_free(
-			     &cache_entry,
-			     error ) != 1 )
+			if( cache_entry->hash == 0 )
 			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free cache entry.",
-				 function );
+				if( libwtcdb_cache_entry_free(
+				     &cache_entry,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+					 "%s: unable to free cache entry.",
+					 function );
 
-				goto on_error;
+					goto on_error;
+				}
 			}
-/* TODO put data offset in runtime cache entry
+			else
+			{
+				if( libcdata_array_append_entry(
+				     internal_file->entries,
+				     &entry_index,
+				     (intptr_t *) cache_entry,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+					 "%s: unable to append cache entry to array.",
+					 function );
 
-			if( first_entry_offset == available_cache_entry_offset )
-			{
-				break;
+					goto on_error;
+				}
+				cache_entry = NULL;
 			}
-			if( cache_entry_offset != cache_entry_size )
-			{
-fprintf( stderr, "SIZE MISMATCH: %" PRIu32 " %" PRIu32 "n",
- cache_entry_offset,
- cache_entry_size );
-			}
-*/
 		}
 		else if( internal_file->io_handle->file_type == LIBWTCDB_FILE_TYPE_INDEX )
 		{

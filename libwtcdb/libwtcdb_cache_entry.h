@@ -41,6 +41,10 @@ struct libwtcdb_cache_entry
 	 */
 	uint32_t data_size;
 
+	/* The hash
+	 */
+	uint64_t hash;
+
 	/* The identifier size
 	 */
 	uint32_t identifier_size;
@@ -56,6 +60,10 @@ struct libwtcdb_cache_entry
 	/* The identifier
 	 */
 	uint8_t *identifier;
+
+	/* The data CRC
+	 */
+	uint64_t data_crc;
 };
 
 int libwtcdb_cache_entry_initialize(
