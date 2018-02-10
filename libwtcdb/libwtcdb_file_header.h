@@ -44,6 +44,10 @@ struct libwtcdb_file_header
 	 */
 	uint32_t format_version;
 
+	/* The cache type
+	 */
+	uint32_t cache_type;
+
 	/* The first entry offset
 	 */
 	uint32_t first_entry_offset;

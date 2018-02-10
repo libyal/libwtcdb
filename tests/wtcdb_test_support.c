@@ -483,19 +483,12 @@ int wtcdb_test_check_file_signature_file_io_handle(
 	 "error",
 	 error );
 
-	/* Initialize test
+	/* Test check file signature with data too small
 	 */
-	memset_result = memory_set(
-	                 empty_block,
-	                 0,
-	                 sizeof( uint8_t ) * 4096 );
-
-	WTCDB_TEST_ASSERT_IS_NOT_NULL(
-	 "memset_result",
-	 memset_result );
-
-	result = libbfio_memory_range_initialize(
+	result = wtcdb_test_open_file_io_handle(
 	          &file_io_handle,
+	          empty_block,
+	          sizeof( uint8_t ) * 1,
 	          &error );
 
 	WTCDB_TEST_ASSERT_EQUAL_INT(
@@ -511,8 +504,48 @@ int wtcdb_test_check_file_signature_file_io_handle(
 	 "error",
 	 error );
 
-	result = libbfio_memory_range_set(
+	result = libwtcdb_check_file_signature_file_io_handle(
 	          file_io_handle,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = wtcdb_test_close_file_io_handle(
+	          &file_io_handle,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test check file signature with empty block
+	 */
+	memset_result = memory_set(
+	                 empty_block,
+	                 0,
+	                 sizeof( uint8_t ) * 4096 );
+
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "memset_result",
+	 memset_result );
+
+	result = wtcdb_test_open_file_io_handle(
+	          &file_io_handle,
 	          empty_block,
 	          sizeof( uint8_t ) * 4096,
 	          &error );
@@ -522,26 +555,14 @@ int wtcdb_test_check_file_signature_file_io_handle(
 	 result,
 	 1 );
 
-	WTCDB_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
-	result = libbfio_handle_open(
-	          file_io_handle,
-	          LIBBFIO_OPEN_READ,
-	          &error );
-
-	WTCDB_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "file_io_handle",
+	 file_io_handle );
 
 	WTCDB_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
 
-	/* Test check file signature
-	 */
 	result = libwtcdb_check_file_signature_file_io_handle(
 	          file_io_handle,
 	          &error );
@@ -555,10 +576,8 @@ int wtcdb_test_check_file_signature_file_io_handle(
 	 "error",
 	 error );
 
-	/* Clean up
-	 */
-	result = libbfio_handle_close(
-	          file_io_handle,
+	result = wtcdb_test_close_file_io_handle(
+	          &file_io_handle,
 	          &error );
 
 	WTCDB_TEST_ASSERT_EQUAL_INT(
@@ -569,25 +588,6 @@ int wtcdb_test_check_file_signature_file_io_handle(
 	WTCDB_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
-
-	result = libbfio_handle_free(
-	          &file_io_handle,
-	          &error );
-
-	WTCDB_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-	WTCDB_TEST_ASSERT_IS_NULL(
-	 "file_io_handle",
-	 file_io_handle );
-
-	WTCDB_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
-	/* TODO test file too small */
 
 	return( 1 );
 

@@ -136,7 +136,7 @@ The Windows Vista cache entry is variable of size and consist of:
 [cols="1,1,1,5",options="header"]
 |===
 | Offset | Size | Value | Description
-| 0 | 4 | "CMMM" | The signature (magic identifier)
+| 0 | 4 | "CMMM" | The signature
 | 4 | 4 | | Cache entry size +
 This includes the signature and size value.
 | 8 | 8 | | [yellow-background]*Entry hash* +
@@ -175,7 +175,7 @@ The Windows 7 cache entry is variable of size and consist of:
 [cols="1,1,1,5",options="header"]
 |===
 | Offset | Size | Value | Description
-| 0 | 4 | "CMMM" | The signature (magic identifier)
+| 0 | 4 | "CMMM" | The signature
 | 4 | 4 | | Cache entry size +
 This includes the signature and size value.
 | 8 | 8 | | [yellow-background]*Entry hash* +
@@ -217,7 +217,7 @@ The file header is 24 bytes of size and consist of:
 [cols="1,1,1,5",options="header"]
 |===
 | Offset | Size | Value | Description
-| 0 | 4 | "IMMM" | The signature (magic identifier)
+| 0 | 4 | "IMMM" | The signature
 | 4 | 4 | | Format version +
 See section: <<format_versions,Format versions>>
 | 8 | 4 | | [yellow-background]*Unknown*

@@ -41,6 +41,7 @@ check_PROGRAMS = \
 
 wtcdb_test_cache_entry_SOURCES = \
 	wtcdb_test_cache_entry.c \
+	wtcdb_test_functions.c wtcdb_test_functions.h \
 	wtcdb_test_libbfio.h \
 	wtcdb_test_libcerror.h \
 	wtcdb_test_libwtcdb.h \
@@ -110,6 +111,7 @@ wtcdb_test_file_LDADD = \
 
 wtcdb_test_file_header_SOURCES = \
 	wtcdb_test_file_header.c \
+	wtcdb_test_functions.c wtcdb_test_functions.h \
 	wtcdb_test_libbfio.h \
 	wtcdb_test_libcerror.h \
 	wtcdb_test_libwtcdb.h \
@@ -130,6 +132,7 @@ wtcdb_test_file_header_LDADD = \
 	@LIBCERROR_LIBADD@
 
 wtcdb_test_index_entry_SOURCES = \
+	wtcdb_test_functions.c wtcdb_test_functions.h \
 	wtcdb_test_index_entry.c \
 	wtcdb_test_libbfio.h \
 	wtcdb_test_libcerror.h \

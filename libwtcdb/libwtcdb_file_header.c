@@ -239,6 +239,10 @@ int libwtcdb_file_header_read_data(
 	if( file_header->file_type == LIBWTCDB_FILE_TYPE_CACHE )
 	{
 		byte_stream_copy_to_uint32_little_endian(
+		 ( (wtcdb_cache_file_header_t *) data )->cache_type,
+		 file_header->cache_type );
+
+		byte_stream_copy_to_uint32_little_endian(
 		 ( (wtcdb_cache_file_header_t *) data )->first_cache_entry_offset,
 		 file_header->first_entry_offset );
 
@@ -276,13 +280,10 @@ int libwtcdb_file_header_read_data(
 
 		if( file_header->file_type == LIBWTCDB_FILE_TYPE_CACHE )
 		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (wtcdb_cache_file_header_t *) data )->cache_type,
-			 value_32bit );
 			libcnotify_printf(
 			 "%s: cache type\t\t\t\t: %" PRIu32 "\n",
 			 function,
-			 value_32bit );
+			 file_header->cache_type );
 
 			libcnotify_printf(
 			 "%s: first cache entry offset\t\t: 0x%08" PRIx32 "\n",
@@ -334,19 +335,6 @@ int libwtcdb_file_header_read_data(
 		 "\n" );
 	}
 #endif
-	if( ( file_header->first_entry_offset != 0 )
-	 && ( file_header->first_entry_offset < 24 ) )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported first entry offset: %" PRIu32 ".",
-		 function,
-		 file_header->first_entry_offset );
-
-		return( -1 );
-	}
 	if( ( file_header->format_version != 20 )
 	 && ( file_header->format_version != 21 ) )
 	{
@@ -359,6 +347,33 @@ int libwtcdb_file_header_read_data(
 		 file_header->format_version );
 
 		return( -1 );
+	}
+	if( file_header->file_type == LIBWTCDB_FILE_TYPE_CACHE )
+	{
+		if( file_header->cache_type >= 5 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+			 "%s: unsupported cache type: %" PRIu32 ".",
+			 function,
+			 file_header->cache_type );
+
+			return( -1 );
+		}
+		if( file_header->first_entry_offset < 24 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+			 "%s: unsupported first entry offset: %" PRIu32 ".",
+			 function,
+			 file_header->first_entry_offset );
+
+			return( -1 );
+		}
 	}
 	return( 1 );
 }
