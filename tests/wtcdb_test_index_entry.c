@@ -41,6 +41,10 @@ uint8_t wtcdb_test_index_entry_data1[ 40 ] = {
 	0x01, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x95, 0x9c, 0x12, 0x00,
 	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 
+uint8_t wtcdb_test_index_entry_data2[ 32 ] = {
+	0x2b, 0x0d, 0x06, 0xc0, 0x7b, 0x75, 0x1e, 0xa1, 0x02, 0x00, 0x00, 0x80, 0xff, 0xff, 0xff, 0xff,
+	0xff, 0xff, 0xff, 0xff, 0x17, 0x80, 0x67, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+
 #if defined( __GNUC__ ) && !defined( LIBWTCDB_DLL_IMPORT )
 
 /* Tests the libwtcdb_index_entry_initialize function
@@ -333,6 +337,25 @@ int wtcdb_test_index_entry_read_data(
 	          io_handle,
 	          wtcdb_test_index_entry_data1,
 	          40,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	io_handle->file_type      = LIBWTCDB_FILE_TYPE_INDEX;
+	io_handle->format_version = 21;
+
+	result = libwtcdb_index_entry_read_data(
+	          index_entry,
+	          io_handle,
+	          wtcdb_test_index_entry_data1,
+	          32,
 	          &error );
 
 	WTCDB_TEST_ASSERT_EQUAL_INT(
