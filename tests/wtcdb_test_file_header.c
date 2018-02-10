@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #endif
 
+#include "wtcdb_test_libbfio.h"
 #include "wtcdb_test_libcerror.h"
 #include "wtcdb_test_libwtcdb.h"
 #include "wtcdb_test_macros.h"
@@ -449,6 +450,205 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libwtcdb_file_header_read_file_io_handle function
+ * Returns 1 if successful or 0 if not
+ */
+int wtcdb_test_file_header_read_file_io_handle(
+     void )
+{
+	libbfio_handle_t *file_io_handle    = NULL;
+	libcerror_error_t *error            = NULL;
+	libwtcdb_file_header_t *file_header = NULL;
+	int result                          = 0;
+
+	/* Initialize test
+	 */
+	result = libbfio_memory_range_initialize(
+	          &file_io_handle,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "file_io_handle",
+	 file_io_handle );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libbfio_memory_range_set(
+	          file_io_handle,
+	          wtcdb_test_file_header_data1,
+	          24,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libbfio_handle_open(
+	          file_io_handle,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libwtcdb_file_header_initialize(
+	          &file_header,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "file_header",
+	 file_header );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libwtcdb_file_header_read_file_io_handle(
+	          file_header,
+	          file_io_handle,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libwtcdb_file_header_read_file_io_handle(
+	          NULL,
+	          file_io_handle,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libwtcdb_file_header_read_file_io_handle(
+	          file_header,
+	          NULL,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libwtcdb_file_header_free(
+	          &file_header,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "file_header",
+	 file_header );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libbfio_handle_close(
+	          file_io_handle,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libbfio_handle_free(
+	          &file_io_handle,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "file_io_handle",
+	 file_io_handle );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( file_header != NULL )
+	{
+		libwtcdb_file_header_free(
+		 &file_header,
+		 NULL );
+	}
+	if( file_io_handle != NULL )
+	{
+		libbfio_handle_free(
+		 &file_io_handle,
+		 NULL );
+	}
+	return( 0 );
+}
+
 #endif /* defined( __GNUC__ ) && !defined( LIBWTCDB_DLL_IMPORT ) */
 
 /* The main program
@@ -480,7 +680,9 @@ int main(
 	 "libwtcdb_file_header_read_data",
 	 wtcdb_test_file_header_read_data );
 
-	/* TODO: add tests for libwtcdb_file_header_read_file_io_handle */
+	WTCDB_TEST_RUN(
+	 "libwtcdb_file_header_read_file_io_handle",
+	 wtcdb_test_file_header_read_file_io_handle );
 
 #endif /* defined( __GNUC__ ) && !defined( LIBWTCDB_DLL_IMPORT ) */
 

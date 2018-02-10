@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #endif
 
+#include "wtcdb_test_libbfio.h"
 #include "wtcdb_test_libcerror.h"
 #include "wtcdb_test_libwtcdb.h"
 #include "wtcdb_test_macros.h"
@@ -413,6 +414,50 @@ int wtcdb_test_cache_entry_header_read_data(
 	libcerror_error_free(
 	 &error );
 
+	io_handle->file_type      = LIBWTCDB_FILE_TYPE_INDEX;
+	io_handle->format_version = 20;
+
+	result = libwtcdb_cache_entry_header_read_data(
+	          cache_entry,
+	          io_handle,
+	          wtcdb_test_cache_entry_data1,
+	          88,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	io_handle->file_type      = LIBWTCDB_FILE_TYPE_CACHE;
+	io_handle->format_version = 0;
+
+	result = libwtcdb_cache_entry_header_read_data(
+	          cache_entry,
+	          io_handle,
+	          wtcdb_test_cache_entry_data1,
+	          88,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
 	result = libwtcdb_cache_entry_header_read_data(
 	          cache_entry,
 	          io_handle,
@@ -529,6 +574,301 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libwtcdb_cache_entry_read_file_io_handle function
+ * Returns 1 if successful or 0 if not
+ */
+int wtcdb_test_cache_entry_read_file_io_handle(
+     void )
+{
+	libbfio_handle_t *file_io_handle    = NULL;
+	libcerror_error_t *error            = NULL;
+	libwtcdb_cache_entry_t *cache_entry = NULL;
+	libwtcdb_io_handle_t *io_handle     = NULL;
+	int result                          = 0;
+
+	/* Initialize test
+	 */
+	result = libwtcdb_io_handle_initialize(
+	          &io_handle,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "io_handle",
+	 io_handle );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libbfio_memory_range_initialize(
+	          &file_io_handle,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "file_io_handle",
+	 file_io_handle );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libbfio_memory_range_set(
+	          file_io_handle,
+	          wtcdb_test_cache_entry_data1,
+	          88,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libbfio_handle_open(
+	          file_io_handle,
+	          LIBBFIO_OPEN_READ,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libwtcdb_cache_entry_initialize(
+	          &cache_entry,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "cache_entry",
+	 cache_entry );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	io_handle->file_type      = LIBWTCDB_FILE_TYPE_CACHE;
+	io_handle->format_version = 20;
+
+	result = libwtcdb_cache_entry_read_file_io_handle(
+	          cache_entry,
+	          io_handle,
+	          file_io_handle,
+	          0,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libwtcdb_cache_entry_read_file_io_handle(
+	          NULL,
+	          io_handle,
+	          file_io_handle,
+	          0,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libwtcdb_cache_entry_read_file_io_handle(
+	          cache_entry,
+	          NULL,
+	          file_io_handle,
+	          0,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	io_handle->file_type      = LIBWTCDB_FILE_TYPE_INDEX;
+	io_handle->format_version = 20;
+
+	result = libwtcdb_cache_entry_read_file_io_handle(
+	          cache_entry,
+	          io_handle,
+	          file_io_handle,
+	          0,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	io_handle->file_type      = LIBWTCDB_FILE_TYPE_CACHE;
+	io_handle->format_version = 0;
+
+	result = libwtcdb_cache_entry_read_file_io_handle(
+	          cache_entry,
+	          io_handle,
+	          file_io_handle,
+	          0,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libwtcdb_cache_entry_read_file_io_handle(
+	          cache_entry,
+	          io_handle,
+	          NULL,
+	          0,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libwtcdb_cache_entry_free(
+	          &cache_entry,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "cache_entry",
+	 cache_entry );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libbfio_handle_close(
+	          file_io_handle,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libbfio_handle_free(
+	          &file_io_handle,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "file_io_handle",
+	 file_io_handle );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( cache_entry != NULL )
+	{
+		libwtcdb_cache_entry_free(
+		 &cache_entry,
+		 NULL );
+	}
+	if( file_io_handle != NULL )
+	{
+		libbfio_handle_free(
+		 &file_io_handle,
+		 NULL );
+	}
+	if( io_handle != NULL )
+	{
+		libwtcdb_io_handle_free(
+		 &io_handle,
+		 NULL );
+	}
+	return( 0 );
+}
+
 #endif /* defined( __GNUC__ ) && !defined( LIBWTCDB_DLL_IMPORT ) */
 
 /* The main program
@@ -559,6 +899,10 @@ int main(
 	WTCDB_TEST_RUN(
 	 "libwtcdb_cache_entry_header_read_data",
 	 wtcdb_test_cache_entry_header_read_data );
+
+	WTCDB_TEST_RUN(
+	 "libwtcdb_cache_entry_read_file_io_handle",
+	 wtcdb_test_cache_entry_read_file_io_handle );
 
 #endif /* defined( __GNUC__ ) && !defined( LIBWTCDB_DLL_IMPORT ) */
 
