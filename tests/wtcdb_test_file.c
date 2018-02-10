@@ -1687,6 +1687,8 @@ int main(
 
 		/* TODO: add tests for libwtcdb_file_open_read */
 
+		/* TODO: add tests for libwtcdb_file_read_entries */
+
 #endif /* defined( __GNUC__ ) && !defined( LIBWTCDB_DLL_IMPORT ) */
 
 		WTCDB_TEST_RUN_WITH_ARGS(
@@ -1699,14 +1701,12 @@ int main(
 		 wtcdb_test_file_get_number_of_items,
 		 file );
 
-#if defined( TODO )
-
+#ifdef TODO
 		WTCDB_TEST_RUN_WITH_ARGS(
 		 "libwtcdb_file_get_item",
 		 wtcdb_test_file_get_item,
 		 file );
-
-#endif /* defined( TODO ) */
+#endif
 
 		/* Clean up
 		 */
@@ -1726,7 +1726,9 @@ int main(
 		WTCDB_TEST_ASSERT_IS_NULL(
 		 "error",
 		 error );
-
+	}
+	if( file_io_handle != NULL )
+	{
 		result = libbfio_handle_free(
 		          &file_io_handle,
 		          &error );

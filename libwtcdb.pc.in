@@ -7,6 +7,6 @@ Name: libwtcdb
 Description: Library to access the Windows Explorer thumbnail cache database (WTCDB) format
 Version: @VERSION@
 Libs: -L${libdir} -lwtcdb
-Libs.private: @ax_libbfio_pc_libs_private@ @ax_libcdata_pc_libs_private@ @ax_libcerror_pc_libs_private@ @ax_libcfile_pc_libs_private@ @ax_libclocale_pc_libs_private@ @ax_libcnotify_pc_libs_private@ @ax_libcpath_pc_libs_private@ @ax_libcsplit_pc_libs_private@ @ax_libfdatetime_pc_libs_private@ @ax_libfvalue_pc_libs_private@ @ax_libuna_pc_libs_private@
+Libs.private: @ax_libbfio_pc_libs_private@ @ax_libcdata_pc_libs_private@ @ax_libcerror_pc_libs_private@ @ax_libcfile_pc_libs_private@ @ax_libclocale_pc_libs_private@ @ax_libcnotify_pc_libs_private@ @ax_libcpath_pc_libs_private@ @ax_libcsplit_pc_libs_private@ @ax_libfdatetime_pc_libs_private@ @ax_libuna_pc_libs_private@
 Cflags: -I${includedir}
 

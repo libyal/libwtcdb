@@ -429,12 +429,6 @@ int main(
 	 "libwtcdb_io_handle_clear",
 	 wtcdb_test_io_handle_clear );
 
-	/* TODO: add tests for libwtcdb_io_handle_read_file_header */
-
-	/* TODO: add tests for libwtcdb_io_handle_read_items */
-
-	/* TODO: add tests for libwtcdb_io_handle_read_cache_entry_data */
-
 #endif /* defined( __GNUC__ ) && !defined( LIBWTCDB_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );

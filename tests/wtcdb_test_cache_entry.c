@@ -1,7 +1,7 @@
 /*
  * Library cache_entry type test program
  *
- * Copyright (C) 2009-2018, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2010-2018, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -458,6 +458,9 @@ int wtcdb_test_cache_entry_header_read_data(
 
 	libcerror_error_free(
 	 &error );
+
+	io_handle->file_type      = LIBWTCDB_FILE_TYPE_CACHE;
+	io_handle->format_version = 20;
 
 	result = libwtcdb_cache_entry_header_read_data(
 	          cache_entry,

@@ -1,7 +1,7 @@
 /*
  * Library file_header type test program
  *
- * Copyright (C) 2009-2018, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2010-2018, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -675,6 +675,57 @@ int wtcdb_test_file_header_read_file_io_handle(
 	          &file_io_handle,
 	          wtcdb_test_file_header_data1,
 	          8,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "file_io_handle",
+	 file_io_handle );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libwtcdb_file_header_read_file_io_handle(
+	          file_header,
+	          file_io_handle,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = wtcdb_test_close_file_io_handle(
+	          &file_io_handle,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test data invalid
+	 */
+	result = wtcdb_test_open_file_io_handle(
+	          &file_io_handle,
+	          wtcdb_test_file_header_error_data1,
+	          24,
 	          &error );
 
 	WTCDB_TEST_ASSERT_EQUAL_INT(
