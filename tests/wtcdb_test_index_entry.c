@@ -840,6 +840,65 @@ int wtcdb_test_index_entry_read_file_io_handle(
 	 "error",
 	 error );
 
+	/* Test data too small
+	 */
+	result = wtcdb_test_open_file_io_handle(
+	          &file_io_handle,
+	          wtcdb_test_index_entry_data2,
+	          8,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "file_io_handle",
+	 file_io_handle );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	io_handle->file_type      = LIBWTCDB_FILE_TYPE_INDEX;
+	io_handle->format_version = 21;
+
+	result = libwtcdb_index_entry_read_file_io_handle(
+	          index_entry,
+	          io_handle,
+	          file_io_handle,
+	          0,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = wtcdb_test_close_file_io_handle(
+	          &file_io_handle,
+	          &error );
+
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test data invalid
+	 */
+
 	/* Clean up
 	 */
 	result = libwtcdb_index_entry_free(

@@ -551,6 +551,13 @@ int libwtcdb_cache_entry_read_file_io_handle(
 	{
 		cache_entry_header_size = sizeof( wtcdb_cache_entry_win7_t );
 	}
+	if( cache_entry->identifier != NULL )
+	{
+		memory_free(
+		 cache_entry->identifier );
+
+		cache_entry->identifier = NULL;
+	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
