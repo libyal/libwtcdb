@@ -27,7 +27,6 @@ libwtcdb_la_SOURCES = \
 	libwtcdb_index_entry.c libwtcdb_index_entry.h \
 	libwtcdb_io_handle.c libwtcdb_io_handle.h \
 	libwtcdb_item.c libwtcdb_item.h \
-	libwtcdb_item_value.c libwtcdb_item_value.h \
 	libwtcdb_libbfio.h \
 	libwtcdb_libcdata.h \
 	libwtcdb_libcerror.h \

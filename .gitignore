@@ -133,7 +133,6 @@ stamp-h[1-9]
 /tests/wtcdb_test_index_entry
 /tests/wtcdb_test_io_handle
 /tests/wtcdb_test_item
-/tests/wtcdb_test_item_value
 /tests/wtcdb_test_notify
 /tests/wtcdb_test_support
 
@@ -148,5 +147,4 @@ stamp-h[1-9]
 /libcsplit
 /libcthreads
 /libfdatetime
-/libfvalue
 /libuna

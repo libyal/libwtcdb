@@ -210,10 +210,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_item_value.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libwtcdb\libwtcdb_notify.c"
 				>
 			</File>
@@ -269,10 +265,6 @@
 			</File>
 			<File
 				RelativePath="..\..\libwtcdb\libwtcdb_item.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libwtcdb\libwtcdb_item_value.h"
 				>
 			</File>
 			<File

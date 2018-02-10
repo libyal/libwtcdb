@@ -7,7 +7,7 @@ EXIT_SUCCESS=0;
 EXIT_FAILURE=1;
 EXIT_IGNORE=77;
 
-LIBRARY_TESTS="cache_entry crc error file_header index_entry io_handle item item_value notify";
+LIBRARY_TESTS="cache_entry crc error file_header index_entry io_handle item notify";
 LIBRARY_TESTS_WITH_INPUT="file support";
 OPTION_SETS="";
 

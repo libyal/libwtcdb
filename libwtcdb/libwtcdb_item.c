@@ -26,7 +26,6 @@
 #include "libwtcdb_definitions.h"
 #include "libwtcdb_io_handle.h"
 #include "libwtcdb_item.h"
-#include "libwtcdb_item_value.h"
 #include "libwtcdb_libbfio.h"
 #include "libwtcdb_libcerror.h"
 

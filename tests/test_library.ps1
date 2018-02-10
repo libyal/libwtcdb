@@ -6,7 +6,7 @@ $ExitSuccess = 0
 $ExitFailure = 1
 $ExitIgnore = 77
 
-$LibraryTests = "cache_entry crc error file_header index_entry io_handle item item_value notify"
+$LibraryTests = "cache_entry crc error file_header index_entry io_handle item notify"
 $LibraryTestsWithInput = "file support"
 
 Function GetTestToolDirectory

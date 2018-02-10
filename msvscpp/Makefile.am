@@ -19,7 +19,6 @@ MSVSCPP_FILES = \
 	wtcdb_test_index_entry/wtcdb_test_index_entry.vcproj \
 	wtcdb_test_io_handle/wtcdb_test_io_handle.vcproj \
 	wtcdb_test_item/wtcdb_test_item.vcproj \
-	wtcdb_test_item_value/wtcdb_test_item_value.vcproj \
 	wtcdb_test_notify/wtcdb_test_notify.vcproj \
 	wtcdb_test_support/wtcdb_test_support.vcproj \
 	wtcdbexport/wtcdbexport.vcproj \
