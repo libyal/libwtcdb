@@ -913,6 +913,39 @@ int wtcdb_test_cache_entry_read_file_io_handle(
 	libcerror_error_free(
 	 &error );
 
+#if defined( HAVE_WTCDB_TEST_MEMORY )
+
+	/* Test libwtcdb_cache_entry_read_file_io_handle with malloc failing
+	 */
+	wtcdb_test_malloc_attempts_before_fail = 0;
+
+	result = libwtcdb_cache_entry_read_file_io_handle(
+	          cache_entry,
+	          io_handle,
+	          file_io_handle,
+	          0,
+	          &error );
+
+	if( wtcdb_test_malloc_attempts_before_fail != -1 )
+	{
+		wtcdb_test_malloc_attempts_before_fail = -1;
+	}
+	else
+	{
+		WTCDB_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		WTCDB_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_WTCDB_TEST_MEMORY ) */
+
 	/* Clean up file IO handle
 	 */
 	result = wtcdb_test_close_file_io_handle(
@@ -1095,6 +1128,10 @@ int wtcdb_test_cache_entry_read_file_io_handle(
 	WTCDB_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
+
+	/* Test identifier data too small
+	 */
+/* TODO implement */
 
 	/* Test invalid padding size
 	 */

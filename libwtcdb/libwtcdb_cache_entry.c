@@ -632,7 +632,7 @@ int libwtcdb_cache_entry_read_file_io_handle(
 			 "%s: invalid identifier size value out of bounds.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		cache_entry->identifier = (uint8_t *) memory_allocate(
 		                                       sizeof( uint8_t ) * cache_entry->identifier_size );
@@ -695,7 +695,7 @@ int libwtcdb_cache_entry_read_file_io_handle(
 				 "%s: unable to print UTF-16 string value.",
 				 function );
 
-				return( -1 );
+				goto on_error;
 			}
 		}
 #endif /* defined( HAVE_DEBUG_OUTPUT ) */
@@ -714,7 +714,7 @@ int libwtcdb_cache_entry_read_file_io_handle(
 			 "%s: invalid padding size value out of bounds.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
