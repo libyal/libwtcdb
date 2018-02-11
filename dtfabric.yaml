@@ -1,0 +1,171 @@
+name: wtcdb
+type: format
+description: Windows Explorer Thumbnail Cache database format
+metadata:
+  authors: ['Joachim Metz <joachim.metz@gmail.com>']
+  year: 2010
+attributes:
+  byte_order: little-endian
+layout:
+- data_type: file_header
+---
+name: byte
+type: integer
+attributes:
+  format: unsigned
+  size: 1
+  units: bytes
+---
+name: uint32
+type: integer
+attributes:
+  format: unsigned
+  size: 4
+  units: bytes
+---
+name: uint64
+type: integer
+attributes:
+  format: unsigned
+  size: 8
+  units: bytes
+---
+name: filetime
+aliases: [FILETIME]
+type: structure
+description: FILETIME structure
+urls: ['https://msdn.microsoft.com/en-us/library/windows/desktop/ms724284(v=vs.85).aspx']
+members:
+- name: lower_part
+  data_type: uint32
+- name: upper_part
+  data_type: uint32
+---
+name: cache_file_header
+type: structure
+description: Cache file header
+members:
+- name: signature
+  type: stream
+  element_data_type: byte
+  elements_data_size: 4
+- name: format_version
+  data_type: uint32
+- name: cache_type
+  data_type: uint32
+- name: first_entry_offset
+  data_type: uint32
+- name: first_available_entry_offset
+  data_type: uint32
+- name: unknown1
+  data_type: uint32
+---
+name: cache_entry_header_vista
+type: structure
+description: Windows Vista (version 20) cache entry header
+members:
+- name: signature
+  type: stream
+  element_data_type: byte
+  elements_data_size: 4
+- name: size
+  data_type: uint32
+- name: hash
+  data_type: uint64
+- name: identifier_string_size
+  data_type: uint32
+- name: padding_size
+  data_type: uint32
+- name: unknown1
+  data_type: uint32
+- name: header_checksum
+  data_type: uint64
+- name: data_checksum
+  data_type: uint64
+---
+name: cache_entry_header_win7
+type: structure
+description: Windows 7 (version 21) cache entry header
+members:
+- name: signature
+  type: stream
+  element_data_type: byte
+  elements_data_size: 4
+- name: size
+  data_type: uint32
+- name: hash
+  data_type: uint64
+- name: file_extension
+  type: stream
+  element_data_type: byte
+  elements_data_size: 8
+- name: identifier_string_size
+  data_type: uint32
+- name: padding_size
+  data_type: uint32
+- name: unknown1
+  data_type: uint32
+- name: header_checksum
+  data_type: uint64
+- name: data_checksum
+  data_type: uint64
+---
+name: index_file_header
+type: structure
+description: Index file header
+members:
+- name: signature
+  type: stream
+  element_data_type: byte
+  elements_data_size: 4
+- name: format_version
+  data_type: uint32
+- name: unknown1
+  data_type: uint32
+- name: number_of_entries_used
+  data_type: uint32
+- name: number_of_entries
+  data_type: uint32
+- name: unknown2
+  data_type: uint32
+---
+name: index_entry_vista
+type: structure
+description: Windows Vista (version 20) index entry
+members:
+- name: hash
+  data_type: uint64
+- name: modification_time
+  description: Modification date and time
+  data_type: filetime
+- name: flags
+  data_type: uint32
+- name: thumbcache_32_db_offset
+  data_type: uint32
+- name: thumbcache_96_db_offset
+  data_type: uint32
+- name: thumbcache_256_db_offset
+  data_type: uint32
+- name: thumbcache_1024_db_offset
+  data_type: uint32
+- name: thumbcache_sr_db_offset
+  data_type: uint32
+---
+name: index_entry_win7
+type: structure
+description: Windows 7 (version 21) index entry
+members:
+- name: hash
+  data_type: uint64
+- name: flags
+  data_type: uint32
+- name: thumbcache_32_db_offset
+  data_type: uint32
+- name: thumbcache_96_db_offset
+  data_type: uint32
+- name: thumbcache_256_db_offset
+  data_type: uint32
+- name: thumbcache_1024_db_offset
+  data_type: uint32
+- name: thumbcache_sr_db_offset
+  data_type: uint32
