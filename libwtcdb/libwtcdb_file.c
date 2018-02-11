@@ -816,7 +816,6 @@ int libwtcdb_file_open_read(
 {
 	libwtcdb_file_header_t *file_header = NULL;
 	static char *function               = "libwtcdb_file_open_read";
-	int result                          = 1;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	uint8_t *trailing_data              = NULL;
@@ -846,10 +845,8 @@ int libwtcdb_file_open_read(
 
 		return( -1 );
 	}
-	if( internal_file->io_handle->abort != 0 )
-	{
-		internal_file->io_handle->abort = 0;
-	}
+	internal_file->io_handle->abort = 0;
+
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -955,13 +952,11 @@ int libwtcdb_file_open_read(
 		 "Reading entries:\n" );
 	}
 #endif
-	result = libwtcdb_file_read_entries(
-	          internal_file,
-	          file_io_handle,
-	          file_header->first_entry_offset,
-	          error );
-
-	if( result != 1 )
+	if( libwtcdb_file_read_entries(
+	     internal_file,
+	     file_io_handle,
+	     file_header->first_entry_offset,
+	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
@@ -969,6 +964,8 @@ int libwtcdb_file_open_read(
 		 LIBCERROR_IO_ERROR_READ_FAILED,
 		 "%s: unable to read entries.",
 		 function );
+
+		goto on_error;
 	}
 	if( libwtcdb_file_header_free(
 	     &file_header,
@@ -983,11 +980,9 @@ int libwtcdb_file_open_read(
 
 		goto on_error;
 	}
-	if( internal_file->io_handle->abort != 0 )
-	{
-		internal_file->io_handle->abort = 0;
-	}
-	return( result );
+	internal_file->io_handle->abort = 0;
+
+	return( 1 );
 
 on_error:
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -1003,6 +998,8 @@ on_error:
 		 &file_header,
 		 NULL );
 	}
+	internal_file->io_handle->abort = 0;
+
 	return( -1 );
 }
 
