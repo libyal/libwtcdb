@@ -178,13 +178,15 @@ wtcdb_test_item_LDADD = \
 	@LIBCERROR_LIBADD@
 
 wtcdb_test_notify_SOURCES = \
+	wtcdb_test_libcerror.h \
 	wtcdb_test_libwtcdb.h \
 	wtcdb_test_macros.h \
 	wtcdb_test_notify.c \
 	wtcdb_test_unused.h
 
 wtcdb_test_notify_LDADD = \
-	../libwtcdb/libwtcdb.la
+	../libwtcdb/libwtcdb.la \
+	@LIBCERROR_LIBADD@
 
 wtcdb_test_support_SOURCES = \
 	wtcdb_test_functions.c wtcdb_test_functions.h \
@@ -196,6 +198,7 @@ wtcdb_test_support_SOURCES = \
 	wtcdb_test_libuna.h \
 	wtcdb_test_libwtcdb.h \
 	wtcdb_test_macros.h \
+	wtcdb_test_memory.c wtcdb_test_memory.h \
 	wtcdb_test_support.c \
 	wtcdb_test_unused.h
 

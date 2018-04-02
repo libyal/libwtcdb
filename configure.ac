@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libwtcdb],
- [20180210],
+ [20180402],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -48,6 +48,12 @@ AX_COMMON_CHECK_ENABLE_WINAPI
 dnl Check if wide character type should be enabled
 AX_COMMON_CHECK_ENABLE_WIDE_CHARACTER_TYPE
 
+dnl Check if verbose output should be enabled
+AX_COMMON_CHECK_ENABLE_VERBOSE_OUTPUT
+
+dnl Check if debug output should be enabled
+AX_COMMON_CHECK_ENABLE_DEBUG_OUTPUT
+
 dnl Check for type definitions
 AX_TYPES_CHECK_LOCAL
 
@@ -92,12 +98,6 @@ AX_LIBWTCDB_CHECK_LOCAL
 
 dnl Check if wtcdbtools required headers and functions are available
 AX_WTCDBTOOLS_CHECK_LOCAL
-
-dnl Check if libwtcdb should be build with verbose output
-AX_COMMON_CHECK_ENABLE_VERBOSE_OUTPUT
-
-dnl Check if libwtcdb should be build with debug output
-AX_COMMON_CHECK_ENABLE_DEBUG_OUTPUT
 
 dnl Check if tests required headers and functions are available
 AX_TESTS_CHECK_LOCAL
