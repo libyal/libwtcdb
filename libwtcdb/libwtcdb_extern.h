@@ -28,17 +28,13 @@
  */
 #if !defined( HAVE_LOCAL_LIBWTCDB )
 
-/* If libtool DLL support is enabled set LIBWTCDB_DLL_EXPORT
- * before including libwtcdb/extern.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBWTCDB_DLL_EXPORT
-#endif
-
 #include <libwtcdb/extern.h>
 
+#define LIBWTCDB_EXTERN_VARIABLE	LIBWTCDB_EXTERN
+
 #else
-#define LIBWTCDB_EXTERN	/* extern */
+#define LIBWTCDB_EXTERN		/* extern */
+#define LIBWTCDB_EXTERN_VARIABLE	extern
 
 #endif /* !defined( HAVE_LOCAL_LIBWTCDB ) */
 
