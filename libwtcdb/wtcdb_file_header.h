@@ -1,7 +1,7 @@
 /*
  * The file header definition of a Windows Explorer thumbnail cache database file
  *
- * Copyright (C) 2010-2018, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2010-2019, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *

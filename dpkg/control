@@ -9,6 +9,8 @@ Homepage: https://github.com/libyal/libwtcdb
 Package: libwtcdb
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Conflicts: libwtcdb1
+Replaces: libwtcdb1
 Suggests: libwtcdb-dbg
 Description: Library to access the Windows Explorer thumbnail cache database (WTCDB) format
  libwtcdb is a library to access the Windows Explorer thumbnail cache database (WTCDB) format.
@@ -31,6 +33,8 @@ Package: libwtcdb-tools
 Section: utils
 Architecture: any
 Depends: libwtcdb (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Conflicts: libwtcdb-utils
+Replaces: libwtcdb-utils
 Description: Several tools for reading Windows Explorer thumbnail cache database (WTCDB) files
  Several tools for reading Windows Explorer thumbnail cache database (WTCDB) files.
 
