@@ -1,11 +1,9 @@
-.Dd February  1, 2017
+.Dd July 29, 2019
 .Dt libwtcdb 3
 .Os libwtcdb
 .Sh NAME
 .Nm libwtcdb.h
 .Nd Library to access the Windows Explorer thumbnail cache database (WTCDB) format
-.Sh LIBRARY
-.Lb libwtcdb
 .Sh SYNOPSIS
 .In libwtcdb.h
 .Pp
@@ -15,27 +13,27 @@ Support functions
 .Ft int
 .Fn libwtcdb_get_access_flags_read "void"
 .Ft int
-.Fn libwtcdb_get_codepage "int *codepage, libwtcdb_error_t **error"
+.Fn libwtcdb_get_codepage "int *codepage" "libwtcdb_error_t **error"
 .Ft int
-.Fn libwtcdb_set_codepage "int codepage, libwtcdb_error_t **error"
+.Fn libwtcdb_set_codepage "int codepage" "libwtcdb_error_t **error"
 .Ft int
-.Fn libwtcdb_check_file_signature "const char *filename, libwtcdb_error_t **error"
+.Fn libwtcdb_check_file_signature "const char *filename" "libwtcdb_error_t **error"
 .Pp
 Available when compiled with wide character string support:
 .Ft int
-.Fn libwtcdb_check_file_signature_wide "const wchar_t *filename, libwtcdb_error_t **error"
+.Fn libwtcdb_check_file_signature_wide "const wchar_t *filename" "libwtcdb_error_t **error"
 .Pp
 Available when compiled with libbfio support:
 .Ft int
-.Fn libwtcdb_check_file_signature_file_io_handle "libbfio_handle_t *file_io_handle, libwtcdb_error_t **error"
+.Fn libwtcdb_check_file_signature_file_io_handle "libbfio_handle_t *file_io_handle" "libwtcdb_error_t **error"
 .Pp
 Notify functions
 .Ft void
 .Fn libwtcdb_notify_set_verbose "int verbose"
 .Ft int
-.Fn libwtcdb_notify_set_stream "FILE *stream, libwtcdb_error_t **error"
+.Fn libwtcdb_notify_set_stream "FILE *stream" "libwtcdb_error_t **error"
 .Ft int
-.Fn libwtcdb_notify_stream_open "const char *filename, libwtcdb_error_t **error"
+.Fn libwtcdb_notify_stream_open "const char *filename" "libwtcdb_error_t **error"
 .Ft int
 .Fn libwtcdb_notify_stream_close "libwtcdb_error_t **error"
 .Pp
@@ -43,43 +41,43 @@ Error functions
 .Ft void
 .Fn libwtcdb_error_free "libwtcdb_error_t **error"
 .Ft int
-.Fn libwtcdb_error_fprint "libwtcdb_error_t *error, FILE *stream"
+.Fn libwtcdb_error_fprint "libwtcdb_error_t *error" "FILE *stream"
 .Ft int
-.Fn libwtcdb_error_sprint "libwtcdb_error_t *error, char *string, size_t size"
+.Fn libwtcdb_error_sprint "libwtcdb_error_t *error" "char *string" "size_t size"
 .Ft int
-.Fn libwtcdb_error_backtrace_fprint "libwtcdb_error_t *error, FILE *stream"
+.Fn libwtcdb_error_backtrace_fprint "libwtcdb_error_t *error" "FILE *stream"
 .Ft int
-.Fn libwtcdb_error_backtrace_sprint "libwtcdb_error_t *error, char *string, size_t size"
+.Fn libwtcdb_error_backtrace_sprint "libwtcdb_error_t *error" "char *string" "size_t size"
 .Pp
 File functions
 .Ft int
-.Fn libwtcdb_file_initialize "libwtcdb_file_t **file, libwtcdb_error_t **error"
+.Fn libwtcdb_file_initialize "libwtcdb_file_t **file" "libwtcdb_error_t **error"
 .Ft int
-.Fn libwtcdb_file_free "libwtcdb_file_t **file, libwtcdb_error_t **error"
+.Fn libwtcdb_file_free "libwtcdb_file_t **file" "libwtcdb_error_t **error"
 .Ft int
-.Fn libwtcdb_file_signal_abort "libwtcdb_file_t *file, libwtcdb_error_t **error"
+.Fn libwtcdb_file_signal_abort "libwtcdb_file_t *file" "libwtcdb_error_t **error"
 .Ft int
-.Fn libwtcdb_file_open "libwtcdb_file_t *file, const char *filename, int access_flags, libwtcdb_error_t **error"
+.Fn libwtcdb_file_open "libwtcdb_file_t *file" "const char *filename" "int access_flags" "libwtcdb_error_t **error"
 .Ft int
-.Fn libwtcdb_file_close "libwtcdb_file_t *file, libwtcdb_error_t **error"
+.Fn libwtcdb_file_close "libwtcdb_file_t *file" "libwtcdb_error_t **error"
 .Ft int
-.Fn libwtcdb_file_get_type "libwtcdb_file_t *file, uint8_t *type, libwtcdb_error_t **error"
+.Fn libwtcdb_file_get_type "libwtcdb_file_t *file" "uint8_t *type" "libwtcdb_error_t **error"
 .Ft int
-.Fn libwtcdb_file_get_number_of_items "libwtcdb_file_t *file, int *number_of_items, libwtcdb_error_t **error"
+.Fn libwtcdb_file_get_number_of_items "libwtcdb_file_t *file" "int *number_of_items" "libwtcdb_error_t **error"
 .Ft int
-.Fn libwtcdb_file_get_item "libwtcdb_file_t *file, int item_index, libwtcdb_item_t **item, libwtcdb_error_t **error"
+.Fn libwtcdb_file_get_item "libwtcdb_file_t *file" "int item_index" "libwtcdb_item_t **item" "libwtcdb_error_t **error"
 .Pp
 Available when compiled with wide character string support:
 .Ft int
-.Fn libwtcdb_file_open_wide "libwtcdb_file_t *file, const wchar_t *filename, int access_flags, libwtcdb_error_t **error"
+.Fn libwtcdb_file_open_wide "libwtcdb_file_t *file" "const wchar_t *filename" "int access_flags" "libwtcdb_error_t **error"
 .Pp
 Available when compiled with libbfio support:
 .Ft int
-.Fn libwtcdb_file_open_file_io_handle "libwtcdb_file_t *file, libbfio_handle_t *file_io_handle, int access_flags, libwtcdb_error_t **error"
+.Fn libwtcdb_file_open_file_io_handle "libwtcdb_file_t *file" "libbfio_handle_t *file_io_handle" "int access_flags" "libwtcdb_error_t **error"
 .Pp
 Item functions
 .Ft int
-.Fn libwtcdb_item_free "libwtcdb_item_t **item, libwtcdb_error_t **error"
+.Fn libwtcdb_item_free "libwtcdb_item_t **item" "libwtcdb_error_t **error"
 .Sh DESCRIPTION
 The
 .Fn libwtcdb_get_version
@@ -92,8 +90,8 @@ None
 .Sh FILES
 None
 .Sh NOTES
-libwtcdb allows to be compiled with wide character support (wchar_t).
-
+libwtcdb can be compiled with wide character support (wchar_t).
+.sp
 To compile libwtcdb with wide character support use:
 .Ar ./configure --enable-wide-character-type=yes
  or define:
@@ -101,7 +99,7 @@ To compile libwtcdb with wide character support use:
  or
 .Ar UNICODE
  during compilation.
-
+.sp
 .Ar LIBWTCDB_WIDE_CHARACTER_TYPE
  in libwtcdb/features.h can be used to determine if libwtcdb was compiled with wide character support.
 .Sh BUGS
@@ -110,7 +108,7 @@ Please report bugs of any kind on the project issue tracker: https://github.com/
 These man pages are generated from "libwtcdb.h".
 .Sh COPYRIGHT
 Copyright (C) 2010-2019, Joachim Metz <joachim.metz@gmail.com>.
-
+.sp
 This is free software; see the source for copying conditions.
 There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .Sh SEE ALSO

@@ -20,6 +20,7 @@ TESTS = \
 
 check_SCRIPTS = \
 	test_library.sh \
+	test_manpage.sh \
 	test_runner.sh \
 	test_wtcdbexport.sh \
 	test_wtcdbinfo.sh

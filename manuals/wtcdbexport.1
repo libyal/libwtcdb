@@ -1,4 +1,4 @@
-.Dd November 29, 2014
+.Dd July 29, 2019
 .Dt wtcdbexport
 .Os libwtcdb
 .Sh NAME
@@ -9,7 +9,7 @@
 .Op Fl l Ar logfile
 .Op Fl t Ar target
 .Op Fl hvV
-.Va Ar source
+.Ar source
 .Sh DESCRIPTION
 .Nm wtcdbexport
 is a utility to export items stored in a Windows Explorer thumbnail cache database (WTCDB) file
@@ -45,14 +45,14 @@ None
 .Bd -literal
 # wtcdbexport thumbcache_32.db
 wtcdbexport 20101023
-
+.sp
 Opening file.
 Exporting aliases.
 Processing alias 1 out of 1.
 .Dl ...
 Exporting alias 4 out of 4.
 Export completed.
-
+.sp
 .Ed
 .Sh DIAGNOSTICS
 Errors, verbose and debug output are printed to stderr when verbose output \-v is enabled.
