@@ -1,7 +1,7 @@
 /*
  * Export handle
  *
- * Copyright (C) 2010-2019, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2010-2020, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -131,6 +131,7 @@ int export_handle_free(
      libcerror_error_t **error )
 {
 	static char *function = "export_handle_free";
+	int result            = 1;
 
 	if( export_handle == NULL )
 	{
@@ -145,6 +146,19 @@ int export_handle_free(
 	}
 	if( *export_handle != NULL )
 	{
+		if( libwtcdb_file_free(
+		     &( ( *export_handle )->input_file ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free input file.",
+			 function );
+
+			result = -1;
+		}
 		if( ( *export_handle )->target_path != NULL )
 		{
 			memory_free(
@@ -160,7 +174,7 @@ int export_handle_free(
 
 		*export_handle = NULL;
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Signals the export handle to abort

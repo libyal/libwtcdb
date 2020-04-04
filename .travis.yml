@@ -1,18 +1,18 @@
+version: ~> 1.0
 language: c
+os: linux
+dist: bionic
 env:
   global:
    # Encrypted COVERITY_SCAN_TOKEN
    - secure: "hHAwfKc/TWV68Htj99vtSyPX3GNWcHpkhLzWTx7Laf95BSOQjBX3JOio1qr5VHXYux2y+k8T4P53aCtfYN9Bu5sehbrh75QpEDbszmyxfIsqMpFTsZf1gSS3aaZ1CdWgqUs9A3XFdGb3OKE/BH6FbHmeGTVHVtt79Aa6djY/BEI="
-matrix:
+jobs:
   include:
   - name: "Coverity"
     env:
     - CONFIGURE_OPTIONS=""
     - TARGET="coverity"
     compiler: clang
-    os: linux
-    dist: xenial
-    sudo: required
     group: edge
     addons:
       coverity_scan:
@@ -30,9 +30,6 @@ matrix:
     - LDFLAGS="--coverage"
     - TARGET="linux-clang"
     compiler: clang
-    os: linux
-    dist: xenial
-    sudo: required
     group: edge
   - name: "Linux with gcc"
     env:
@@ -41,9 +38,6 @@ matrix:
     - LDFLAGS="--coverage"
     - TARGET="linux-gcc"
     compiler: gcc
-    os: linux
-    dist: xenial
-    sudo: required
     group: edge
   - name: "Linux with gcc on s390x (Docker)"
     env:
@@ -54,9 +48,6 @@ matrix:
     - LDFLAGS="--coverage"
     - TARGET="docker"
     compiler: gcc
-    os: linux
-    dist: xenial
-    sudo: required
     group: edge
     services:
     - docker
@@ -67,9 +58,6 @@ matrix:
     - LDFLAGS="--coverage"
     - TARGET="linux-gcc-wide-character-type"
     compiler: gcc
-    os: linux
-    dist: xenial
-    sudo: required
     group: edge
   - name: "Linux with gcc without optimization"
     env:
@@ -79,9 +67,6 @@ matrix:
     - LDFLAGS="--coverage"
     - TARGET="linux-gcc-no-optimization"
     compiler: gcc
-    os: linux
-    dist: xenial
-    sudo: required
     group: edge
   - name: "Linux with gcc and shared libraries"
     env:
@@ -90,9 +75,6 @@ matrix:
     - LDFLAGS="--coverage"
     - TARGET="linux-gcc-shared"
     compiler: gcc
-    os: linux
-    dist: xenial
-    sudo: required
     group: edge
   - name: "Linux with gcc, shared libraries and wide character type (wchar_t) support"
     env:
@@ -101,9 +83,6 @@ matrix:
     - LDFLAGS="--coverage"
     - TARGET="linux-gcc-shared-wide-character-type"
     compiler: gcc
-    os: linux
-    dist: xenial
-    sudo: required
     group: edge
   - name: "Linux with gcc and static executables support"
     env:
@@ -112,9 +91,6 @@ matrix:
     - LDFLAGS="--coverage"
     - TARGET="linux-gcc-static-executables"
     compiler: gcc
-    os: linux
-    dist: xenial
-    sudo: required
     group: edge
   - name: "Mac OS with clang"
     env:
