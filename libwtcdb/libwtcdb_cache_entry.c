@@ -433,13 +433,19 @@ int libwtcdb_cache_entry_header_read_data(
 		 "\n" );
 	}
 #endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
+#if ( SIZEOF_SIZE_T <= 4 )
+	if( ( cache_entry->data_size < cache_entry_header_size )
+	 || ( cache_entry->data_size > (uint32_t) SSIZE_MAX ) )
+#else
 	if( cache_entry->data_size < cache_entry_header_size )
+#endif
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid cache entry size value out of bounds.",
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid cache entry - data value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -622,6 +628,17 @@ int libwtcdb_cache_entry_read_file_io_handle(
 
 	if( cache_entry->identifier_size > 0 )
 	{
+		if( cache_entry->identifier_size > MEMORY_MAXIMUM_ALLOCATION_SIZE )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+			 "%s: invalid cache entry - identifier size value exceeds maximum allocation size.",
+			 function );
+
+			goto on_error;
+		}
 		if( ( cache_entry->identifier_size > cache_entry->data_size )
 		 || ( data_offset > ( cache_entry->data_size - cache_entry->identifier_size ) ) )
 		{
@@ -704,6 +721,17 @@ int libwtcdb_cache_entry_read_file_io_handle(
 	}
 	if( cache_entry->padding_size > 0 )
 	{
+		if( cache_entry->padding_size > MEMORY_MAXIMUM_ALLOCATION_SIZE )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
+			 "%s: invalid cache entry - padding size value exceeds maximum allocation size.",
+			 function );
+
+			goto on_error;
+		}
 		if( ( cache_entry->padding_size > cache_entry->data_size )
 		 || ( data_offset > ( cache_entry->data_size - cache_entry->padding_size ) ) )
 		{
