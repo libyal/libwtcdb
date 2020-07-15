@@ -19,6 +19,7 @@ SUBDIRS = \
 	po \
 	manuals \
 	tests \
+	ossfuzz \
 	msvscpp
 
 DPKG_FILES = \
@@ -107,4 +108,5 @@ splint:
 	(cd $(srcdir)/wtcdbtools && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/po && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/tests && $(MAKE) $(AM_MAKEFLAGS))
+	(cd $(srcdir)/ossfuzz && $(MAKE) $(AM_MAKEFLAGS))
 

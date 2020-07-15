@@ -27,7 +27,6 @@
 #include <stdlib.h>
 #endif
 
-#include "wtcdb_test_libcerror.h"
 #include "wtcdb_test_libwtcdb.h"
 #include "wtcdb_test_macros.h"
 #include "wtcdb_test_unused.h"

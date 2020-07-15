@@ -37,9 +37,16 @@
 #include "wtcdb_test_libwtcdb.h"
 #include "wtcdb_test_macros.h"
 #include "wtcdb_test_memory.h"
-#include "wtcdb_test_unused.h"
 
 #include "../libwtcdb/libwtcdb_file.h"
+
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER ) && SIZEOF_WCHAR_T != 2 && SIZEOF_WCHAR_T != 4
+#error Unsupported size of wchar_t
+#endif
+
+/* Define to make wtcdb_test_file generate verbose output
+#define WTCDB_TEST_FILE_VERBOSE
+ */
 
 #if !defined( LIBWTCDB_HAVE_BFIO )
 
@@ -56,14 +63,6 @@ int libwtcdb_file_open_file_io_handle(
      libwtcdb_error_t **error );
 
 #endif /* !defined( LIBWTCDB_HAVE_BFIO ) */
-
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER ) && SIZEOF_WCHAR_T != 2 && SIZEOF_WCHAR_T != 4
-#error Unsupported size of wchar_t
-#endif
-
-/* Define to make wtcdb_test_file generate verbose output
-#define WTCDB_TEST_FILE_VERBOSE
- */
 
 /* Creates and opens a source file
  * Returns 1 if successful or -1 on error
@@ -266,6 +265,8 @@ int wtcdb_test_file_initialize(
 	          &file,
 	          &error );
 
+	file = NULL;
+
 	WTCDB_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -277,8 +278,6 @@ int wtcdb_test_file_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	file = NULL;
 
 #if defined( HAVE_WTCDB_TEST_MEMORY )
 
@@ -800,13 +799,13 @@ int wtcdb_test_file_open_file_io_handle(
 	 result,
 	 1 );
 
-        WTCDB_TEST_ASSERT_IS_NOT_NULL(
-         "file_io_handle",
-         file_io_handle );
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "file_io_handle",
+	 file_io_handle );
 
-        WTCDB_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	string_length = system_string_length(
 	                 source );
@@ -829,9 +828,9 @@ int wtcdb_test_file_open_file_io_handle(
 	 result,
 	 1 );
 
-        WTCDB_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libwtcdb_file_initialize(
 	          &file,
@@ -972,12 +971,12 @@ int wtcdb_test_file_open_file_io_handle(
 	 1 );
 
 	WTCDB_TEST_ASSERT_IS_NULL(
-         "file_io_handle",
-         file_io_handle );
+	 "file_io_handle",
+	 file_io_handle );
 
-        WTCDB_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	WTCDB_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	return( 1 );
 
@@ -1243,7 +1242,6 @@ int wtcdb_test_file_get_type(
 	libcerror_error_t *error = NULL;
 	uint8_t type             = 0;
 	int result               = 0;
-	int type_is_set          = 0;
 
 	/* Test regular cases
 	 */
@@ -1252,16 +1250,14 @@ int wtcdb_test_file_get_type(
 	          &type,
 	          &error );
 
-	WTCDB_TEST_ASSERT_NOT_EQUAL_INT(
+	WTCDB_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 1 );
 
 	WTCDB_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
-
-	type_is_set = result;
 
 	/* Test error cases
 	 */
@@ -1282,25 +1278,23 @@ int wtcdb_test_file_get_type(
 	libcerror_error_free(
 	 &error );
 
-	if( type_is_set != 0 )
-	{
-		result = libwtcdb_file_get_type(
-		          file,
-		          NULL,
-		          &error );
+	result = libwtcdb_file_get_type(
+	          file,
+	          NULL,
+	          &error );
 
-		WTCDB_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
 
-		WTCDB_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
-		libcerror_error_free(
-		 &error );
-	}
+	libcerror_error_free(
+	 &error );
+
 	return( 1 );
 
 on_error:
@@ -1318,10 +1312,9 @@ on_error:
 int wtcdb_test_file_get_number_of_items(
      libwtcdb_file_t *file )
 {
-	libcerror_error_t *error   = NULL;
-	int number_of_items        = 0;
-	int number_of_items_is_set = 0;
-	int result                 = 0;
+	libcerror_error_t *error = NULL;
+	int number_of_items      = 0;
+	int result               = 0;
 
 	/* Test regular cases
 	 */
@@ -1330,16 +1323,14 @@ int wtcdb_test_file_get_number_of_items(
 	          &number_of_items,
 	          &error );
 
-	WTCDB_TEST_ASSERT_NOT_EQUAL_INT(
+	WTCDB_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 1 );
 
 	WTCDB_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
-
-	number_of_items_is_set = result;
 
 	/* Test error cases
 	 */
@@ -1360,25 +1351,23 @@ int wtcdb_test_file_get_number_of_items(
 	libcerror_error_free(
 	 &error );
 
-	if( number_of_items_is_set != 0 )
-	{
-		result = libwtcdb_file_get_number_of_items(
-		          file,
-		          NULL,
-		          &error );
+	result = libwtcdb_file_get_number_of_items(
+	          file,
+	          NULL,
+	          &error );
 
-		WTCDB_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+	WTCDB_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
 
-		WTCDB_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
-		libcerror_error_free(
-		 &error );
-	}
+	libcerror_error_free(
+	 &error );
+
 	return( 1 );
 
 on_error:
@@ -1397,7 +1386,7 @@ int wtcdb_test_file_get_item(
      libwtcdb_file_t *file )
 {
 	libcerror_error_t *error = NULL;
-	libwtcdb_item_t *item    = 0;
+	libwtcdb_item_t *item    = NULL;
 	int result               = 0;
 
 	/* Test regular cases
@@ -1408,10 +1397,10 @@ int wtcdb_test_file_get_item(
 	          &item,
 	          &error );
 
-	WTCDB_TEST_ASSERT_NOT_EQUAL_INT(
+	WTCDB_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 1 );
 
 	WTCDB_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1509,6 +1498,12 @@ on_error:
 	{
 		libcerror_error_free(
 		 &error );
+	}
+	if( item != NULL )
+	{
+		libwtcdb_item_free(
+		 &item,
+		 NULL );
 	}
 	return( 0 );
 }
@@ -1701,12 +1696,12 @@ int main(
 		 wtcdb_test_file_get_number_of_items,
 		 file );
 
-#ifdef TODO
+/* TODO implement
 		WTCDB_TEST_RUN_WITH_ARGS(
 		 "libwtcdb_file_get_item",
 		 wtcdb_test_file_get_item,
 		 file );
-#endif
+*/
 
 		/* Clean up
 		 */

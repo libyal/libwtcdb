@@ -105,14 +105,14 @@ uint8_t wtcdb_test_cache_entry_error_data4[ 88 ] = {
 int wtcdb_test_cache_entry_initialize(
      void )
 {
-	libcerror_error_t *error          = NULL;
+	libcerror_error_t *error            = NULL;
 	libwtcdb_cache_entry_t *cache_entry = NULL;
-	int result                        = 0;
+	int result                          = 0;
 
 #if defined( HAVE_WTCDB_TEST_MEMORY )
-	int number_of_malloc_fail_tests   = 1;
-	int number_of_memset_fail_tests   = 1;
-	int test_number                   = 0;
+	int number_of_malloc_fail_tests     = 1;
+	int number_of_memset_fail_tests     = 1;
+	int test_number                     = 0;
 #endif
 
 	/* Test regular cases
