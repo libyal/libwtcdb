@@ -151,6 +151,8 @@ int wtcdb_test_file_header_initialize(
 	          &file_header,
 	          &error );
 
+	file_header = NULL;
+
 	WTCDB_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -162,8 +164,6 @@ int wtcdb_test_file_header_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	file_header = NULL;
 
 #if defined( HAVE_WTCDB_TEST_MEMORY )
 

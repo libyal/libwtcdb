@@ -175,6 +175,8 @@ int wtcdb_test_cache_entry_initialize(
 	          &cache_entry,
 	          &error );
 
+	cache_entry = NULL;
+
 	WTCDB_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -186,8 +188,6 @@ int wtcdb_test_cache_entry_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	cache_entry = NULL;
 
 #if defined( HAVE_WTCDB_TEST_MEMORY )
 

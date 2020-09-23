@@ -113,6 +113,8 @@ int wtcdb_test_item_value_initialize(
 	          &item_value,
 	          &error );
 
+	item_value = NULL;
+
 	WTCDB_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -124,8 +126,6 @@ int wtcdb_test_item_value_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	item_value = NULL;
 
 #if defined( HAVE_WTCDB_TEST_MEMORY )
 
