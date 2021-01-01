@@ -1,7 +1,7 @@
 /*
  * File header functions
  *
- * Copyright (C) 2010-2020, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2010-2021, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -410,25 +410,11 @@ int libwtcdb_file_header_read_file_io_handle(
 		 function );
 	}
 #endif
-	if( libbfio_handle_seek_offset(
-	     file_io_handle,
-	     0,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek file header offset: 0.",
-		 function );
-
-		return( -1 );
-	}
-	read_count = libbfio_handle_read_buffer(
+	read_count = libbfio_handle_read_buffer_at_offset(
 	              file_io_handle,
 	              file_header_data,
 	              24,
+	              0,
 	              error );
 
 	if( read_count != (ssize_t) 24 )
@@ -437,7 +423,7 @@ int libwtcdb_file_header_read_file_io_handle(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read file header data.",
+		 "%s: unable to read file header data at offset: 0 (0x00000000).",
 		 function );
 
 		return( -1 );
