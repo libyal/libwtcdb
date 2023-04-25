@@ -2,7 +2,7 @@ AC_PREREQ([2.71])
 
 AC_INIT(
  [libwtcdb],
- [20230130],
+ [20230425],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
