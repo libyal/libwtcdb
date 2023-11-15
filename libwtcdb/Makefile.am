@@ -66,11 +66,13 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 distclean: clean
-	/bin/rm -f libwtcdb_definitions.h
-	/bin/rm -f libwtcdb.rc
-	/bin/rm -f Makefile
+	-rm -f libwtcdb_definitions.h
+	-rm -f libwtcdb.rc
+	-rm -f Makefile
 
-splint:
+sources-local: $(BUILT_SOURCES)
+
+splint-local:
 	@echo "Running splint on libwtcdb ..."
 	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(libwtcdb_la_SOURCES)
 

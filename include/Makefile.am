@@ -19,9 +19,9 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 distclean: clean
-	/bin/rm -f libwtcdb.h
-	/bin/rm -f libwtcdb/definitions.h
-	/bin/rm -f libwtcdb/features.h
-	/bin/rm -f libwtcdb/types.h
-	/bin/rm -f Makefile
+	-rm -f libwtcdb.h
+	-rm -f libwtcdb/definitions.h
+	-rm -f libwtcdb/features.h
+	-rm -f libwtcdb/types.h
+	-rm -f Makefile
 

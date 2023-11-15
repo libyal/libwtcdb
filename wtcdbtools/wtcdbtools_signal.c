@@ -40,7 +40,7 @@ void (*wtcdbtools_signal_signal_handler)( wtcdbtools_signal_t ) = NULL;
 /* Signal handler for Ctrl+C or Ctrl+Break signals
  */
 BOOL WINAPI wtcdbtools_signal_handler(
-             unsigned long signal )
+             wtcdbtools_signal_t signal )
 {
 	static char *function = "wtcdbtools_signal_handler";
 
@@ -112,7 +112,7 @@ int wtcdbtools_signal_attach(
 	wtcdbtools_signal_signal_handler = signal_handler;
 
 	if( SetConsoleCtrlHandler(
-	     wtcdbtools_signal_handler,
+	     (PHANDLER_ROUTINE) wtcdbtools_signal_handler,
 	     TRUE ) == 0 )
 	{
 		libcerror_error_set(
@@ -179,7 +179,7 @@ int wtcdbtools_signal_detach(
 	static char *function = "wtcdbtools_signal_detach";
 
 	if( SetConsoleCtrlHandler(
-	     wtcdbtools_signal_handler,
+	     (PHANDLER_ROUTINE) wtcdbtools_signal_handler,
 	     FALSE ) == 0 )
 	{
 		libcerror_error_set(
