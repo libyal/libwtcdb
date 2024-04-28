@@ -8,9 +8,7 @@ EXTRA_DIST = \
 	wtcdbinfo.1 \
 	libwtcdb.3
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f Makefile
 

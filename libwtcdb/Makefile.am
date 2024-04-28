@@ -1,6 +1,6 @@
 AM_CPPFLAGS = \
-	-I$(top_srcdir)/include \
-	-I$(top_srcdir)/common \
+	-I../include -I$(top_srcdir)/include \
+	-I../common -I$(top_srcdir)/common \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -62,13 +62,11 @@ EXTRA_DIST = \
 	libwtcdb.rc \
 	libwtcdb.rc.in
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	libwtcdb_definitions.h \
+	libwtcdb.rc \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f libwtcdb_definitions.h
-	-rm -f libwtcdb.rc
-	-rm -f Makefile
 
 sources-local: $(BUILT_SOURCES)
 

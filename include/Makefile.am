@@ -15,13 +15,11 @@ EXTRA_DIST = \
 	libwtcdb/features.h.in \
 	libwtcdb/types.h.in
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	libwtcdb.h \
+	libwtcdb/definitions.h \
+	libwtcdb/features.h \
+	libwtcdb/types.h \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f libwtcdb.h
-	-rm -f libwtcdb/definitions.h
-	-rm -f libwtcdb/features.h
-	-rm -f libwtcdb/types.h
-	-rm -f Makefile
 
