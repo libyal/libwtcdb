@@ -21,6 +21,7 @@
 
 #include <common.h>
 #include <file_stream.h>
+#include <memory.h>
 #include <types.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
@@ -46,8 +47,20 @@ int wtcdb_test_crc64_weak_calculate(
 	uint8_t buffer[ 128 ];
 
 	libcerror_error_t *error = NULL;
+	void *memset_result      = NULL;
 	uint64_t crc64           = 0;
 	int result               = 0;
+
+	/* Initialize test
+	 */
+	memset_result = memory_set(
+	                 buffer,
+	                 0,
+	                 sizeof( uint8_t ) * 128 );
+
+	WTCDB_TEST_ASSERT_IS_NOT_NULL(
+	 "memset_result",
+	 memset_result );
 
 	/* Test regular cases
 	 */

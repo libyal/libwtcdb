@@ -31,7 +31,7 @@ for the libwtcdb project.
 == License
 
 ....
-Copyright (C) 2010-2021, Joachim Metz <joachim.metz@gmail.com>.
+Copyright (C) 2010-2024, Joachim Metz <joachim.metz@gmail.com>.
 Permission is granted to copy, distribute and/or modify this document under the
 terms of the GNU Free Documentation License, Version 1.3 or any later version
 published by the Free Software Foundation; with no Invariant Sections, no
@@ -51,6 +51,7 @@ in the section entitled "GNU Free Documentation License".
 | 0.0.4 | J.B. Metz | November 2015 | Switched to asciidoc format.
 | 0.0.5 | J.B. Metz | February 2018 | Additional changes.
 | 0.0.6 | J.B. Metz | August 2021 | Changes for formatting.
+| 0.0.7 | J.B. Metz | May 2024 | Additional information about format version 30, 31 and 32 with thanks to S. Augustin and Pascal (patatetom).
 |===
 
 :numbered:
@@ -79,6 +80,10 @@ document:
 
 * Windows Vista
 * Windows 7
+* Windows 8.0
+* Windows 8.1
+* Windows 10
+* Windows 11
 
 == Common
 
@@ -87,8 +92,12 @@ document:
 [cols="1,1,5",options="header"]
 |===
 | Value | Identifier | Description
-| 20 | | Windows Vista
-| 21 | | Windows 7
+| 20 | | Seen on Windows Vista
+| 21 | | Seen on Windows 7
+3+|
+| 30 | | Seen on Windows 8.0
+| 31 | | Seen on Windows 8.1
+| 32 | | Seen on Windows 10 and 11
 |===
 
 == Cache file
@@ -100,7 +109,7 @@ The cache file consists of:
 
 === File header
 
-The file header is 24 bytes of size and consist of:
+The file header is 24 bytes in size and consist of:
 
 [cols="1,1,1,5",options="header"]
 |===
@@ -111,7 +120,7 @@ See section: <<format_versions,Format versions>>
 | 8 | 4 | | Cache type +
 See section: <<cache_types,Cache types>>
 | 12 | 4 | | Offset to first cache entry +
-(Or the file header size)
+Contains 0 if not set
 | 16 | 4 | | Offset to first available cache entry
 | 20 | 4 | | Number of cache entries +
 [yellow-background]*Value is not always accurate, could it be the number of allocated items instead?*
@@ -119,14 +128,71 @@ See section: <<cache_types,Cache types>>
 
 ==== [[cache_types]]Cache types
 
+===== Cache types - format version 20 and 21
+
 [cols="1,1,5",options="header"]
 |===
 | Value | Identifier | Description
-| 0 | | thumbcache_32.db, 32 x 32
-| 1 | | thumbcache_96.db, 96 x 96
-| 2 | | thumbcache_256.db, 256 x 256
-| 3 | | thumbcache_1024.db, 1024 x 768
+| 0 | | thumbcache_32.db (32 x 32)
+| 1 | | thumbcache_96.db (96 x 96)
+| 2 | | thumbcache_256.db (256 x 256)
+| 3 | | thumbcache_1024.db (1024 x 768)
 | 4 | | thumbcache_sr.db
+|===
+
+===== Cache types - format version 30
+
+[cols="1,1,5",options="header"]
+|===
+| Value | Identifier | Description
+| 0 | | thumbcache_16.db
+| 1 | | thumbcache_32.db (32 x 32)
+| 2 | | thumbcache_48.db
+| 3 | | thumbcache_96.db (96 x 96)
+| 4 | | thumbcache_256.db (256 x 256)
+| 5 | | thumbcache_1024.db (1024 x 768)
+| 6 | | thumbcache_sr.db
+| 7 | | thumbcache_wide.db
+| 8 | | thumbcache_exif.db
+|===
+
+===== Cache types - format version 31
+
+[cols="1,1,5",options="header"]
+|===
+| Value | Identifier | Description
+| 0 | | thumbcache_16.db
+| 1 | | thumbcache_32.db (32 x 32)
+| 2 | | thumbcache_48.db
+| 3 | | thumbcache_96.db (96 x 96)
+| 4 | | thumbcache_256.db (256 x 256)
+| 5 | | thumbcache_1024.db (1024 x 768)
+| 6 | | thumbcache_1600.db
+| 7 | | thumbcache_sr.db
+| 8 | | thumbcache_wide.db
+| 9 | | thumbcache_exif.db
+| 10 | | thumbcache_wide_alternate.db
+|===
+
+===== Cache types - format version 32
+
+[cols="1,1,5",options="header"]
+|===
+| Value | Identifier | Description
+| 0 | | thumbcache_16.db
+| 1 | | thumbcache_32.db (32 x 32)
+| 2 | | thumbcache_48.db
+| 3 | | thumbcache_96.db (96 x 96)
+| 4 | | thumbcache_256.db (256 x 256)
+| 5 | | thumbcache_768.db
+| 6 | | thumbcache_1280.db
+| 7 | | thumbcache_1920.db
+| 8 | | thumbcache_2560.db
+| 9 | | thumbcache_sr.db
+| 10 | | thumbcache_wide.db
+| 11 | | thumbcache_exif.db
+| 12 | | thumbcache_wide_alternate.db
+| 13 | | thumbcache_custom_stream.db
 |===
 
 === Cache entry
@@ -136,9 +202,9 @@ The size of the first available cache entry can entail the remainder of the
 file. This entry should not have an identifier size, padding size, or data
 size. The remainder of this entry should consist of zero bytes.
 
-==== Windows Vista cache entry
+==== Cache entry - format version 20
 
-The Windows Vista cache entry is variable of size and consist of:
+The cache entry - format version 20 is of variable size and consist of:
 
 [cols="1,1,1,5",options="header"]
 |===
@@ -146,7 +212,7 @@ The Windows Vista cache entry is variable of size and consist of:
 | 0 | 4 | "CMMM" | The signature
 | 4 | 4 | | Cache entry size +
 This includes the signature and size value.
-| 8 | 8 | | [yellow-background]*Entry hash* +
+| 8 | 8 | | [yellow-background]*Unknown (Entry hash)*
 [yellow-background]*Hash algorithm?*
 | 16 | 8 | | File extension +
 UTF-16 string with end-of-string character +
@@ -159,7 +225,7 @@ Can be an empty string
 Contains a CRC-64
 | 48 | 8 | | Header checksum +
 Contains a CRC-64 +
-The checkum is calculated for the first 48 or 40 bytes of the cache entry with an initial value of -1 (0xffffffffffffffff)
+The checkum is calculated for the first 48 bytes of the cache entry with an initial value of -1 (0xffffffffffffffff)
 | 56 | identifier string size | | Identifier string +
 UTF-16 string without an end-of-string character +
 4+| _If padding size > 0_
@@ -176,9 +242,9 @@ The CRC-64 uses an unknown polynomial, however the look-up table is stored in
 thumbcache.dll. The calculation does not use the initial and final XOR with -1
 (0xffffffffffffffff) like the Weak CRC-32 in the Personal Folder Format.
 
-==== Windows 7 cache entry
+==== Cache entry - format version 21
 
-The Windows 7 cache entry is variable of size and consist of:
+The cache entry - format version 21 is of variable size and consist of:
 
 [cols="1,1,1,5",options="header"]
 |===
@@ -186,7 +252,7 @@ The Windows 7 cache entry is variable of size and consist of:
 | 0 | 4 | "CMMM" | The signature
 | 4 | 4 | | Cache entry size +
 This includes the signature and size value.
-| 8 | 8 | | [yellow-background]*Entry hash* +
+| 8 | 8 | | [yellow-background]*Unknown (Entry hash)*
 [yellow-background]*Hash algorithm?*
 | 16 | 4 | | Identifier string size
 | 20 | 4 | | Padding size
@@ -196,8 +262,46 @@ This includes the signature and size value.
 Contains a CRC-64
 | 40 | 8 | | Header checksum +
 Contains a CRC-64 +
-The checkum is calculated for the first 48 or 40 bytes of the cache entry with an initial value of -1 (0xffffffffffffffff)
+The checkum is calculated for the first 40 bytes of the cache entry with an initial value of -1 (0xffffffffffffffff)
 | 48 | identifier string size | | Identifier string +
+UTF-16 string without an end-of-string character +
+4+| _If padding size > 0_
+| ... | padding size | | Padding +
+[yellow-background]*Should consist of zero bytes*
+4+| _Common_
+| ... | data size | | Data
+|===
+
+The identifier string can contain a string representation of a 64-bit
+hexadecimal ThumbnailCacheId value without leading zeros.
+
+The CRC-64 uses an unknown polynomial, however the look-up table is stored in
+thumbcache.dll. The calculation does not use the initial and final XOR with -1
+(0xffffffffffffffff) like the Weak CRC-32 in the Personal Folder Format.
+
+==== Cache entry - format version 30 (and later)
+
+The cache entry - format version 30 is of variable size and consist of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 4 | "CMMM" | The signature
+| 4 | 4 | | Cache entry size +
+This includes the signature and size value.
+| 8 | 8 | | [yellow-background]*Unknown (Entry hash)*
+[yellow-background]*Hash algorithm?*
+| 16 | 4 | | Identifier string size
+| 20 | 4 | | Padding size
+| 24 | 4 | | Data size
+| 28 | 4 | | [yellow-background]*Unknown (format version? or 0)*
+| 32 | 8 | | [yellow-background]*Unknown (format version? or 0)*
+| 40 | 8 | | Data checksum +
+Contains a CRC-64
+| 48 | 8 | | Header checksum +
+Contains a CRC-64 +
+The checkum is calculated for the first 48 bytes of the cache entry with an initial value of -1 (0xffffffffffffffff)
+| 56 | identifier string size | | Identifier string +
 UTF-16 string without an end-of-string character +
 4+| _If padding size > 0_
 | ... | padding size | | Padding +
@@ -222,7 +326,9 @@ The index file consists of:
 
 === File header
 
-The file header is 24 bytes of size and consist of:
+==== File header - format version 20 and 21
+
+The file header - format version 20 and 21 is 24 bytes in size and consist of:
 
 [cols="1,1,1,5",options="header"]
 |===
@@ -237,55 +343,64 @@ Contains the total number of entries in the file, both used and unused
 | 20 | 4 | | [yellow-background]*Unknown (empty value)*
 |===
 
-=== Index entry
+==== File header - format version 30
 
-==== Windows Vista index entry
-
-The Windows Vista index entry is 40 bytes of size and consist of:
+The file header - format version 30 is 28 bytes in size and consist of:
 
 [cols="1,1,1,5",options="header"]
 |===
 | Offset | Size | Value | Description
-| 0 | 8 | | [yellow-background]*Entry hash* +
+| 0 | 4 | | [yellow-background]*Unknown*
+| 4 | 4 | "IMMM" | The signature
+| 8 | 4 | | Format version +
+See section: <<format_versions,Format versions>>
+| 12 | 8 | | [yellow-background]*Unknown*
+| 20 | 4 | | The number of entries used
+| 24 | 4 | | Number of entries +
+Contains the total number of entries in the file, both used and unused
+|===
+
+TODO: is remainder of data upto offset 0x110 part of the file header?
+
+=== Index entry
+
+==== Index entry - format version 20
+
+The index entry - format version 20 is 40 bytes in size and consist of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 8 | | [yellow-background]*Unknown (Entry hash)*
 [yellow-background]*Hash algorithm?*
 | 8 | 8 | | Last modification date and time +
 Contains a FILETIME
 | 16 | 4 | | Flags +
 See section: <<index_entry_flags,Index entry flags>>
-| 20 | 4 | | Cache entry offset in corresponding thumbcache_32.db file +
-Contains an offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
-| 24 | 4 | | Cache entry offset in corresponding thumbcache_96.db file +
-Contains an offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
-| 28 | 4 | | Cache entry offset in corresponding thumbcache_256.db file +
-Contains an offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
-| 32 | 4 | | Cache entry offset in corresponding thumbcache_1024.db file +
-Contains an offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
-| 36 | 4 | | Cache entry offset in corresponding thumbcache_sr.db file +
-Contains an offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
+| 20 | 5 x 4 | | Array if cache entry offsets +
+Contains a 32-bit offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
 |===
 
-==== Windows 7 index entry
+See section: <<cache_types,cache types>> for the cache file represented by
+the cache entry offset.
 
-The Windows 7 index entry is 32 bytes of size and consist of:
+==== Index entry - format version 21
+
+The index entry - format version 21 is 32 bytes in size and consist of:
 
 [cols="1,1,1,5",options="header"]
 |===
 | Offset | Size | Value | Description
-| 0 | 8 | | [yellow-background]*Entry hash* +
+| 0 | 8 | | [yellow-background]*Unknown (Entry hash)*
 [yellow-background]*Hash algorithm?*
 | 8 | 4 | | Flags +
 See section: <<index_entry_flags,Index entry flags>>
-| 12 | 4 | | Cache entry offset in corresponding thumbcache_32.db file +
-Contains an offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
-| 16 | 4 | | Cache entry offset in corresponding thumbcache_96.db file +
-Contains an offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
-| 20 | 4 | | Cache entry offset in corresponding thumbcache_256.db file +
-Contains an offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
-| 24 | 4 | | Cache entry offset in corresponding thumbcache_1024.db file +
-Contains an offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
-| 28 | 4 | | Cache entry offset in corresponding thumbcache_sr.db file +
-Contains an offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
+| 12 | 5 x 4 | | Array if cache entry offsets +
+Contains a 32-bit offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
 |===
+
+See section: <<cache_types,cache types>> for the cache file represented by
+the cache entry offset.
 
 === [[index_entry_flags]]Index entry flags
 
@@ -295,7 +410,7 @@ Contains an offset relative to the start of the file, 0 if not set or -1 if no c
 |===
 | Value | Identifier | Description
 | 0x00000001 | | [yellow-background]*Set if the cache entry has no data*
-4+| [yellow-background]*Introduced in Windows 7 (version 21)?*
+4+| [yellow-background]*Introduced in format version 21?*
 | 0x00000002 | |
 | | |
 | 0x00000200 | |
@@ -316,6 +431,59 @@ Contains an offset relative to the start of the file, 0 if not set or -1 if no c
 | | |
 | 0x80000000 | |
 |===
+
+==== Index entry - format version 30
+
+The index entry - format version 30 is 56 bytes in size and consist of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 8 | | [yellow-background]*Unknown (Entry hash)*
+[yellow-background]*Hash algorithm?*
+| 8 | 8 | | [yellow-background]*Unknown (flags?)*
+| 16 | 9 x 4 | | Array if cache entry offsets +
+Contains a 32-bit offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
+| 52 | 4 | | [yellow-background]*Unknown (empty value)*
+|===
+
+See section: <<cache_types,cache types>> for the cache file represented by
+the cache entry offset.
+
+==== Index entry - format version 31
+
+The index entry - format version 31 is 64 bytes in size and consist of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 8 | | [yellow-background]*Unknown (Entry hash)*
+[yellow-background]*Hash algorithm?*
+| 8 | 8 | | [yellow-background]*Unknown (flags?)*
+| 16 | 11 x 4 | | Array if cache entry offsets +
+Contains a 32-bit offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
+| 60 | 4 | | [yellow-background]*Unknown (empty value)*
+|===
+
+See section: <<cache_types,cache types>> for the cache file represented by
+the cache entry offset.
+
+==== Index entry - format version 32
+
+The index entry - format version 32 is 72 bytes in size and consist of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 8 | | [yellow-background]*Unknown (Entry hash)*
+[yellow-background]*Hash algorithm?*
+| 8 | 8 | | [yellow-background]*Unknown (flags?)*
+| 16 | 14 x 4 | | Array if cache entry offsets +
+Contains a 32-bit offset relative to the start of the file, 0 if not set or -1 if no cache entry in the file
+|===
+
+See section: <<cache_types,cache types>> for the cache file represented by
+the cache entry offset.
 
 ==== Notes
 

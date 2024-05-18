@@ -145,10 +145,14 @@ int libwtcdb_file_header_read_data(
      size_t data_size,
      libcerror_error_t **error )
 {
-	static char *function = "libwtcdb_file_header_read_data";
+	static char *function         = "libwtcdb_file_header_read_data";
+	size_t file_header_data_size  = 0;
+	uint8_t file_type             = 0;
+	uint8_t number_of_cache_types = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	uint32_t value_32bit  = 0;
+	uint64_t value_64bit          = 0;
+	uint32_t value_32bit          = 0;
 #endif
 
 	if( file_header == NULL )
@@ -173,24 +177,49 @@ int libwtcdb_file_header_read_data(
 
 		return( -1 );
 	}
-	if( data_size < 24 )
+	if( ( data_size < 8 )
+	 || ( data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: invalid data size value too small.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid data size value out of bounds.",
 		 function );
 
 		return( -1 );
 	}
-	if( data_size > (size_t) SSIZE_MAX )
+	if( memory_compare(
+	     data,
+	     wtcdb_cache_file_signature,
+	     4 ) == 0 )
+	{
+		file_type             = LIBWTCDB_FILE_TYPE_CACHE;
+		file_header_data_size = 24;
+	}
+	else if( memory_compare(
+	          data,
+	          wtcdb_index_file_signature,
+	          4 ) == 0 )
+	{
+		file_type             = LIBWTCDB_FILE_TYPE_INDEX_V20;
+		file_header_data_size = 24;
+	}
+	else if( memory_compare(
+	          &( data[ 4 ] ),
+	          wtcdb_index_file_signature,
+	          4 ) == 0 )
+	{
+		file_type             = LIBWTCDB_FILE_TYPE_INDEX_V30;
+		file_header_data_size = 28;
+	}
+	if( data_size < file_header_data_size )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid data size value exceeds maximum.",
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid data size value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -203,25 +232,11 @@ int libwtcdb_file_header_read_data(
 		 function );
 		libcnotify_print_data(
 		 data,
-		 24,
+		 file_header_data_size,
 		 0 );
 	}
 #endif
-	if( memory_compare(
-	     data,
-	     wtcdb_cache_file_signature,
-	     4 ) == 0 )
-	{
-		file_header->file_type = LIBWTCDB_FILE_TYPE_CACHE;
-	}
-	else if( memory_compare(
-	          data,
-	          wtcdb_index_file_signature,
-	          4 ) == 0 )
-	{
-		file_header->file_type = LIBWTCDB_FILE_TYPE_INDEX;
-	}
-	else
+	if( file_type == 0 )
 	{
 		libcerror_error_set(
 		 error,
@@ -232,11 +247,20 @@ int libwtcdb_file_header_read_data(
 
 		return( -1 );
 	}
-	byte_stream_copy_to_uint32_little_endian(
-	 &( data[ 4 ] ),
-	 file_header->format_version );
-
-	if( file_header->file_type == LIBWTCDB_FILE_TYPE_CACHE )
+	if( ( file_type == LIBWTCDB_FILE_TYPE_CACHE )
+	 || ( file_type == LIBWTCDB_FILE_TYPE_INDEX_V20 ) )
+	{
+		byte_stream_copy_to_uint32_little_endian(
+		 &( data[ 4 ] ),
+		 file_header->format_version );
+	}
+	else if( file_type == LIBWTCDB_FILE_TYPE_INDEX_V30 )
+	{
+		byte_stream_copy_to_uint32_little_endian(
+		 &( data[ 8 ] ),
+		 file_header->format_version );
+	}
+	if( file_type == LIBWTCDB_FILE_TYPE_CACHE )
 	{
 		byte_stream_copy_to_uint32_little_endian(
 		 ( (wtcdb_cache_file_header_t *) data )->cache_type,
@@ -254,31 +278,56 @@ int libwtcdb_file_header_read_data(
 		 ( (wtcdb_cache_file_header_t *) data )->number_of_cache_entries,
 		 file_header->number_of_entries );
 	}
-	else if( file_header->file_type == LIBWTCDB_FILE_TYPE_INDEX )
+	else if( file_type == LIBWTCDB_FILE_TYPE_INDEX_V20 )
 	{
-		file_header->first_entry_offset = sizeof( wtcdb_index_file_header_t );
-
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (wtcdb_index_file_header_t *) data )->number_of_index_entries,
+		 ( (wtcdb_index_file_header_v20_t *) data )->number_of_index_entries,
+		 file_header->number_of_entries );
+	}
+	else if( file_type == LIBWTCDB_FILE_TYPE_INDEX_V30 )
+	{
+		byte_stream_copy_to_uint32_little_endian(
+		 ( (wtcdb_index_file_header_v30_t *) data )->number_of_index_entries,
 		 file_header->number_of_entries );
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
-		libcnotify_printf(
-		 "%s: signature\t\t\t\t: %c%c%c%c\n",
-		 function,
-		 data[ 0 ],
-		 data[ 1 ],
-		 data[ 2 ],
-		 data[ 3 ] );
+		if( ( file_type == LIBWTCDB_FILE_TYPE_CACHE )
+		 || ( file_type == LIBWTCDB_FILE_TYPE_INDEX_V20 ) )
+		{
+			libcnotify_printf(
+			 "%s: signature\t\t\t\t: %c%c%c%c\n",
+			 function,
+			 data[ 0 ],
+			 data[ 1 ],
+			 data[ 2 ],
+			 data[ 3 ] );
+		}
+		else if( file_type == LIBWTCDB_FILE_TYPE_INDEX_V30 )
+		{
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (wtcdb_index_file_header_v30_t *) data )->unknown1,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: unknown1\t\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 value_32bit );
 
+			libcnotify_printf(
+			 "%s: signature\t\t\t\t: %c%c%c%c\n",
+			 function,
+			 data[ 4 ],
+			 data[ 5 ],
+			 data[ 6 ],
+			 data[ 7 ] );
+		}
 		libcnotify_printf(
 		 "%s: format version\t\t\t\t: %" PRIu32 "\n",
 		 function,
 		 file_header->format_version );
 
-		if( file_header->file_type == LIBWTCDB_FILE_TYPE_CACHE )
+		if( file_type == LIBWTCDB_FILE_TYPE_CACHE )
 		{
 			libcnotify_printf(
 			 "%s: cache type\t\t\t\t: %" PRIu32 "\n",
@@ -300,10 +349,10 @@ int libwtcdb_file_header_read_data(
 			 function,
 			 file_header->number_of_entries );
 		}
-		else if( file_header->file_type == LIBWTCDB_FILE_TYPE_INDEX )
+		else if( file_type == LIBWTCDB_FILE_TYPE_INDEX_V20 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (wtcdb_index_file_header_t *) data )->unknown1,
+			 ( (wtcdb_index_file_header_v20_t *) data )->unknown1,
 			 value_32bit );
 			libcnotify_printf(
 			 "%s: unknown1\t\t\t\t: 0x%08" PRIx32 "\n",
@@ -311,7 +360,7 @@ int libwtcdb_file_header_read_data(
 			 value_32bit );
 
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (wtcdb_index_file_header_t *) data )->number_of_index_entries_used,
+			 ( (wtcdb_index_file_header_v20_t *) data )->number_of_index_entries_used,
 			 value_32bit );
 			libcnotify_printf(
 			 "%s: number of index entries used\t\t: %" PRIu32 "\n",
@@ -324,19 +373,46 @@ int libwtcdb_file_header_read_data(
 			 file_header->number_of_entries );
 
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (wtcdb_index_file_header_t *) data )->unknown2,
+			 ( (wtcdb_index_file_header_v20_t *) data )->unknown2,
 			 value_32bit );
 			libcnotify_printf(
 			 "%s: unknown2\t\t\t\t: 0x%08" PRIx32 "\n",
 			 function,
 			 value_32bit );
 		}
+		else if( file_type == LIBWTCDB_FILE_TYPE_INDEX_V30 )
+		{
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (wtcdb_index_file_header_v30_t *) data )->unknown2,
+			 value_64bit );
+			libcnotify_printf(
+			 "%s: unknown2\t\t\t\t: 0x%08" PRIx64 "\n",
+			 function,
+			 value_64bit );
+
+			byte_stream_copy_to_uint32_little_endian(
+			 ( (wtcdb_index_file_header_v30_t *) data )->number_of_index_entries_used,
+			 value_32bit );
+			libcnotify_printf(
+			 "%s: number of index entries used\t\t: %" PRIu32 "\n",
+			 function,
+			 value_32bit );
+
+			libcnotify_printf(
+			 "%s: number of index entries\t\t\t: %" PRIu32 "\n",
+			 function,
+			 file_header->number_of_entries );
+		}
 		libcnotify_printf(
 		 "\n" );
 	}
-#endif
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
 	if( ( file_header->format_version != 20 )
-	 && ( file_header->format_version != 21 ) )
+	 && ( file_header->format_version != 21 )
+	 && ( file_header->format_version != 30 )
+	 && ( file_header->format_version != 31 )
+	 && ( file_header->format_version != 32 ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -348,9 +424,28 @@ int libwtcdb_file_header_read_data(
 
 		return( -1 );
 	}
+	file_header->file_type = file_type;
+
 	if( file_header->file_type == LIBWTCDB_FILE_TYPE_CACHE )
 	{
-		if( file_header->cache_type >= 5 )
+		if( ( file_header->format_version == 20 )
+		 || ( file_header->format_version == 21 ) )
+		{
+			number_of_cache_types = 5;
+		}
+		else if( file_header->format_version == 30 )
+		{
+			number_of_cache_types = 9;
+		}
+		else if( file_header->format_version == 31 )
+		{
+			number_of_cache_types = 11;
+		}
+		else if( file_header->format_version == 32 )
+		{
+			number_of_cache_types = 14;
+		}
+		if( file_header->cache_type >= number_of_cache_types )
 		{
 			libcerror_error_set(
 			 error,
@@ -362,7 +457,11 @@ int libwtcdb_file_header_read_data(
 
 			return( -1 );
 		}
-		if( file_header->first_entry_offset < 24 )
+		if( file_header->first_entry_offset == 0 )
+		{
+			file_header->first_entry_offset = 24;
+		}
+		else if( file_header->first_entry_offset < 24 )
 		{
 			libcerror_error_set(
 			 error,
@@ -373,6 +472,25 @@ int libwtcdb_file_header_read_data(
 			 file_header->first_entry_offset );
 
 			return( -1 );
+		}
+	}
+	else if( file_header->file_type == LIBWTCDB_FILE_TYPE_INDEX_V20 )
+	{
+		file_header->first_entry_offset = sizeof( wtcdb_index_file_header_v20_t );
+	}
+	else if( file_header->file_type == LIBWTCDB_FILE_TYPE_INDEX_V30 )
+	{
+		if( file_header->format_version == 30 )
+		{
+			file_header->first_entry_offset = 0x110;
+		}
+		else if( file_header->format_version == 31 )
+		{
+			file_header->first_entry_offset = 0x78;
+		}
+		else if( file_header->format_version == 32 )
+		{
+			file_header->first_entry_offset = 0xd8;
 		}
 	}
 	return( 1 );
@@ -386,7 +504,7 @@ int libwtcdb_file_header_read_file_io_handle(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
-	uint8_t file_header_data[ 24 ];
+	uint8_t file_header_data[ 32 ];
 
 	static char *function = "libwtcdb_file_header_read_file_io_handle";
 	ssize_t read_count    = 0;
@@ -413,11 +531,11 @@ int libwtcdb_file_header_read_file_io_handle(
 	read_count = libbfio_handle_read_buffer_at_offset(
 	              file_io_handle,
 	              file_header_data,
-	              24,
+	              32,
 	              0,
 	              error );
 
-	if( read_count != (ssize_t) 24 )
+	if( read_count < (ssize_t) 24 )
 	{
 		libcerror_error_set(
 		 error,
@@ -431,7 +549,7 @@ int libwtcdb_file_header_read_file_io_handle(
 	if( libwtcdb_file_header_read_data(
 	     file_header,
 	     file_header_data,
-	     24,
+	     (size_t) read_count,
 	     error ) != 1 )
 	{
 		libcerror_error_set(

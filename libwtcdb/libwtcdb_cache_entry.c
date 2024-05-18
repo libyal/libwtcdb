@@ -159,6 +159,7 @@ int libwtcdb_cache_entry_header_read_data(
 	uint64_t stored_header_crc     = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
+	uint64_t value_64bit           = 0;
 	uint32_t value_32bit           = 0;
 #endif
 
@@ -196,7 +197,10 @@ int libwtcdb_cache_entry_header_read_data(
 		return( -1 );
 	}
 	if( ( io_handle->format_version != 20 )
-	 && ( io_handle->format_version != 21 ) )
+	 && ( io_handle->format_version != 21 )
+	 && ( io_handle->format_version != 30 )
+	 && ( io_handle->format_version != 31 )
+	 && ( io_handle->format_version != 32 ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -210,11 +214,17 @@ int libwtcdb_cache_entry_header_read_data(
 	}
 	if( io_handle->format_version == 20 )
 	{
-		cache_entry_header_size = sizeof( wtcdb_cache_entry_vista_t );
+		cache_entry_header_size = sizeof( wtcdb_cache_entry_v20_t );
 	}
 	else if( io_handle->format_version == 21 )
 	{
-		cache_entry_header_size = sizeof( wtcdb_cache_entry_win7_t );
+		cache_entry_header_size = sizeof( wtcdb_cache_entry_v21_t );
+	}
+	else if( ( io_handle->format_version == 30 )
+	      || ( io_handle->format_version == 31 )
+	      || ( io_handle->format_version == 32 ) )
+	{
+		cache_entry_header_size = sizeof( wtcdb_cache_entry_v30_t );
 	}
 	if( data == NULL )
 	{
@@ -262,7 +272,7 @@ int libwtcdb_cache_entry_header_read_data(
 	}
 #endif
 	if( memory_compare(
-	     ( (wtcdb_cache_entry_vista_t *) data )->signature,
+	     ( (wtcdb_cache_entry_v20_t *) data )->signature,
 	     wtcdb_cache_file_signature,
 	     4 ) != 0 )
 	{
@@ -276,55 +286,79 @@ int libwtcdb_cache_entry_header_read_data(
 		return( -1 );
 	}
 	byte_stream_copy_to_uint32_little_endian(
-	 ( (wtcdb_cache_entry_vista_t *) data )->size,
+	 ( (wtcdb_cache_entry_v20_t *) data )->size,
 	 cache_entry->data_size );
 
 	byte_stream_copy_to_uint64_little_endian(
-	 ( (wtcdb_cache_entry_vista_t *) data )->entry_hash,
+	 ( (wtcdb_cache_entry_v20_t *) data )->entry_hash,
 	 cache_entry->hash );
 
 	if( io_handle->format_version == 20 )
 	{
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (wtcdb_cache_entry_vista_t *) data )->identifier_string_size,
+		 ( (wtcdb_cache_entry_v20_t *) data )->identifier_string_size,
 		 cache_entry->identifier_size );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (wtcdb_cache_entry_vista_t *) data )->padding_size,
+		 ( (wtcdb_cache_entry_v20_t *) data )->padding_size,
 		 cache_entry->padding_size );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (wtcdb_cache_entry_vista_t *) data )->data_size,
+		 ( (wtcdb_cache_entry_v20_t *) data )->data_size,
 		 cache_entry->cached_data_size );
 
 		byte_stream_copy_to_uint64_little_endian(
-		 ( (wtcdb_cache_entry_vista_t *) data )->header_checksum,
+		 ( (wtcdb_cache_entry_v20_t *) data )->header_checksum,
 		 stored_header_crc );
 
 		byte_stream_copy_to_uint64_little_endian(
-		 ( (wtcdb_cache_entry_vista_t *) data )->data_checksum,
+		 ( (wtcdb_cache_entry_v20_t *) data )->data_checksum,
 		 cache_entry->data_crc );
 	}
 	else if( io_handle->format_version == 21 )
 	{
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (wtcdb_cache_entry_win7_t *) data )->identifier_string_size,
+		 ( (wtcdb_cache_entry_v21_t *) data )->identifier_string_size,
 		 cache_entry->identifier_size );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (wtcdb_cache_entry_win7_t *) data )->padding_size,
+		 ( (wtcdb_cache_entry_v21_t *) data )->padding_size,
 		 cache_entry->padding_size );
 
 		byte_stream_copy_to_uint32_little_endian(
-		 ( (wtcdb_cache_entry_win7_t *) data )->data_size,
+		 ( (wtcdb_cache_entry_v21_t *) data )->data_size,
 		 cache_entry->cached_data_size );
 
 		byte_stream_copy_to_uint64_little_endian(
-		 ( (wtcdb_cache_entry_win7_t *) data )->data_checksum,
+		 ( (wtcdb_cache_entry_v21_t *) data )->data_checksum,
 		 cache_entry->data_crc );
 
 		byte_stream_copy_to_uint64_little_endian(
-		 ( (wtcdb_cache_entry_win7_t *) data )->header_checksum,
+		 ( (wtcdb_cache_entry_v21_t *) data )->header_checksum,
+		 stored_header_crc );
+	}
+	else if( ( io_handle->format_version == 30 )
+	      || ( io_handle->format_version == 31 )
+	      || ( io_handle->format_version == 32 ) )
+	{
+		byte_stream_copy_to_uint32_little_endian(
+		 ( (wtcdb_cache_entry_v30_t *) data )->identifier_string_size,
+		 cache_entry->identifier_size );
+
+		byte_stream_copy_to_uint32_little_endian(
+		 ( (wtcdb_cache_entry_v30_t *) data )->padding_size,
+		 cache_entry->padding_size );
+
+		byte_stream_copy_to_uint32_little_endian(
+		 ( (wtcdb_cache_entry_v30_t *) data )->data_size,
+		 cache_entry->cached_data_size );
+
+		byte_stream_copy_to_uint64_little_endian(
+		 ( (wtcdb_cache_entry_v30_t *) data )->data_checksum,
+		 cache_entry->data_crc );
+
+		byte_stream_copy_to_uint64_little_endian(
+		 ( (wtcdb_cache_entry_v30_t *) data )->header_checksum,
 		 stored_header_crc );
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -333,10 +367,10 @@ int libwtcdb_cache_entry_header_read_data(
 		libcnotify_printf(
 		 "%s: signature\t\t\t: %c%c%c%c\n",
 		 function,
-		 ( (wtcdb_cache_entry_vista_t *) data )->signature[ 0 ],
-		 ( (wtcdb_cache_entry_vista_t *) data )->signature[ 1 ],
-		 ( (wtcdb_cache_entry_vista_t *) data )->signature[ 2 ],
-		 ( (wtcdb_cache_entry_vista_t *) data )->signature[ 3 ] );
+		 ( (wtcdb_cache_entry_v20_t *) data )->signature[ 0 ],
+		 ( (wtcdb_cache_entry_v20_t *) data )->signature[ 1 ],
+		 ( (wtcdb_cache_entry_v20_t *) data )->signature[ 2 ],
+		 ( (wtcdb_cache_entry_v20_t *) data )->signature[ 3 ] );
 
 		libcnotify_printf(
 		 "%s: size\t\t\t\t: %" PRIu32 "\n",
@@ -355,7 +389,7 @@ int libwtcdb_cache_entry_header_read_data(
 			 "%s: file extension\t\t\t: ",
 			 function );
 
-			if( ( (wtcdb_cache_entry_vista_t *) data )->file_extension[ 0 ] == 0 )
+			if( ( (wtcdb_cache_entry_v20_t *) data )->file_extension[ 0 ] == 0 )
 			{
 				libcnotify_printf(
 				 "(none)" );
@@ -364,25 +398,25 @@ int libwtcdb_cache_entry_header_read_data(
 			{
 				libcnotify_printf(
 				 "%c",
-				 ( (wtcdb_cache_entry_vista_t *) data )->file_extension[ 0 ] );
+				 ( (wtcdb_cache_entry_v20_t *) data )->file_extension[ 0 ] );
 			}
-			if( ( (wtcdb_cache_entry_vista_t *) data )->file_extension[ 2 ] != 0 )
+			if( ( (wtcdb_cache_entry_v20_t *) data )->file_extension[ 2 ] != 0 )
 			{
 				libcnotify_printf(
 				 "%c",
-				 ( (wtcdb_cache_entry_vista_t *) data )->file_extension[ 2 ] );
+				 ( (wtcdb_cache_entry_v20_t *) data )->file_extension[ 2 ] );
 			}
-			if( ( (wtcdb_cache_entry_vista_t *) data )->file_extension[ 4 ] != 0 )
+			if( ( (wtcdb_cache_entry_v20_t *) data )->file_extension[ 4 ] != 0 )
 			{
 				libcnotify_printf(
 				 "%c",
-				 ( (wtcdb_cache_entry_vista_t *) data )->file_extension[ 4 ] );
+				 ( (wtcdb_cache_entry_v20_t *) data )->file_extension[ 4 ] );
 			}
-			if( ( (wtcdb_cache_entry_vista_t *) data )->file_extension[ 6 ] != 0 )
+			if( ( (wtcdb_cache_entry_v20_t *) data )->file_extension[ 6 ] != 0 )
 			{
 				libcnotify_printf(
 				 "%c",
-				 ( (wtcdb_cache_entry_vista_t *) data )->file_extension[ 6 ] );
+				 ( (wtcdb_cache_entry_v20_t *) data )->file_extension[ 6 ] );
 			}
 			libcnotify_printf(
 			 "\n" );
@@ -405,13 +439,16 @@ int libwtcdb_cache_entry_header_read_data(
 		if( io_handle->format_version == 20 )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (wtcdb_cache_entry_vista_t *) data )->unknown1,
+			 ( (wtcdb_cache_entry_v20_t *) data )->unknown1,
 			 value_32bit );
 		}
-		else if( io_handle->format_version == 21 )
+		else if( ( io_handle->format_version == 21 )
+		      || ( io_handle->format_version == 30 )
+		      || ( io_handle->format_version == 31 )
+		      || ( io_handle->format_version == 32 ) )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (wtcdb_cache_entry_win7_t *) data )->unknown1,
+			 ( (wtcdb_cache_entry_v21_t *) data )->unknown1,
 			 value_32bit );
 		}
 		libcnotify_printf(
@@ -419,6 +456,18 @@ int libwtcdb_cache_entry_header_read_data(
 		 function,
 		 value_32bit );
 
+		if( ( io_handle->format_version == 30 )
+		 || ( io_handle->format_version == 31 )
+		 || ( io_handle->format_version == 32 ) )
+		{
+			byte_stream_copy_to_uint64_little_endian(
+			 ( (wtcdb_cache_entry_v30_t *) data )->unknown2,
+			 value_64bit );
+			libcnotify_printf(
+			 "%s: unknown2\t\t\t\t: 0x%08" PRIx64 "\n",
+			 function,
+			 value_64bit );
+		}
 		libcnotify_printf(
 		 "%s: data checksum\t\t\t: 0x%08" PRIx64 "\n",
 		 function,
@@ -492,7 +541,7 @@ int libwtcdb_cache_entry_read_file_io_handle(
      off64_t file_offset,
      libcerror_error_t **error )
 {
-	uint8_t cache_entry_data[ sizeof( wtcdb_cache_entry_vista_t ) ];
+	uint8_t cache_entry_data[ sizeof( wtcdb_cache_entry_v20_t ) ];
 
 	static char *function            = "libwtcdb_cache_entry_read_file_io_handle";
 	uint32_t cache_entry_header_size = 0;
@@ -537,7 +586,10 @@ int libwtcdb_cache_entry_read_file_io_handle(
 		return( -1 );
 	}
 	if( ( io_handle->format_version != 20 )
-	 && ( io_handle->format_version != 21 ) )
+	 && ( io_handle->format_version != 21 )
+	 && ( io_handle->format_version != 30 )
+	 && ( io_handle->format_version != 31 )
+	 && ( io_handle->format_version != 32 ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -551,11 +603,17 @@ int libwtcdb_cache_entry_read_file_io_handle(
 	}
 	if( io_handle->format_version == 20 )
 	{
-		cache_entry_header_size = sizeof( wtcdb_cache_entry_vista_t );
+		cache_entry_header_size = sizeof( wtcdb_cache_entry_v20_t );
 	}
 	else if( io_handle->format_version == 21 )
 	{
-		cache_entry_header_size = sizeof( wtcdb_cache_entry_win7_t );
+		cache_entry_header_size = sizeof( wtcdb_cache_entry_v21_t );
+	}
+	else if( ( io_handle->format_version == 30 )
+	      || ( io_handle->format_version == 31 )
+	      || ( io_handle->format_version == 32 ) )
+	{
+		cache_entry_header_size = sizeof( wtcdb_cache_entry_v30_t );
 	}
 	if( cache_entry->identifier != NULL )
 	{
@@ -776,6 +834,13 @@ int libwtcdb_cache_entry_read_file_io_handle(
 
 		data_offset += cache_entry->padding_size;
 	}
+#if defined( HAVE_DEBUG_OUTPUT )
+	else if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "\n" );
+	}
+#endif
 	return( 1 );
 
 on_error:

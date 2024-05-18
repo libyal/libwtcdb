@@ -68,10 +68,13 @@ enum LIBWTCDB_ACCESS_FLAGS
 enum LIBWTCDB_FILE_TYPES
 {
 	LIBWTCDB_FILE_TYPE_CACHE			= (uint8_t) 'c',
-	LIBWTCDB_FILE_TYPE_INDEX			= (uint8_t) 'i'
+	LIBWTCDB_FILE_TYPE_INDEX_V20			= (uint8_t) 'i',
+	LIBWTCDB_FILE_TYPE_INDEX_V30			= (uint8_t) 'I'
 };
 
-#endif
+#define LIBWTCDB_FILE_TYPE_INDEX			LIBWTCDB_FILE_TYPE_INDEX_V20
 
-#endif
+#endif /* !defined( HAVE_LOCAL_LIBWTCDB ) */
+
+#endif /* !defined( _LIBWTCDB_INTERNAL_DEFINITIONS_H ) */
 

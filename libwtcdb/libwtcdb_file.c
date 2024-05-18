@@ -819,6 +819,7 @@ int libwtcdb_file_open_read(
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	uint8_t *trailing_data              = NULL;
+	size_t first_entry_offset           = 0;
 	size_t trailing_data_size           = 0;
 	ssize_t read_count                  = 0;
 #endif
@@ -888,16 +889,26 @@ int libwtcdb_file_open_read(
 	{
 		internal_file->entry_free_function = (intptr_t *) &libwtcdb_cache_entry_free;
 	}
-	else if( internal_file->io_handle->file_type == LIBWTCDB_FILE_TYPE_INDEX )
+	else if( ( internal_file->io_handle->file_type == LIBWTCDB_FILE_TYPE_INDEX_V20 )
+	      || ( internal_file->io_handle->file_type == LIBWTCDB_FILE_TYPE_INDEX_V30 ) )
 	{
 		internal_file->entry_free_function = (intptr_t *) &libwtcdb_index_entry_free;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
-		if( file_header->first_entry_offset > 24 )
+		if( ( internal_file->io_handle->file_type == LIBWTCDB_FILE_TYPE_CACHE )
+		 || ( internal_file->io_handle->file_type == LIBWTCDB_FILE_TYPE_INDEX_V20 ) )
 		{
-			trailing_data_size = (size_t) ( file_header->first_entry_offset - 24 );
+			first_entry_offset = 24;
+		}
+		else if( internal_file->io_handle->file_type == LIBWTCDB_FILE_TYPE_INDEX_V30 )
+		{
+			first_entry_offset = 32;
+		}
+		if( file_header->first_entry_offset > first_entry_offset )
+		{
+			trailing_data_size = (size_t) ( file_header->first_entry_offset - first_entry_offset );
 
 			trailing_data = (uint8_t *) memory_allocate(
 			                             sizeof( uint8_t ) * trailing_data_size );
@@ -945,6 +956,7 @@ int libwtcdb_file_open_read(
 		}
 	}
 #endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -1047,7 +1059,8 @@ int libwtcdb_file_read_entries(
 		return( -1 );
 	}
 	if( ( internal_file->io_handle->file_type != LIBWTCDB_FILE_TYPE_CACHE )
-	 && ( internal_file->io_handle->file_type != LIBWTCDB_FILE_TYPE_INDEX ) )
+	 && ( internal_file->io_handle->file_type != LIBWTCDB_FILE_TYPE_INDEX_V20 )
+	 && ( internal_file->io_handle->file_type != LIBWTCDB_FILE_TYPE_INDEX_V30 ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -1063,9 +1076,13 @@ int libwtcdb_file_read_entries(
 	{
 		type_string = "cache";
 	}
-	else if( internal_file->io_handle->file_type == LIBWTCDB_FILE_TYPE_INDEX )
+	else if( internal_file->io_handle->file_type == LIBWTCDB_FILE_TYPE_INDEX_V20 )
 	{
-		type_string = "index";
+		type_string = "index (v20)";
+	}
+	else if( internal_file->io_handle->file_type == LIBWTCDB_FILE_TYPE_INDEX_V30 )
+	{
+		type_string = "index (v30)";
 	}
 #endif
 	if( libbfio_handle_get_size(
@@ -1168,7 +1185,8 @@ int libwtcdb_file_read_entries(
 				cache_entry = NULL;
 			}
 		}
-		else if( internal_file->io_handle->file_type == LIBWTCDB_FILE_TYPE_INDEX )
+		else if( ( internal_file->io_handle->file_type == LIBWTCDB_FILE_TYPE_INDEX_V20 )
+		      || ( internal_file->io_handle->file_type == LIBWTCDB_FILE_TYPE_INDEX_V30 ) )
 		{
 			if( libwtcdb_index_entry_initialize(
 			     &index_entry,
@@ -1238,13 +1256,6 @@ int libwtcdb_file_read_entries(
 				index_entry = NULL;
 			}
 		}
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
-		{
-			libcnotify_printf(
-			 "\n" );
-		}
-#endif
 		entry_iterator++;
 	}
 	return( 1 );

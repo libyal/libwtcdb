@@ -29,9 +29,9 @@
 extern "C" {
 #endif
 
-typedef struct wtcdb_index_entry_vista wtcdb_index_entry_vista_t;
+typedef struct wtcdb_index_entry_v20 wtcdb_index_entry_v20_t;
 
-struct wtcdb_index_entry_vista
+struct wtcdb_index_entry_v20
 {
 	/* The entry hash
 	 * Consists of 8 bytes
@@ -49,35 +49,15 @@ struct wtcdb_index_entry_vista
 	 */
 	uint8_t flags[ 4 ];
 
-	/* Cache entry offset for thumbcache_32.db
-	 * Consists of 4 bytes
+	/* Cache entry offsets
+	 * Consists of 5 x 4 bytes
 	 */
-	uint8_t cache_entry_offset_32[ 4 ];
-
-	/* Cache entry offset for thumbcache_96.db
-	 * Consists of 4 bytes
-	 */
-	uint8_t cache_entry_offset_96[ 4 ];
-
-	/* Cache entry offset for thumbcache_256.db
-	 * Consists of 4 bytes
-	 */
-	uint8_t cache_entry_offset_256[ 4 ];
-
-	/* Cache entry offset for thumbcache_1024.db
-	 * Consists of 4 bytes
-	 */
-	uint8_t cache_entry_offset_1024[ 4 ];
-
-	/* Cache entry offset for thumbcache_sr.db
-	 * Consists of 4 bytes
-	 */
-	uint8_t cache_entry_offset_sr[ 4 ];
+	uint8_t cache_entry_offsets[ 20 ];
 };
 
-typedef struct wtcdb_index_entry_win7 wtcdb_index_entry_win7_t;
+typedef struct wtcdb_index_entry_v21 wtcdb_index_entry_v21_t;
 
-struct wtcdb_index_entry_win7
+struct wtcdb_index_entry_v21
 {
 	/* The entry hash
 	 * Consists of 8 bytes
@@ -89,30 +69,80 @@ struct wtcdb_index_entry_win7
 	 */
 	uint8_t flags[ 4 ];
 
-	/* Cache entry offset for thumbcache_32.db
-	 * Consists of 4 bytes
+	/* Cache entry offsets
+	 * Consists of 5 x 4 bytes
 	 */
-	uint8_t cache_entry_offset_32[ 4 ];
+	uint8_t cache_entry_offsets[ 20 ];
+};
 
-	/* Cache entry offset for thumbcache_96.db
-	 * Consists of 4 bytes
-	 */
-	uint8_t cache_entry_offset_96[ 4 ];
+typedef struct wtcdb_index_entry_v30 wtcdb_index_entry_v30_t;
 
-	/* Cache entry offset for thumbcache_256.db
-	 * Consists of 4 bytes
+struct wtcdb_index_entry_v30
+{
+	/* The entry hash
+	 * Consists of 8 bytes
 	 */
-	uint8_t cache_entry_offset_256[ 4 ];
+	uint8_t entry_hash[ 8 ];
 
-	/* Cache entry offset for thumbcache_1024.db
-	 * Consists of 4 bytes
+	/* Flags
+	 * Consists of 8 bytes
 	 */
-	uint8_t cache_entry_offset_1024[ 4 ];
+	uint8_t flags[ 8 ];
 
-	/* Cache entry offset for thumbcache_sr.db
+	/* Cache entry offsets
+	 * Consists of 9 x 4 bytes
+	 */
+	uint8_t cache_entry_offsets[ 36 ];
+
+	/* Unknown
 	 * Consists of 4 bytes
 	 */
-	uint8_t cache_entry_offset_sr[ 4 ];
+	uint8_t unknown1[ 4 ];
+};
+
+typedef struct wtcdb_index_entry_v31 wtcdb_index_entry_v31_t;
+
+struct wtcdb_index_entry_v31
+{
+	/* The entry hash
+	 * Consists of 8 bytes
+	 */
+	uint8_t entry_hash[ 8 ];
+
+	/* Flags
+	 * Consists of 8 bytes
+	 */
+	uint8_t flags[ 8 ];
+
+	/* Cache entry offsets
+	 * Consists of 11 x 4 bytes
+	 */
+	uint8_t cache_entry_offsets[ 44 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown1[ 4 ];
+};
+
+typedef struct wtcdb_index_entry_v32 wtcdb_index_entry_v32_t;
+
+struct wtcdb_index_entry_v32
+{
+	/* The entry hash
+	 * Consists of 8 bytes
+	 */
+	uint8_t entry_hash[ 8 ];
+
+	/* Flags
+	 * Consists of 8 bytes
+	 */
+	uint8_t flags[ 8 ];
+
+	/* Cache entry offsets
+	 * Consists of 14 x 4 bytes
+	 */
+	uint8_t cache_entry_offsets[ 56 ];
 };
 
 #if defined( __cplusplus )

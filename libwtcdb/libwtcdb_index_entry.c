@@ -147,11 +147,14 @@ int libwtcdb_index_entry_read_data(
      size_t data_size,
      libcerror_error_t **error )
 {
-	static char *function        = "libwtcdb_index_entry_read_data";
-	size_t index_entry_data_size = 0;
+	static char *function             = "libwtcdb_index_entry_read_data";
+	size_t index_entry_data_size      = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	uint32_t value_32bit         = 0;
+	const uint8_t *cache_entry_offset = NULL;
+	uint32_t value_32bit              = 0;
+	int number_of_offsets             = 0;
+	int offset_index                  = 0;
 #endif
 
 	if( index_entry == NULL )
@@ -176,7 +179,8 @@ int libwtcdb_index_entry_read_data(
 
 		return( -1 );
 	}
-	if( io_handle->file_type != LIBWTCDB_FILE_TYPE_INDEX )
+	if( ( io_handle->file_type != LIBWTCDB_FILE_TYPE_INDEX_V20 )
+	 && ( io_handle->file_type != LIBWTCDB_FILE_TYPE_INDEX_V30 ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -188,7 +192,10 @@ int libwtcdb_index_entry_read_data(
 		return( -1 );
 	}
 	if( ( io_handle->format_version != 20 )
-	 && ( io_handle->format_version != 21 ) )
+	 && ( io_handle->format_version != 21 )
+	 && ( io_handle->format_version != 30 )
+	 && ( io_handle->format_version != 31 )
+	 && ( io_handle->format_version != 32 ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -202,11 +209,23 @@ int libwtcdb_index_entry_read_data(
 	}
 	if( io_handle->format_version == 20 )
 	{
-		index_entry_data_size = sizeof( wtcdb_index_entry_vista_t );
+		index_entry_data_size = sizeof( wtcdb_index_entry_v20_t );
 	}
 	else if( io_handle->format_version == 21 )
 	{
-		index_entry_data_size = sizeof( wtcdb_index_entry_win7_t );
+		index_entry_data_size = sizeof( wtcdb_index_entry_v21_t );
+	}
+	else if( io_handle->format_version == 30 )
+	{
+		index_entry_data_size = sizeof( wtcdb_index_entry_v30_t );
+	}
+	else if( io_handle->format_version == 31 )
+	{
+		index_entry_data_size = sizeof( wtcdb_index_entry_v31_t );
+	}
+	else if( io_handle->format_version == 32 )
+	{
+		index_entry_data_size = sizeof( wtcdb_index_entry_v32_t );
 	}
 	if( data == NULL )
 	{
@@ -219,24 +238,14 @@ int libwtcdb_index_entry_read_data(
 
 		return( -1 );
 	}
-	if( data_size < index_entry_data_size )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-		 "%s: invalid data size value too small.",
-		 function );
-
-		return( -1 );
-	}
-	if( data_size > (size_t) SSIZE_MAX )
+	if( ( data_size < index_entry_data_size )
+	 || ( data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid data size value exceeds maximum.",
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid data size value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -254,13 +263,13 @@ int libwtcdb_index_entry_read_data(
 	}
 #endif
 	byte_stream_copy_to_uint64_little_endian(
-	 ( (wtcdb_index_entry_vista_t *) data )->entry_hash,
+	 ( (wtcdb_index_entry_v20_t *) data )->entry_hash,
 	 index_entry->hash );
 
 	if( io_handle->format_version == 20 )
 	{
 		byte_stream_copy_to_uint64_little_endian(
-		 ( (wtcdb_index_entry_vista_t *) data )->modification_time,
+		 ( (wtcdb_index_entry_v20_t *) data )->modification_time,
 		 index_entry->modification_time );
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
@@ -276,7 +285,7 @@ int libwtcdb_index_entry_read_data(
 			if( libwtcdb_debug_print_filetime_value(
 			     function,
 			     "modification time\t\t\t",
-			     ( (wtcdb_index_entry_vista_t *) data )->modification_time,
+			     ( (wtcdb_index_entry_v20_t *) data )->modification_time,
 			     8,
 			     LIBFDATETIME_ENDIAN_LITTLE,
 			     LIBFDATETIME_STRING_FORMAT_TYPE_CTIME | LIBFDATETIME_STRING_FORMAT_FLAG_DATE_TIME_NANO_SECONDS,
@@ -292,13 +301,16 @@ int libwtcdb_index_entry_read_data(
 				return( -1 );
 			}
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (wtcdb_index_entry_vista_t *) data )->flags,
+			 ( (wtcdb_index_entry_v20_t *) data )->flags,
 			 value_32bit );
 		}
-		else if( io_handle->format_version == 21 )
+		else if( ( io_handle->format_version == 21 )
+		      || ( io_handle->format_version == 30 )
+		      || ( io_handle->format_version == 31 )
+		      || ( io_handle->format_version == 32 ) )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (wtcdb_index_entry_win7_t *) data )->flags,
+			 ( (wtcdb_index_entry_v21_t *) data )->flags,
 			 value_32bit );
 		}
 		libcnotify_printf(
@@ -308,90 +320,62 @@ int libwtcdb_index_entry_read_data(
 
 		if( io_handle->format_version == 20 )
 		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (wtcdb_index_entry_vista_t *) data )->cache_entry_offset_32,
-			 value_32bit );
+			cache_entry_offset = ( (wtcdb_index_entry_v20_t *) data )->cache_entry_offsets;
+			number_of_offsets  = 5;
 		}
 		else if( io_handle->format_version == 21 )
 		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (wtcdb_index_entry_win7_t *) data )->cache_entry_offset_32,
-			 value_32bit );
+			cache_entry_offset = ( (wtcdb_index_entry_v21_t *) data )->cache_entry_offsets;
+			number_of_offsets  = 5;
 		}
-		libcnotify_printf(
-		 "%s: cache entry offset 32\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 value_32bit );
+		else if( io_handle->format_version == 30 )
+		{
+			cache_entry_offset = ( (wtcdb_index_entry_v30_t *) data )->cache_entry_offsets;
+			number_of_offsets  = 9;
+		}
+		else if( io_handle->format_version == 31 )
+		{
+			cache_entry_offset = ( (wtcdb_index_entry_v31_t *) data )->cache_entry_offsets;
+			number_of_offsets  = 11;
+		}
+		else if( io_handle->format_version == 32 )
+		{
+			cache_entry_offset = ( (wtcdb_index_entry_v32_t *) data )->cache_entry_offsets;
+			number_of_offsets  = 14;
+		}
+		for( offset_index = 0;
+		     offset_index < number_of_offsets;
+		     offset_index++ )
+		{
+			byte_stream_copy_to_uint32_little_endian(
+			 cache_entry_offset,
+			 value_32bit );
 
-		if( io_handle->format_version == 20 )
-		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (wtcdb_index_entry_vista_t *) data )->cache_entry_offset_96,
+			libcnotify_printf(
+			 "%s: cache entry offset: %d\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
+			 offset_index,
 			 value_32bit );
-		}
-		else if( io_handle->format_version == 21 )
-		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (wtcdb_index_entry_win7_t *) data )->cache_entry_offset_96,
-			 value_32bit );
-		}
-		libcnotify_printf(
-		 "%s: cache entry offset 96\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 value_32bit );
 
-		if( io_handle->format_version == 20 )
+			cache_entry_offset += 4;
+		}
+		if( ( io_handle->format_version == 30 )
+		 || ( io_handle->format_version == 31 ) )
 		{
 			byte_stream_copy_to_uint32_little_endian(
-			 ( (wtcdb_index_entry_vista_t *) data )->cache_entry_offset_256,
+			 cache_entry_offset,
 			 value_32bit );
-		}
-		else if( io_handle->format_version == 21 )
-		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (wtcdb_index_entry_win7_t *) data )->cache_entry_offset_256,
-			 value_32bit );
-		}
-		libcnotify_printf(
-		 "%s: cache entry offset 256\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 value_32bit );
 
-		if( io_handle->format_version == 20 )
-		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (wtcdb_index_entry_vista_t *) data )->cache_entry_offset_1024,
-			 value_32bit );
-		}
-		else if( io_handle->format_version == 21 )
-		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (wtcdb_index_entry_win7_t *) data )->cache_entry_offset_1024,
+			libcnotify_printf(
+			 "%s: unknown1\t\t\t\t: 0x%08" PRIx32 "\n",
+			 function,
 			 value_32bit );
 		}
 		libcnotify_printf(
-		 "%s: cache entry offset 1024\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 value_32bit );
-
-		if( io_handle->format_version == 20 )
-		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (wtcdb_index_entry_vista_t *) data )->cache_entry_offset_sr,
-			 value_32bit );
-		}
-		else if( io_handle->format_version == 21 )
-		{
-			byte_stream_copy_to_uint32_little_endian(
-			 ( (wtcdb_index_entry_win7_t *) data )->cache_entry_offset_sr,
-			 value_32bit );
-		}
-		libcnotify_printf(
-		 "%s: cache entry offset sr\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 value_32bit );
+		 "\n" );
 	}
 #endif /* defined( HAVE_DEBUG_OUTPUT ) */
+
 	index_entry->data_size = index_entry_data_size;
 
 	return( 1 );
@@ -407,7 +391,7 @@ int libwtcdb_index_entry_read_file_io_handle(
      off64_t file_offset,
      libcerror_error_t **error )
 {
-	uint8_t index_entry_data[ 40 ];
+	uint8_t index_entry_data[ sizeof( wtcdb_index_entry_v32_t ) ];
 
 	static char *function        = "libwtcdb_index_entry_read_file_io_handle";
 	size_t index_entry_data_size = 0;
@@ -435,7 +419,8 @@ int libwtcdb_index_entry_read_file_io_handle(
 
 		return( -1 );
 	}
-	if( io_handle->file_type != LIBWTCDB_FILE_TYPE_INDEX )
+	if( ( io_handle->file_type != LIBWTCDB_FILE_TYPE_INDEX_V20 )
+	 && ( io_handle->file_type != LIBWTCDB_FILE_TYPE_INDEX_V30 ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -447,7 +432,10 @@ int libwtcdb_index_entry_read_file_io_handle(
 		return( -1 );
 	}
 	if( ( io_handle->format_version != 20 )
-	 && ( io_handle->format_version != 21 ) )
+	 && ( io_handle->format_version != 21 )
+	 && ( io_handle->format_version != 30 )
+	 && ( io_handle->format_version != 31 )
+	 && ( io_handle->format_version != 32 ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -461,11 +449,23 @@ int libwtcdb_index_entry_read_file_io_handle(
 	}
 	if( io_handle->format_version == 20 )
 	{
-		index_entry_data_size = sizeof( wtcdb_index_entry_vista_t );
+		index_entry_data_size = sizeof( wtcdb_index_entry_v20_t );
 	}
 	else if( io_handle->format_version == 21 )
 	{
-		index_entry_data_size = sizeof( wtcdb_index_entry_win7_t );
+		index_entry_data_size = sizeof( wtcdb_index_entry_v21_t );
+	}
+	else if( io_handle->format_version == 30 )
+	{
+		index_entry_data_size = sizeof( wtcdb_index_entry_v30_t );
+	}
+	else if( io_handle->format_version == 31 )
+	{
+		index_entry_data_size = sizeof( wtcdb_index_entry_v31_t );
+	}
+	else if( io_handle->format_version == 32 )
+	{
+		index_entry_data_size = sizeof( wtcdb_index_entry_v32_t );
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )

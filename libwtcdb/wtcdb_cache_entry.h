@@ -29,9 +29,9 @@
 extern "C" {
 #endif
 
-typedef struct wtcdb_cache_entry_vista wtcdb_cache_entry_vista_t;
+typedef struct wtcdb_cache_entry_v20 wtcdb_cache_entry_v20_t;
 
-struct wtcdb_cache_entry_vista
+struct wtcdb_cache_entry_v20
 {
 	/* Signature
 	 * Consists of 4 bytes
@@ -92,9 +92,9 @@ struct wtcdb_cache_entry_vista
 	 */
 };
 
-typedef struct wtcdb_cache_entry_win7 wtcdb_cache_entry_win7_t;
+typedef struct wtcdb_cache_entry_v21 wtcdb_cache_entry_v21_t;
 
-struct wtcdb_cache_entry_win7
+struct wtcdb_cache_entry_v21
 {
 	/* Signature
 	 * Consists of 4 bytes
@@ -131,6 +131,68 @@ struct wtcdb_cache_entry_win7
 	 * Consists of 4 bytes
 	 */
 	uint8_t unknown1[ 4 ];
+
+	/* A CRC-64 of the data
+	 * Consists of 8 bytes
+	 */
+	uint8_t data_checksum[ 8 ];
+
+	/* A CRC-64 of the header
+	 * Consists of 8 bytes
+	 */
+	uint8_t header_checksum[ 8 ];
+
+	/* The identifier string
+	 */
+
+	/* The data
+	 */
+};
+
+typedef struct wtcdb_cache_entry_v30 wtcdb_cache_entry_v30_t;
+
+struct wtcdb_cache_entry_v30
+{
+	/* Signature
+	 * Consists of 4 bytes
+	 * Contains CMMM
+	 */
+	uint8_t signature[ 4 ];
+
+	/* The size
+	 * Consists of 4 bytes
+	 */
+	uint8_t size[ 4 ];
+
+	/* The entry hash
+	 * Consists of 8 bytes
+	 */
+	uint8_t entry_hash[ 8 ];
+
+	/* The identifier string size
+	 * Consists of 4 bytes
+	 */
+	uint8_t identifier_string_size[ 4 ];
+
+	/* Padding size
+	 * Consists of 4 bytes
+	 */
+	uint8_t padding_size[ 4 ];
+
+	/* The data size
+	 * Consists of 4 bytes
+	 */
+	uint8_t data_size[ 4 ];
+
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown1[ 4 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown2[ 8 ];
 
 	/* A CRC-64 of the data
 	 * Consists of 8 bytes

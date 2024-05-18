@@ -65,9 +65,9 @@ struct wtcdb_cache_file_header
 	uint8_t number_of_cache_entries[ 4 ];
 };
 
-typedef struct wtcdb_index_file_header wtcdb_index_file_header_t;
+typedef struct wtcdb_index_file_header_v20 wtcdb_index_file_header_v20_t;
 
-struct wtcdb_index_file_header
+struct wtcdb_index_file_header_v20
 {
 	/* Signature
 	 * Consists of 4 bytes
@@ -99,6 +99,42 @@ struct wtcdb_index_file_header
 	 * Consists of 4 bytes
 	 */
 	uint8_t unknown2[ 4 ];
+};
+
+typedef struct wtcdb_index_file_header_v30 wtcdb_index_file_header_v30_t;
+
+struct wtcdb_index_file_header_v30
+{
+	/* Unknown
+	 * Consists of 4 bytes
+	 */
+	uint8_t unknown1[ 4 ];
+
+	/* Signature
+	 * Consists of 4 bytes
+	 * Contains IMMM
+	 */
+	uint8_t signature[ 4 ];
+
+	/* Format version
+	 * Consists of 4 bytes
+	 */
+	uint8_t format_version[ 4 ];
+
+	/* Unknown
+	 * Consists of 8 bytes
+	 */
+	uint8_t unknown2[ 8 ];
+
+	/* The number of index entries used
+	 * Consists of 4 bytes
+	 */
+	uint8_t number_of_index_entries_used[ 4 ];
+
+	/* Total number of index entries
+	 * Consists of 4 bytes
+	 */
+	uint8_t number_of_index_entries[ 4 ];
 };
 
 #if defined( __cplusplus )
