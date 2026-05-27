@@ -31,14 +31,17 @@
  */
 #if defined( LIBWTCDB_DLL_EXPORT )
 #define LIBWTCDB_EXTERN __declspec(dllexport)
+#define LIBWTCDB_EXTERN_VARIABLE extern __declspec(dllexport)
 
 #elif defined( LIBWTCDB_DLL_IMPORT )
-#define LIBWTCDB_EXTERN extern __declspec(dllimport)
+#define LIBWTCDB_EXTERN __declspec(dllimport)
+#define LIBWTCDB_EXTERN_VARIABLE extern __declspec(dllimport)
 
 #else
 #define LIBWTCDB_EXTERN extern
+#define LIBWTCDB_EXTERN_VARIABLE extern
 
-#endif
+#endif /* defined( LIBWTCDB_DLL_EXPORT ) */
 
 #endif /* !defined( _LIBWTCDB_EXTERN_H ) */
 

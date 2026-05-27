@@ -438,13 +438,13 @@ int export_handle_set_target_path(
      const system_character_t *target_path,
      libcerror_error_t **error )
 {
-	static char *function                           = "export_handle_set_target_path";
-	size_t target_path_length                       = 0;
+	static char *function                = "export_handle_set_target_path";
+	size_t target_path_length            = 0;
 
 #if defined( WINAPI )
-	system_character_t *extended_length_target_path = NULL;
-        size_t extended_length_target_path_size         = 0;
-	int result                                      = 0;
+	system_character_t *full_target_path = NULL;
+        size_t full_target_path_size         = 0;
+	int result                           = 0;
 #endif
 
 	if( export_handle == NULL )
@@ -481,13 +481,21 @@ int export_handle_set_target_path(
 	                      target_path );
 
 #if defined( WINAPI )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libcpath_path_get_full_path_wide(
 	          target_path,
                   target_path_length,
-                  (wchar_t **) &extended_length_target_path,
-                  &extended_length_target_path_size,
+                  &full_target_path,
+                  &full_target_path_size,
                   error );
-
+#else
+	result = libcpath_path_get_full_path(
+	          target_path,
+                  target_path_length,
+                  &full_target_path,
+                  &full_target_path_size,
+                  error );
+#endif
         if( result == -1 )
         {
 		libcerror_error_set(
@@ -497,12 +505,12 @@ int export_handle_set_target_path(
 		 "%s: unable to create extended-length target path.",
 		 function );
 
-		return( -1 );
+		goto on_error;
         }
         else if( result != 0 )
         {
-                target_path        = extended_length_target_path;
-                target_path_length = extended_length_target_path_size - 1;
+                target_path        = full_target_path;
+                target_path_length = full_target_path_size - 1;
         }
 #endif
 	if( target_path_length > 0 )
@@ -519,11 +527,7 @@ int export_handle_set_target_path(
 			 "%s: unable to create target path.",
 			 function );
 
-#if defined( WINAPI )
-			memory_free(
-			 extended_length_target_path );
-#endif
-			return( -1 );
+			goto on_error;
 		}
 		if( system_string_copy(
 		     export_handle->target_path,
@@ -537,16 +541,7 @@ int export_handle_set_target_path(
 			 "%s: unable to copy target path.",
 			 function );
 
-#if defined( WINAPI )
-			memory_free(
-			 extended_length_target_path );
-#endif
-			memory_free(
-			 export_handle->target_path );
-
-			export_handle->target_path = NULL;
-
-			return( -1 );
+			goto on_error;
 		}
 		( export_handle->target_path )[ target_path_length ] = 0;
 
@@ -554,9 +549,27 @@ int export_handle_set_target_path(
 	}
 #if defined( WINAPI )
 	memory_free(
-	 extended_length_target_path );
+	 full_target_path );
 #endif
 	return( 1 );
+
+on_error:
+	if( export_handle->target_path != NULL )
+	{
+		memory_free(
+		 export_handle->target_path );
+
+		export_handle->target_path      = NULL;
+		export_handle->target_path_size = 0;
+	}
+#if defined( WINAPI )
+	if( full_target_path != NULL )
+	{
+		memory_free(
+		 full_target_path );
+	}
+#endif
+	return( -1 );
 }
 
 /* Opens the export handle

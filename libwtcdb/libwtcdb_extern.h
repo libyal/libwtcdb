@@ -30,12 +30,6 @@
 
 #include <libwtcdb/extern.h>
 
-#if defined( __CYGWIN__ ) || defined( __MINGW32__ )
-#define LIBWTCDB_EXTERN_VARIABLE	extern
-#else
-#define LIBWTCDB_EXTERN_VARIABLE	LIBWTCDB_EXTERN
-#endif
-
 #else
 #define LIBWTCDB_EXTERN		/* extern */
 #define LIBWTCDB_EXTERN_VARIABLE	extern
