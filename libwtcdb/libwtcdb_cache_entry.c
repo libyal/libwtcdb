@@ -830,9 +830,9 @@ int libwtcdb_cache_entry_read_file_io_handle(
 			 cache_entry->padding_size,
 			 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 		}
-#endif /* defined( HAVE_DEBUG_OUTPUT ) */
-
 		data_offset += cache_entry->padding_size;
+
+#endif /* defined( HAVE_DEBUG_OUTPUT ) */
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	else if( libcnotify_verbose != 0 )

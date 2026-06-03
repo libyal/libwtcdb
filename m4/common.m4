@@ -1,6 +1,6 @@
 dnl Checks for common headers and functions
 dnl
-dnl Version: 20260527
+dnl Version: 20260530
 
 dnl Function to test if a certain feature was disabled
 AC_DEFUN([AX_COMMON_ARG_DISABLE],
@@ -59,7 +59,7 @@ AC_DEFUN([AX_COMMON_CHECK_COMPILER_FLAG],
 
   AC_MSG_CHECKING([whether $CC supports $1])
 
-  SAVE_CFLAGS="$CFLAGS"
+  BACKUP_CFLAGS="$CFLAGS"
 
   dnl Force -Werror so Clang/GCC fail on unsupported options
   CFLAGS="$CFLAGS -Werror $1"
@@ -71,7 +71,7 @@ AC_DEFUN([AX_COMMON_CHECK_COMPILER_FLAG],
     [AC_MSG_RESULT([no])
      eval variable_name="no"])
 
-  CFLAGS="$SAVE_CFLAGS"
+  CFLAGS="$BACKUP_CFLAGS"
   ])
 
 dnl Function to detect whether shared library support should be disabled
@@ -79,7 +79,7 @@ AC_DEFUN([AX_COMMON_CHECK_DISABLE_SHARED_LIBS],
   [AX_COMMON_ARG_DISABLE(
     [shared-libs],
     [shared_libs],
-    [disable shared library support])
+    [shared library support])
   ])
 
 dnl Function to detect whether debug output should be enabled
@@ -151,7 +151,7 @@ AC_DEFUN([AX_COMMON_CHECK_ENABLE_WINAPI],
   [AX_COMMON_ARG_ENABLE(
     [winapi],
     [winapi],
-    [enable WINAPI support for cross-compilation],
+    [WINAPI support for cross-compilation],
     [auto-detect])
 
   AS_IF(
@@ -179,7 +179,7 @@ AC_DEFUN([AX_COMMON_CHECK_FUNC_PRINTF_JD],
   [AC_MSG_CHECKING(
     [whether printf supports the conversion specifier "%jd"])
 
-  SAVE_CFLAGS="$CFLAGS"
+  BACKUP_CFLAGS="$CFLAGS"
   CFLAGS="$CFLAGS -Wall -Werror"
   AC_LANG_PUSH(C)
 
@@ -219,7 +219,7 @@ if( ( string[ 0 ] != '1' ) || ( string[ 1 ] != '0' ) ) return( 1 ); ]] )],
     ])
 
   AC_LANG_POP(C)
-  CFLAGS="$SAVE_CFLAGS"
+  CFLAGS="$BACKUP_CFLAGS"
 
   AS_IF(
     [test "x$ac_cv_have_printf_jd" = xyes],
@@ -239,7 +239,7 @@ AC_DEFUN([AX_COMMON_CHECK_FUNC_PRINTF_ZD],
   [AC_MSG_CHECKING(
     [whether printf supports the conversion specifier "%zd"])
 
-  SAVE_CFLAGS="$CFLAGS"
+  BACKUP_CFLAGS="$CFLAGS"
   CFLAGS="$CFLAGS -Wall -Werror"
   AC_LANG_PUSH(C)
 
@@ -279,7 +279,7 @@ if( ( string[ 0 ] != '1' ) || ( string[ 1 ] != '0' ) ) return( 1 ); ]] )],
     ])
 
   AC_LANG_POP(C)
-  CFLAGS="$SAVE_CFLAGS"
+  CFLAGS="$BACKUP_CFLAGS"
 
   AS_IF(
     [test "x$ac_cv_have_printf_zd" = xyes],
@@ -324,7 +324,7 @@ AC_DEFUN([AX_COMMON_CHECK_LOCAL],
   AC_CHECK_HEADERS([wchar.h wctype.h])
 
   dnl File stream functions used in common/file_stream.h
-  AC_CHECK_FUNCS([fclose feof fgets fopen fread fseeko fseeko64 fwrite vfprintf])
+  AC_CHECK_FUNCS([fclose feof fgets fgetws fopen fread fseeko fseeko64 fwrite vfprintf])
 
   AS_IF(
     [test "x$ac_cv_func_fclose" != xyes],
@@ -384,9 +384,7 @@ AC_DEFUN([AX_COMMON_CHECK_LOCAL],
 
   AS_IF(
     [test "x$ac_cv_enable_wide_character_type" != xno],
-    [AC_CHECK_FUNCS([fgetws])
-
-    AS_IF(
+    [AS_IF(
       [test "x$ac_cv_func_fgetws" != xyes],
       [AC_MSG_FAILURE(
         [Missing function: fgetws],
@@ -522,11 +520,11 @@ AC_DEFUN([AX_COMMON_CHECK_LOCAL],
     ])
 
   dnl Wide character string functions used in common/wide_string.h
+  AC_CHECK_FUNCS([swprintf towlower wcscasecmp wcschr wcslen wcsncasecmp wcsncmp wcsncpy wcsnicmp wcsrchr wcsstr wmemchr wmemcmp wmemcpy wmemrchr])
+
   AS_IF(
     [test "x$ac_cv_enable_wide_character_type" != xno],
-    [AC_CHECK_FUNCS([swprintf towlower wcscasecmp wcschr wcslen wcsncasecmp wcsncmp wcsncpy wcsnicmp wcsrchr wcsstr wmemchr wmemcmp wmemcpy wmemrchr])
-
-    AS_IF(
+    [AS_IF(
       [test "x$ac_cv_func_swprintf" != xyes],
       [AC_MSG_FAILURE(
         [Missing function: swprintf],

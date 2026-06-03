@@ -13,6 +13,10 @@ AM_CPPFLAGS = \
 	@LIBFDATETIME_CPPFLAGS@ \
 	@LIBWTCDB_DLL_IMPORT@
 
+AM_TESTS_ENVIRONMENT = \
+	export PYTHON="@PYTHON@"; \
+	export TESTS_USE_WINAPI="@TESTS_USE_WINAPI@";
+
 TESTS = \
 	test_library.sh \
 	test_wtcdbexport.sh \

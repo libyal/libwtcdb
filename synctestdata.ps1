@@ -1,11 +1,11 @@
 # Script that synchronizes the local test data
 #
-# Version: 20251217
+# Version: 20260531
 
 $Repository = "dfirlabs/greendale-specimens"
 $TestDataPath = "wtcdb/student-pc1"
 $TestSet = "public"
-$TestInputDirectory = "tests/input"
+$TestInputDirectory = "tests\input"
 $TestFiles = "thumbcache_256.db thumbcache_idx.db"
 
 If (-Not (Test-Path ${TestInputDirectory}))
