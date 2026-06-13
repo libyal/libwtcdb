@@ -233,6 +233,10 @@ m4_define([AT_SETUP],
 
 SETUP_HELPER_FUNCTIONS
 
+RUN_TEST_BINARIES(
+  [SKIP_TOOLS_TESTS],
+  [tools_info_handle tools_output tools_signal])
+
 RUN_TEST_WTCDBTOOL_AND_COMPARE_STDOUT(
   [wtcdbinfo],
   test_inputs_wtcdbinfo)

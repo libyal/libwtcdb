@@ -62,30 +62,6 @@
 export_handle_t *wtcdbexport_export_handle = NULL;
 int wtcdbexport_abort                      = 0;
 
-/* Prints the executable usage information
- */
-void usage_fprint(
-      FILE *stream )
-{
-	if( stream == NULL )
-	{
-		return;
-	}
-	fprintf( stream, "Use wtcdbexport to export items stored in a Windows Explorer\n"
-	                 "thumbnail cache database (thumbcache.db) file.\n\n" );
-
-	fprintf( stream, "Usage: wtcdbexport [ -l logfile ] [ -t target ] [ -hvV ] source\n\n" );
-
-	fprintf( stream, "\tsource: the source file\n\n" );
-
-	fprintf( stream, "\t-h:     shows this help\n" );
-	fprintf( stream, "\t-l:     logs information about the exported items\n" );
-	fprintf( stream, "\t-t:     specify the target directory to export to\n"
-	                 "\t        (default is the source filename followed by .export)\n" );
-	fprintf( stream, "\t-v:     verbose output to stderr\n" );
-	fprintf( stream, "\t-V:     print version\n" );
-}
-
 /* Signal handler for wtcdbexport
  */
 void wtcdbexport_signal_handler(
@@ -138,6 +114,19 @@ int wmain( int argc, wchar_t * const argv[] )
 int main( int argc, char * const argv[] )
 #endif
 {
+	const char *description    = \
+		"Use wtcdbexport to export items stored in a Windows Explorer thumbnail cache database (thumbcache.db) file.";
+
+	wtcdbtools_option_t options[ ] = {
+		{ 'h', NULL, "shows this help" },
+		{ 'l', "logfile", "logs information about the exported items" },
+		{ 't', "target", "specify the target directory to export to (default is the source filename followed by .export)" },
+		{ 'v', NULL, "verbose output to stderr" },
+		{ 'V', NULL, "print version" },
+		{ 0, "source", "the source file" },
+	};
+	system_character_t options_string[ 32 ];
+
 	libcerror_error_t *error               = NULL;
 	log_handle_t *log_handle               = NULL;
 	system_character_t *log_filename       = NULL;
@@ -147,6 +136,7 @@ int main( int argc, char * const argv[] )
 	const char *program                    = "wtcdbexport";
 	system_integer_t option                = 0;
 	size_t source_length                   = 0;
+	int number_of_options                  = (int) ( sizeof( options ) / sizeof( wtcdbtools_option_t ) );
 	int result                             = 0;
 	int verbose                            = 0;
 
@@ -185,10 +175,22 @@ int main( int argc, char * const argv[] )
 	 stdout,
 	 program );
 
+	if( wtcdbtools_getopt_get_options_string(
+	     options,
+	     number_of_options,
+	     options_string,
+	     32 ) != 1 )
+	{
+		fprintf(
+		 stderr,
+		 "Unable to determine options string.\n" );
+
+		goto on_error;
+	}
 	while( ( option = wtcdbtools_getopt(
 	                   argc,
 	                   argv,
-	                   _SYSTEM_STRING( "hl:t:vV" ) ) ) != (system_integer_t) -1 )
+	                   options_string ) ) != (system_integer_t) -1 )
 	{
 		switch( option )
 		{
@@ -199,14 +201,22 @@ int main( int argc, char * const argv[] )
 				 "Invalid argument: %" PRIs_SYSTEM "\n",
 				 argv[ optind - 1 ] );
 
-				usage_fprint(
-				 stdout );
+				wtcdbtools_getopt_usage_fprint(
+				 stdout,
+				 program,
+				 description,
+				 options,
+				 number_of_options );
 
 				return( EXIT_FAILURE );
 
 			case (system_integer_t) 'h':
-				usage_fprint(
-				 stdout );
+				wtcdbtools_getopt_usage_fprint(
+				 stdout,
+				 program,
+				 description,
+				 options,
+				 number_of_options );
 
 				return( EXIT_SUCCESS );
 
@@ -238,8 +248,12 @@ int main( int argc, char * const argv[] )
 		 stderr,
 		 "Missing source file.\n" );
 
-		usage_fprint(
-		 stdout );
+		wtcdbtools_getopt_usage_fprint(
+		 stdout,
+		 program,
+		 description,
+		 options,
+		 number_of_options );
 
 		return( EXIT_FAILURE );
 	}
@@ -366,8 +380,7 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to open: %" PRIs_SYSTEM ".\n",
-		 source );
+		 "Unable to open source file.\n" );
 
 		goto on_error;
 	}

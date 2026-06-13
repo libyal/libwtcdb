@@ -117,7 +117,7 @@ void wtcdbtools_output_copyright_fprint(
 	 */
 	fprintf(
 	 stream,
-	 _( "Report bugs to <%s>.\n" ),
+	 _( "Report bugs via <%s>.\n" ),
 	 PACKAGE_BUGREPORT );
 }
 

@@ -325,7 +325,7 @@ int libwtcdb_check_file_signature_file_io_handle(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
-	uint8_t signature[ 4 ];
+	uint8_t signature[ 8 ];
 
 	static char *function      = "libwtcdb_check_file_signature_file_io_handle";
 	ssize_t read_count         = 0;
@@ -377,11 +377,11 @@ int libwtcdb_check_file_signature_file_io_handle(
 	read_count = libbfio_handle_read_buffer_at_offset(
 	              file_io_handle,
 	              signature,
-	              4,
+	              8,
 	              0,
 	              error );
 
-	if( read_count != 4 )
+	if( read_count != 8 )
 	{
 		libcerror_error_set(
 		 error,
@@ -418,6 +418,13 @@ int libwtcdb_check_file_signature_file_io_handle(
 	else if( memory_compare(
 	          wtcdb_index_file_signature,
 	          signature,
+	          4 ) == 0 )
+	{
+		return( 1 );
+	}
+	else if( memory_compare(
+	          wtcdb_index_file_signature,
+	          &( signature[ 4 ] ),
 	          4 ) == 0 )
 	{
 		return( 1 );

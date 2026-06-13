@@ -21,6 +21,9 @@ MSVSCPP_FILES = \
 	wtcdb_test_item/wtcdb_test_item.vcproj \
 	wtcdb_test_notify/wtcdb_test_notify.vcproj \
 	wtcdb_test_support/wtcdb_test_support.vcproj \
+	wtcdb_test_tools_info_handle/wtcdb_test_tools_info_handle.vcproj \
+	wtcdb_test_tools_output/wtcdb_test_tools_output.vcproj \
+	wtcdb_test_tools_signal/wtcdb_test_tools_signal.vcproj \
 	wtcdbexport/wtcdbexport.vcproj \
 	wtcdbinfo/wtcdbinfo.vcproj \
 	libwtcdb.sln

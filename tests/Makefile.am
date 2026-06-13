@@ -1,3 +1,5 @@
+AUTOMAKE_OPTIONS = subdir-objects
+
 AM_CPPFLAGS = \
 	-I../include -I$(top_srcdir)/include \
 	-I../common -I$(top_srcdir)/common \
@@ -30,7 +32,10 @@ check_PROGRAMS = \
 	wtcdb_test_io_handle \
 	wtcdb_test_item \
 	wtcdb_test_notify \
-	wtcdb_test_support
+	wtcdb_test_support \
+	wtcdb_test_tools_info_handle \
+	wtcdb_test_tools_output \
+	wtcdb_test_tools_signal
 
 wtcdb_test_cache_entry_SOURCES = \
 	wtcdb_test_cache_entry.c \
@@ -204,6 +209,45 @@ wtcdb_test_support_LDADD = \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
+	../libwtcdb/libwtcdb.la \
+	@LIBCERROR_LIBADD@
+
+wtcdb_test_tools_info_handle_SOURCES = \
+	../wtcdbtools/info_handle.c ../wtcdbtools/info_handle.h \
+	../wtcdbtools/wtcdbinput.c ../wtcdbtools/wtcdbinput.h \
+	wtcdb_test_libcerror.h \
+	wtcdb_test_macros.h \
+	wtcdb_test_memory.c wtcdb_test_memory.h \
+	wtcdb_test_tools_info_handle.c \
+	wtcdb_test_unused.h
+
+wtcdb_test_tools_info_handle_LDADD = \
+	@LIBFDATETIME_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	../libwtcdb/libwtcdb.la \
+	@LIBCERROR_LIBADD@
+
+wtcdb_test_tools_output_SOURCES = \
+	../wtcdbtools/wtcdbtools_output.c ../wtcdbtools/wtcdbtools_output.h \
+	wtcdb_test_libcerror.h \
+	wtcdb_test_macros.h \
+	wtcdb_test_tools_output.c \
+	wtcdb_test_unused.h
+
+wtcdb_test_tools_output_LDADD = \
+	../libwtcdb/libwtcdb.la \
+	@LIBCERROR_LIBADD@ \
+	@LIBINTL@
+
+wtcdb_test_tools_signal_SOURCES = \
+	../wtcdbtools/wtcdbtools_signal.c ../wtcdbtools/wtcdbtools_signal.h \
+	wtcdb_test_libcerror.h \
+	wtcdb_test_macros.h \
+	wtcdb_test_tools_signal.c \
+	wtcdb_test_unused.h
+
+wtcdb_test_tools_signal_LDADD = \
 	../libwtcdb/libwtcdb.la \
 	@LIBCERROR_LIBADD@
 

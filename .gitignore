@@ -155,6 +155,9 @@ stamp-h[1-9]
 /tests/wtcdb_test_item_value
 /tests/wtcdb_test_notify
 /tests/wtcdb_test_support
+/tests/wtcdb_test_tools_info_handle
+/tests/wtcdb_test_tools_output
+/tests/wtcdb_test_tools_signal
 
 # Local library dependencies specific files
 /libbfio
