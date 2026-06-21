@@ -1,7 +1,6 @@
 TODO:
 * expose index and cache entry in API
 * libwtcdb
-  - merge libwtcdb_item and libwtcdb_item_values?
 * wtcdbinfo
   - add info handle
 * wtcdbexport

@@ -2,7 +2,7 @@ AC_PREREQ([2.71])
 
 AC_INIT(
   [libwtcdb],
-  [20260613],
+  [20260621],
   [https://github.com/libyal/libwtcdb/issues])
 
 AC_CONFIG_SRCDIR(
