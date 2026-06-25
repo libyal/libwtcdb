@@ -1,9 +1,10 @@
-.Dd July 29, 2019
-.Dt wtcdbexport
-.Os libwtcdb
+.Dd June 25, 2026
+.Dt WTCDBEXPORT 1
+.Os
 .Sh NAME
 .Nm wtcdbexport
-.Nd exports items stored in a Windows Explorer thumbnail cache database (WTCDB) file
+.Nd exports items stored in a Windows Explorer thumbnail cache database \
+(thumbcache.db) file
 .Sh SYNOPSIS
 .Nm wtcdbexport
 .Op Fl l Ar logfile
@@ -12,14 +13,16 @@
 .Ar source
 .Sh DESCRIPTION
 .Nm wtcdbexport
-is a utility to export items stored in a Windows Explorer thumbnail cache database (WTCDB) file
+is a utility to export items stored in a Windows Explorer thumbnail cache \
+database (thumbcache.db) file
 .Pp
 .Nm wtcdbexport
 is part of the
 .Nm libwtcdb
 package.
 .Nm libwtcdb
-is a library to access the Windows Explorer thumbnail cache database (WTCDB) format
+is a library to access the Windows Explorer thumbnail cache database (WTCDB) \
+format
 .Pp
 .Ar source
 is the source file.
@@ -31,7 +34,8 @@ shows this help
 .It Fl l Ar logfile
 specify the file in which to log information about the exported items
 .It Fl t Ar target
-specify the target directory to export to (default is the source filename followed by .export)
+specify the target directory to export to (default is the source filename \
+followed by .export)
 .It Fl v
 verbose output to stderr
 .It Fl V
@@ -44,26 +48,26 @@ None
 .Sh EXAMPLES
 .Bd -literal
 # wtcdbexport thumbcache_32.db
-wtcdbexport 20101023
+wtcdbexport 20260625
 .sp
 Opening file.
-Exporting aliases.
-Processing alias 1 out of 1.
-.Dl ...
-Exporting alias 4 out of 4.
 Export completed.
 .sp
 .Ed
 .Sh DIAGNOSTICS
-Errors, verbose and debug output are printed to stderr when verbose output \-v is enabled.
+Errors, verbose and debug output are printed to stderr when verbose output \
+\-v is enabled.
 Verbose and debug output are only printed when enabled at compilation.
-.Sh BUGS
-Please report bugs of any kind to <joachim.metz@gmail.com> or on the project website:
-https://github.com/libyal/libwtcdb/
-.Sh AUTHOR
-These man pages were written by Joachim Metz.
-.Sh COPYRIGHT
-Copyright (C) 2010-2026, Joachim Metz <joachim.metz@gmail.com>.
-This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .Sh SEE ALSO
 .Xr wtcdbinfo 1
+.Sh AUTHORS
+.An Joachim Metz <joachim.metz@gmail.com>
+.Sh BUGS
+Please report bugs of any kind on the project issue tracker: \
+https://github.com/libyal/libwtcdb/issues
+.Sh COPYRIGHT
+Copyright (C) 2010-2026, Joachim Metz <joachim.metz@gmail.com>.
+.sp
+This is free software; see the source for copying conditions.
+There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A \
+PARTICULAR PURPOSE.

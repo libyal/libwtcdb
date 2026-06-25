@@ -1,31 +1,32 @@
-.Dd July 29, 2019
-.Dt wtcdbinfo
-.Os libwtcdb
+.Dd June 25, 2026
+.Dt WTCDBINFO 1
+.Os
 .Sh NAME
 .Nm wtcdbinfo
-.Nd determines information about a Windows Explorer thumbnail cache database (WTCDB) file
+.Nd determines information about a Windows Explorer thumbnail cache database \
+(thumbcache.db) file
 .Sh SYNOPSIS
 .Nm wtcdbinfo
-.Op Fl ahvV
+.Op Fl hvV
 .Ar source
 .Sh DESCRIPTION
 .Nm wtcdbinfo
-is a utility to determine information about a Windows Explorer thumbnail cache database (WTCDB) file
+is a utility to determine information about a Windows Explorer thumbnail cache \
+database (thumbcache.db) file
 .Pp
 .Nm wtcdbinfo
 is part of the
 .Nm libwtcdb
 package.
 .Nm libwtcdb
-is a library to access the Windows Explorer thumbnail cache database (WTCDB) format
+is a library to access the Windows Explorer thumbnail cache database (WTCDB) \
+format
 .Pp
 .Ar source
 is the source file.
 .Pp
 The options are as follows:
 .Bl -tag -width Ds
-.It Fl a
-shows allocation information
 .It Fl h
 shows this help
 .It Fl v
@@ -40,22 +41,27 @@ None
 .Sh EXAMPLES
 .Bd -literal
 # wtcdbinfo thumbcache_32.db
-wtcdbinfo 20100912
+wtcdbinfo 20260621
 .sp
 Windows Explorer thumbnail cache database information:
-	...
+	File type:		Cache file
+	Number of items:	12
 .sp
 .Ed
 .Sh DIAGNOSTICS
-Errors, verbose and debug output are printed to stderr when verbose output \-v is enabled.
+Errors, verbose and debug output are printed to stderr when verbose output \
+\-v is enabled.
 Verbose and debug output are only printed when enabled at compilation.
-.Sh BUGS
-Please report bugs of any kind to <joachim.metz@gmail.com> or on the project website:
-https://github.com/libyal/libwtcdb/
-.Sh AUTHOR
-These man pages were written by Joachim Metz.
-.Sh COPYRIGHT
-Copyright (C) 2010-2026, Joachim Metz <joachim.metz@gmail.com>.
-This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .Sh SEE ALSO
 .Xr wtcdbexport 1
+.Sh AUTHORS
+.An Joachim Metz <joachim.metz@gmail.com>
+.Sh BUGS
+Please report bugs of any kind on the project issue tracker: \
+https://github.com/libyal/libwtcdb/issues
+.Sh COPYRIGHT
+Copyright (C) 2010-2026, Joachim Metz <joachim.metz@gmail.com>.
+.sp
+This is free software; see the source for copying conditions.
+There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A \
+PARTICULAR PURPOSE.
