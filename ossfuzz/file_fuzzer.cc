@@ -36,12 +36,16 @@ extern "C" {
  */
 LIBWTCDB_EXTERN \
 int libwtcdb_file_open_file_io_handle(
-     libwtcdb_file_t *file,
-     libbfio_handle_t *file_io_handle,
-     int access_flags,
-     libwtcdb_error_t **error );
+      libwtcdb_file_t *file,
+      libbfio_handle_t *file_io_handle,
+      int access_flags,
+      libwtcdb_error_t **error );
 
 #endif /* !defined( LIBWTCDB_HAVE_BFIO ) */
+
+/* Limits on the number of items to query
+ */
+#define FUZZER_ITEMS_LIMIT	8
 
 int LLVMFuzzerTestOneInput(
      const uint8_t *data,
@@ -49,6 +53,10 @@ int LLVMFuzzerTestOneInput(
 {
 	libbfio_handle_t *file_io_handle = NULL;
 	libwtcdb_file_t *file            = NULL;
+	libwtcdb_item_t *item            = NULL;
+	uint8_t file_type                = 0;
+	int item_index                   = 0;
+	int number_of_items              = 0;
 
 	if( libbfio_memory_range_initialize(
 	     &file_io_handle,
@@ -76,13 +84,78 @@ int LLVMFuzzerTestOneInput(
 	     LIBWTCDB_OPEN_READ,
 	     NULL ) != 1 )
 	{
-		goto on_error_libwtcdb;
+		goto on_error_libwtcdb_file;
+	}
+	libwtcdb_file_get_type(
+	 file,
+	 &file_type,
+	 NULL );
+	libwtcdb_file_signal_abort(
+	 file,
+	 NULL );
+	if( libwtcdb_file_get_number_of_items(
+	     file,
+	     &number_of_items,
+	     NULL ) == 1 )
+	{
+		for( item_index = 0;
+		     item_index < number_of_items;
+		     item_index++ )
+		{
+			if( item_index >= FUZZER_ITEMS_LIMIT )
+			{
+				break;
+			}
+			item = NULL;
+			libwtcdb_file_get_item(
+			 file,
+			 item_index,
+			 &item,
+			 NULL );
+			if( item != NULL )
+			{
+				libwtcdb_item_free(
+				 &item,
+				 NULL );
+			}
+		}
+		/* Attempt to retrieve an item using an out of range index
+		 * to trigger the validation
+		 */
+		item = NULL;
+		libwtcdb_file_get_item(
+		 file,
+		 number_of_items,
+		 &item,
+		 NULL );
+		if( item != NULL )
+		{
+			libwtcdb_item_free(
+			 &item,
+			 NULL );
+		}
 	}
 	libwtcdb_file_close(
 	 file,
 	 NULL );
+	/* Attempt to open with unsupported access flags
+	 * to trigger the validation
+	 */
+	libwtcdb_file_open_file_io_handle(
+	 file,
+	 file_io_handle,
+	 LIBWTCDB_OPEN_READ_WRITE,
+	 NULL );
+	libwtcdb_file_open_file_io_handle(
+	 file,
+	 file_io_handle,
+	 0,
+	 NULL );
+	libwtcdb_file_close(
+	 file,
+	 NULL );
 
-on_error_libwtcdb:
+on_error_libwtcdb_file:
 	libwtcdb_file_free(
 	 &file,
 	 NULL );
@@ -96,4 +169,3 @@ on_error_libbfio:
 }
 
 } /* extern "C" */
-
